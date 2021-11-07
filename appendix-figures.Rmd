@@ -5,5 +5,261 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+
+usethis::use_blank_slate()
+
+### ----------- packages + settings
+pacman::p_load(tidyverse,
+               sjlabelled,
+               sjmisc,
+               psych,
+               lubridate,
+               srvyr,
+               purrr,
+               kableExtra)
+
+### ----------- data
+merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 ```
+
+### Table A1.
+
+```{r calculate demog distribution}
+# select variables of interest
+demo_vars <- c(
+  'gender',
+  'race',
+  'presvote16post',
+  'employ',
+  'educ2',
+  'religion',
+  'marital',
+  'faminc_new',
+  'pid3',
+  'age_group'
+)
+DEMOG_data <- merged_data %>%
+  dplyr::select(weight_cmd, all_of(demo_vars), browser_sample) %>%
+  fastDummies::dummy_cols(select_columns = all_of(demo_vars))
+# level of each variable
+var_levels <- DEMOG_data %>% 
+  dplyr::select(-demo_vars, -weight_cmd, -browser_sample) %>% 
+  names()
+
+# function to calculate (un)weighted stats depending on sample
+weighted_stats_fxn <- function (var, sample) {
+  require(TAM)
+  require(diagis)
+  if (sample == "full") {
+    d <- # take non-null in variable
+      DEMOG_data[complete.cases(DEMOG_data[[var]], DEMOG_data$weight_cmd), , drop =
+                   FALSE][[var]]
+    w <-
+      DEMOG_data$weight_cmd[complete.cases(DEMOG_data[[var]],  DEMOG_data$weight_cmd)]
+  } else if (sample == "browser") {
+    d <- # non-Nulls in extension sample
+      DEMOG_data[complete.cases(DEMOG_data[[var]], DEMOG_data$weight_cmd) &
+                   DEMOG_data$browser_sample == "browser", , drop = FALSE][[var]]
+    w <-
+      DEMOG_data$weight_cmd[complete.cases(DEMOG_data[[var]],  DEMOG_data$weight_cmd) &
+                          DEMOG_data$browser_sample == "browser"]
+  } 
+  out <- data.frame(
+    "variable" = str_split(string = var, pattern = "_(?=[^_]+$)")[[1]][1] ,
+    "level" = str_split(string = var, pattern = "_(?=[^_]+$)")[[1]][2] ,
+    "n" = length(d),
+    "unweighted_mean" = mean(d, na.rm = T),
+    "weighted_mean" = TAM::weighted_mean(d, w = w),
+    "unweighted_se" = sd(d, na.rm = T) / sqrt(length(d)),
+    "weighted_se" = diagis::weighted_se(d, w = w, na.rm = TRUE),
+    "sample" = sample
+  )
+  return(out)
+}
+
+# function to format table
+custom_kable_weighted <- function(data, 
+                                  col_names = c("", "Weighted", "Unweighted")) {
+  kbl(
+    data %>% dplyr::select(-variable),
+    booktabs = TRUE,
+    caption = "Full and extension sample demographics",
+    format = "latex",
+    align = "c",
+    digits = 2,
+    linesep = "",
+    col.names = col_names
+  )  %>%
+    kable_styling(latex_options =  "HOLD_position",
+                  font_size = 10,
+                  #bootstrap_options = c("striped","condensed"),
+                  stripe_index = c(1, 5, 13, 17, 21, 29, 35, 41, 51, 57)) %>%
+    group_rows("Gender", 1, 4,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Race", 5, 12,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("2016 presidential vote", 13, 16,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Employment status", 17, 20,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Education", 21, 28,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Religion", 29, 34,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Marital status", 35, 40,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Family income", 41, 50,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Party identification", 51, 56,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Age", 57, 61,
+               background = "gray!6",
+               latex_gap_space = "0em") %>% 
+    footnote(
+      c("Weighted estimates use YouGov survey weights.",
+        "Standard errors are in parentheses."))%>%
+    row_spec(61, extra_latex_after = "\\cline{3-4}")%>%
+    row_spec(62, hline_after = TRUE)
+}
+```
+
+```{r}
+# get (un)weighted estimates for extension sample
+browser_sample <-
+  map(var_levels, ~weighted_stats_fxn(.x, sample = "browser"))
+# get (un)weighted estimates for full survey sample
+full_sample <-
+  map(var_levels, ~weighted_stats_fxn(.x, sample = "full"))
+
+# number of respondents in survey sample
+n_full <- 
+  DEMOG_data %>% 
+  nrow()
+# number of respondents in extension sample
+n_browser <- 
+  DEMOG_data %>% 
+  filter(browser_sample == "browser") %>% 
+  nrow()
+```
+
+
+```{r }
+# reformat 
+full_summ <- SUMM_stats_tlb %>%
+  dplyr::select(
+    variable,
+    level,
+    weighted_mean.full,
+    weighted_se.full,
+    unweighted_mean.full,
+    unweighted_se.full
+  ) %>%
+  mutate(
+    unweighted_se.full = paste0("(", as.character(unweighted_se.full), ")"),
+    weighted_se.full = paste0("(", as.character(weighted_se.full), ")"),
+    weighted_mean.full = as.character(weighted_mean.full),
+    unweighted_mean.full  = as.character(unweighted_mean.full)
+  ) %>%
+  pivot_longer(c(
+    weighted_mean.full,
+    weighted_se.full,
+    unweighted_mean.full,
+    unweighted_se.full
+  )) %>%
+  mutate(weighted = ifelse(str_detect(name, "unweighted"), "unweighted", "weighted")) %>%
+  pivot_wider(-c(value), weighted) %>%
+  mutate(
+    weighted = ifelse(is.na(weighted), lag(weighted, n = 2L), weighted),
+    unweighted = ifelse(is.na(unweighted), lead(unweighted, n = 2L), unweighted)
+  ) %>%
+  filter(str_detect(name, "unweighted")) %>% 
+  filter(level != "NA" & level != "Other") %>% 
+  select(-name) %>%
+  mutate(level = ifelse(1:length(.$level) %% 2 == 0, "", level)) %>%
+  add_row(
+    variable = "",
+    level = "",
+    weighted = paste0("n = ", n_full),
+    unweighted = paste0("n = ", n_full)
+  ) 
+
+# extension sample
+browser_summ <- SUMM_stats_tlb %>%
+  dplyr::select(
+    variable,
+    level,
+    weighted_mean.browser,
+    weighted_se.browser,
+    unweighted_mean.browser,
+    unweighted_se.browser
+  ) %>%
+  mutate(
+    unweighted_se.browser = paste0("(", as.character(unweighted_se.browser), ")"),
+    weighted_se.browser = paste0("(", as.character(weighted_se.browser), ")"),
+    weighted_mean.browser = as.character(weighted_mean.browser),
+    unweighted_mean.browser  = as.character(unweighted_mean.browser)
+  ) %>%
+  pivot_longer(
+    c(
+      weighted_mean.browser,
+      weighted_se.browser,
+      unweighted_mean.browser,
+      unweighted_se.browser
+    )
+  ) %>%
+  mutate(weighted = ifelse(str_detect(name, "unweighted"), "unweighted", "weighted")) %>%
+  pivot_wider(-c(value), weighted) %>%
+  mutate(
+    weighted = ifelse(is.na(weighted), lag(weighted, n = 2L), weighted),
+    unweighted = ifelse(is.na(unweighted), lead(unweighted, n = 2L), unweighted)
+  ) %>%
+  filter(str_detect(name, "unweighted")) %>%
+  filter(level != "NA" & level != "Other") %>% 
+  select(-name) %>%
+  mutate(level = ifelse(1:length(.$level) %% 2 == 0, "", level)) %>%
+  add_row(
+    variable = "",
+    level = "",
+    weighted = paste0("n = ", n_browser),
+    unweighted = paste0("n = ", n_browser)
+  )
+
+# put full and extension sample tables together...
+combined_table <- full_summ %>%
+  rename(full_weighted = weighted,
+         full_unweighted = unweighted) %>%
+  bind_cols(
+    browser_summ %>%
+      rename(
+        extension_weighted = weighted,
+        extension_unweighted = unweighted
+      ) %>% 
+      select(-variable, -level)
+  )
+
+# print table
+custom_kable_weighted(combined_table,
+                      col_names = c("", "Full weighted", "Full unweighted", 
+                                    "Extension weighted", "Extension unweighted"))
+
+```
+
+
+```{r}
+
+```
+
+
+
+
 

@@ -1,42 +1,7 @@
----
-title: "Figures in Main Text"
-output: github_document
-editor_options: 
-  chunk_output_type: console
----
+Figures in Main Text
+================
 
-```{r setup, include = FALSE}
-# code chunk settings
-knitr::opts_chunk$set(echo = TRUE,
-                      warning = FALSE,
-                      message = FALSE,
-                      fig.width = 12,
-                      fig.align = 'center')
-
-usethis::use_blank_slate()
-
-### ----------- packages
-pacman::p_load(tidyverse,
-               data.table,
-               sjlabelled,
-               sjmisc,
-               psych,
-               lubridate,
-               # estimation
-               survey,
-               sandwich,
-               lmtest,
-               # plotting / tables
-               waffle,
-               cowplot, 
-               purrr,
-               ggimage,
-               ggpattern,
-               kableExtra)
-```
-
-
-```{r data}
+``` r
 # activity data
 at_data <- read_rds("data/activity_yg_cces.rds") 
 
@@ -53,117 +18,7 @@ recs_data <-
   read_delim("data/recommendation_pipeline.tsv", delim = '\t')
 ```
 
-
-```{r helper functions, include = FALSE}
-# string wrap for factor variables
-str_wrap_factor <- function(x, ...) {
-  levels(x) <- str_wrap(levels(x), ...)
-  x
-}
-
-# better labels for channel types
-recode_channel_type_fxn <- function(old_name) {
-  recode(
-    old_name,
-    alternative = "Alternative \nchannel",
-    extremist = "Extremist \nchannel",
-    mainstream = "Mainstream media \nchannel",
-    other = "Other \nchannel"
-  )
-}
-
-# labels for predictors
-recode_fxn <- function(old_name) {
-  recode(
-    old_name,
-    rr_tercilemed = "RR, medium",
-    rr_tercilehigh = "RR, high",
-    ft_jew_binnedwarm = "Feeling Jews, warm",
-    ft_jew_binnedmedium = "Feeling Jews, medium",
-    rr_cts = "Racial resentment",
-    rr_cts2 = "Denial of racism",
-    `raceNon-white` = "Non-white",
-    jw_cts = "Feeling Jews",
-    genderMale = "Male",
-    fem_cts = "Hostile sexism",
-    pid_leanDemocrat = "Democrat",
-    pid_leanRepublican = "Republican",
-    `educ2Some college` = "Some college",
-    `educ2Post-grad` = "Post-grad",
-    `educ24-year` = "Bachelors",
-    age = "Age"
-  )
-}
-
-# refactoring order of predictors
-refactor_fxn <- function (var_list) {
-  if ("Republican" %in% var_list) {
-    demo_vars <- c(
-      "Post-grad",
-      "Bachelors",
-      "Some college",
-      "Non-white",
-      "Male",
-      "Age",
-      "Republican",
-      "Democrat"
-    )
-  } else {
-    demo_vars <- c("Post-grad",
-                   "Bachelors",
-                   "Some college",
-                   "Non-white",
-                   "Male",
-                   "Age")
-  }
-  
-  if (length(var_list) == 9 * 3 | length(var_list) == 11 * 3) {
-    if ("Racial resentment" %in% var_list) {
-      factor(
-        var_list,
-        levels = c(
-          demo_vars,
-          "Feeling Jews",
-          "Racial resentment",
-          "Hostile sexism"
-        )
-      )
-    } else
-      (factor(var_list,
-              levels = c(
-                demo_vars,
-                "Feeling Jews",
-                "Denial of racism",
-                "Hostile sexism"
-              )))
-  } else if (length(var_list) == 7 * 3) {
-    if ("Racial resentment" %in% var_list) {
-      factor(var_list,
-             levels = c(demo_vars, "Racial resentment"))
-    } else
-      (factor(var_list,
-              levels = c(demo_vars, "Female resentment")))
-  } else if (length(var_list) == 6 * 3) {
-    factor(var_list,
-           levels = demo_vars)
-  } else {
-    var_list
-  }
-}
-# get modal values
-mode_fxn <- function(var) {
-  factor(which.max(table(with(at_data, get(
-    var
-  )))) %>% names())
-}
-
-vars <- c("rr_tercile", "ft_jew_binned", "gender", "educ2", "race", "pid_lean")
-modes <- map(vars, function (i) mode_fxn(i))
-names(modes) <- vars
-```
-
-
-```{r define variables}
+``` r
 # attach survey weights
 svy_at <- svydesign(ids = ~ 1,
                     data = at_data,
@@ -183,10 +38,9 @@ minutes_activity_time_all_week <- paste0(
 )
 ```
 
-
 ## Figure 1: Distribution of video views by subscription status and channel type
 
-```{r}
+``` r
 summarize_subscribe_plot <- summarize_subscribe_table %>%
   mutate(subscribed_group = factor(
     subscribed_group,
@@ -272,9 +126,11 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
 summarize_subscribe_plot
 ```
 
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
+
 ## Figure 2. Concentration of exposure to alternative and extremist channels
 
-```{r fig.height = 8}
+``` r
 #cumulative time spent on that channel and the cumulative user 
 cumsum_fxn <- function (var, data) {
   channel_type <-
@@ -416,16 +272,19 @@ time_cumsum_plot_zoomout +
                              guides(color = "none"), 
                            left = 0.3, bottom = 0.05, right = .95, top = .85,
                            on_top = TRUE)
-
 ```
 
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
 ## Figure 3. YouTube video diets of alternative and extremist superconsumers
 
-Distribution of time spent per week on channels for alternative (extremist) superconsumers. Superconsumers are individuals who make up the top 80th percentile of watch time for the given channel type. Bars are in descending order of most to least time on alternative (extremist) channel videos.
+Distribution of time spent per week on channels for alternative
+(extremist) superconsumers. Superconsumers are individuals who make up
+the top 80th percentile of watch time for the given channel type. Bars
+are in descending order of most to least time on alternative (extremist)
+channel videos.
 
-
-```{r calculate cumulative sums}
+``` r
 # join with rest of survey data
 at_data_supers <- at_data %>%
   left_join(
@@ -485,8 +344,7 @@ top_time_all_weeks_most_ext <- at_data_supers  %>%
   )
 ```
 
-
-```{r plot function}
+``` r
 topuser_plot <- function (data,
                           channel_type,
                           title,
@@ -556,11 +414,9 @@ topuser_plot <- function (data,
     ) +
     coord_cartesian(ylim = c(-160, y_limit))
 }
-
 ```
 
-
-```{r combined plots}
+``` r
 # alternative superconsumers
 alternative_superconsumers_weeks_plot <-
   topuser_plot(
@@ -603,15 +459,18 @@ plot_grid(
   ncol = 1,
   rel_heights = c(1, .1)
 )
-
 ```
 
+<img src="main-text-figures_files/figure-gfm/combined plots-1.png" style="display: block; margin: auto;" />
 
 ## Figure AX.
 
-Distribution of time spent per week on channels for anyone who watched an alternative (extremist) channel video over the course of the study. Bars are in descending order of most to least time on alternative (extremist) channel videos.
+Distribution of time spent per week on channels for anyone who watched
+an alternative (extremist) channel video over the course of the study.
+Bars are in descending order of most to least time on alternative
+(extremist) channel videos.
 
-```{r }
+``` r
 # anyone who watched at least one alternative
 top_time_all_weeks_most_any_alt <- at_data_supers  %>% 
   filter(at_alt == 1)  %>% 
@@ -641,7 +500,11 @@ topuser_plot(
     ylabel = "Minutes per week on YouTube videos",
     y_limit = 3e3
   )
+```
 
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
+``` r
 topuser_plot(
     data = top_time_all_weeks_most_any_ext,
     figure_size = .02,
@@ -653,10 +516,11 @@ topuser_plot(
   )
 ```
 
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-2.png" style="display: block; margin: auto;" />
 
 ## Figure 4. Predictors of watch time
 
-```{r formulas}
+``` r
 # DV is time elapsed per week on channel video
 f_time_alternative_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race)
 f_time_extremist_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race )
@@ -669,8 +533,7 @@ time_fs <- list(
 )
 ```
 
-
-```{r estimate quasipoisson}
+``` r
 # function to calculate rocust quasipoisson 
 robust_weighted_quasipoisson <- function(data = at_data,
                                          formula,
@@ -732,8 +595,7 @@ coef_names <- c("Intercept",
                 "Non-white")
 ```
 
-
-```{r coefficient plot, fig.height = 9}
+``` r
 time_models <- bind_rows(QP_time_fit)
 
 time_models %>%
@@ -784,10 +646,11 @@ time_models %>%
   )
 ```
 
+<img src="main-text-figures_files/figure-gfm/coefficient plot-1.png" style="display: block; margin: auto;" />
 
 ## Figure 5. Hostile sexism as predictor of alternative and extremist channel viewing
 
-```{r calculate predicted values}
+``` r
 QP_time_fit_noSE <- map(time_fs,
                         ~ robust_weighted_quasipoisson(formula = .x,
                                                        robust_output = FALSE))
@@ -869,10 +732,9 @@ get_predictions <- function (model_name,
     )
   return(predicted_df)
 }
-
 ```
 
-```{r predicted value plots}
+``` r
 predicted_data_alternative <- get_predictions(
   model_name = "time_alternative_full",
   data = at_data,
@@ -946,10 +808,11 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
   )
 ```
 
+<img src="main-text-figures_files/figure-gfm/predicted value plots-1.png" style="display: block; margin: auto;" />
+
 ## Figure 6: Pages viewed immediately prior to YouTube videos by channel type
 
-
-```{r fig.height = 10}
+``` r
 # on platform panel
 referrers_channel_type_videos_on_platform <-
   aggregated_referrers_by_channel %>%
@@ -1093,10 +956,11 @@ plot_grid(
 )
 ```
 
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
 ## Figure 8: Recommendation frequency by type of channel being watched
 
-```{r recommendations functions}
+``` r
 #function to calculate %s as input to waffle plots
 recs_prop_table_fxn <- function(channel_type, statistic) {
   filter_var <-
@@ -1246,11 +1110,9 @@ scale_plot_fxn <- function(data,
     coord_fixed(ratio = 4)
   return(out)
 }
-
 ```
 
-
-```{r recommendations shown, fig.show = FALSE, results='hide'}
+``` r
 ### ===== recommendations shown setup
 #inputs to waffle_plot_fxn
 alternative_shown_table <-
@@ -1339,7 +1201,7 @@ all_waffles_shown <- gridExtra::arrangeGrob(
 ) 
 ```
 
-```{r recommedations show plot, fig.height = 8}
+``` r
 # add legend and bar to waffles
 recs_shown_grid <- plot_grid(
   plot_grid(
@@ -1362,10 +1224,11 @@ recs_shown_grid <- plot_grid(
 recs_shown_grid
 ```
 
+<img src="main-text-figures_files/figure-gfm/recommedations show plot-1.png" style="display: block; margin: auto;" />
 
 ## Figure 9: Recommendation follows by video channel type
 
-```{r recommendations followed, results='hide'}
+``` r
 ### ===== recommendations followed setup
 alternative_followed_table <-
   recs_prop_table_fxn(channel_type = "alternative",
@@ -1465,8 +1328,7 @@ all_waffles_followed <- gridExtra::arrangeGrob(
 )
 ```
 
-
-```{r recommendations followed plot, fig.height = 8}
+``` r
 recs_followed_grid <- plot_grid(
   plot_grid(
     bar_recs_followed_plot,
@@ -1488,17 +1350,17 @@ recs_followed_grid <- plot_grid(
 recs_followed_grid
 ```
 
+<img src="main-text-figures_files/figure-gfm/recommendations followed plot-1.png" style="display: block; margin: auto;" />
 
 ## Figure 10: YouTube recommendations by subscription status and channel type
 
-```{r}
+``` r
 # select all subscription variables
 sub_data <- at_data %>% 
   select(ends_with("subscribed"),
          ends_with("unclassified"),
          -contains("adl"),
          caseid, weight_cmd) %>%
-  # make names consistent
   rename(activity_yt_n_video_total_subscribed = activity_yt_n_video_subscribed,
          activity_yt_n_video_total_notsubscribed = activity_yt_n_video_notsubscribed,
          activity_yt_n_video_total_unclassified = activity_yt_n_video_unclassified,
@@ -1683,4 +1545,4 @@ combined %>%
          color = "none")
 ```
 
-
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
