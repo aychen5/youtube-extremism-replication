@@ -45,8 +45,14 @@ summarize_subscribe_table <-
   read_csv("data/summarize_subscribe_table.csv")
 
 # referrers data
-aggregated_referrers_by_channel <- 
-  read_csv("data/aggregated_referrers_by_channel.csv")
+youtube_referrers_data <- 
+  read_csv("data/youtube_referrers.csv")
+
+# list of referrers
+referrers_list <- read_rds('data/referrers_list.rds')
+external_referrers <- referrers_list$external_referrers
+internal_referrers_other <- referrers_list$internal_referrers_other
+internal_referrers <- referrers_list$internal_referrers
 
 # recommendations data
 recs_data <- 
@@ -657,10 +663,10 @@ topuser_plot(
 ## Figure 4. Predictors of watch time
 
 ```{r formulas}
-# DV is time elapsed per week on channel video
-f_time_alternative_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race)
-f_time_extremist_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race )
-f_time_mainstream_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_mainstream_all_week ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race)
+# DV is time elapsed on channel video
+f_time_alternative_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race)
+f_time_extremist_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_extremist_all ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race )
+f_time_mainstream_all <- formula(minutes_activity_yt_video_time_elapsed_capped_total_mainstream_all ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race)
 
 time_fs <- list(
   f_time_alternative_all,
@@ -709,11 +715,9 @@ robust_weighted_quasipoisson <- function(data = at_data,
   }
   return(results)
 }
-QP_time_fit <- list()
-for (i in 1:length(time_fs)) {
-  QP_time_fit[[i]] <-
-    robust_weighted_quasipoisson(formula = time_fs[[i]])
-}
+
+QP_time_fit <- map(1:length(time_fs), 
+                   ~robust_weighted_quasipoisson(formula = time_fs[[.x]]))
 
 names(QP_time_fit) <-
   c("time_alternative_full",
@@ -788,6 +792,7 @@ time_models %>%
 ## Figure 5. Hostile sexism as predictor of alternative and extremist channel viewing
 
 ```{r calculate predicted values}
+# predict() needs to take original model object without robust standard errors first, then separately estimate robust covariance matrix 
 QP_time_fit_noSE <- map(time_fs,
                         ~ robust_weighted_quasipoisson(formula = .x,
                                                        robust_output = FALSE))
@@ -895,9 +900,9 @@ predicted_data <-
 # set y-axis limits
 predicted_data <- data.table(predicted_data)
 predicted_data[channel_type == "alternative", y_min := 0]
-predicted_data[channel_type == "alternative", y_max := 200]
+predicted_data[channel_type == "alternative", y_max := 2000]
 predicted_data[channel_type == "extremist", y_min := 0]
-predicted_data[channel_type == "extremist", y_max := 50]
+predicted_data[channel_type == "extremist", y_max := 500]
 
 
 ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
@@ -931,8 +936,8 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
     values = c("#FFA500", "#CD5C5C"),
     name = "",
     labels = c(
-      "Alternative channel videos \ny-axis = [0, 200]",
-      "Extremist channel videos \ny-axis = [0, 50]"
+      "Alternative channel videos \ny-axis = [0, 2000]",
+      "Extremist channel videos \ny-axis = [0, 500]"
     )
   ) +
   labs(x = "Hostile sexism scale",
@@ -948,8 +953,140 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
 
 ## Figure 6: Pages viewed immediately prior to YouTube videos by channel type
 
+```{r}
+on_platform_referrers_by_channel <- youtube_referrers_data %>%
+  group_by(channel_type) %>%
+  count(youtube_video_referrers_by_channel_type) %>%
+  filter(!is.na(youtube_video_referrers_by_channel_type)) %>%
+  mutate(
+    total = sum(n),
+    proportion = (n / sum(n)),
+    std_err = sqrt((proportion * (1 - proportion)) / total),
+    ci_lwr = 100 * (proportion - std_err * 1.96),
+    ci_upr = 100 * (proportion + std_err * 1.96),
+    percentage = 100 * proportion
+  ) %>%
+  ungroup() %>%
+  mutate(
+    channel_type_referrer = interaction(channel_type, youtube_video_referrers_by_channel_type),
+    youtube_video_referrers_by_channel_type = factor(
+      youtube_video_referrers_by_channel_type,
+      levels = c(
+        "alternative",
+        "extremist",
+        "mainstream",
+        'other',
+        'Non-video on-platform',
+        'Off-platform'
+      )
+    )
+  ) %>%
+  arrange(channel_type, youtube_video_referrers_by_channel_type) %>%
+  mutate(order_var = 1:nrow(.))
+
+
+on_platform_referrers_by_channel_plot <-
+  on_platform_referrers_by_channel %>%
+  mutate(
+    channel_type = case_when(
+      channel_type == "alternative" ~ "Alternative channel videos",
+      channel_type == "extremist" ~ "Extremist channel videos",
+      channel_type == "mainstream" ~ "Mainstream media videos",
+      channel_type == "other" ~ "Other channel videos"
+    )
+  ) %>%
+  ggplot(
+    data = .,
+    aes(
+      x = str_wrap_factor(reorder(channel_type, order_var), width = 17),
+      y = percentage,
+      fill = youtube_video_referrers_by_channel_type,
+      group = channel_type
+    )
+  ) +
+  geom_col(position = position_dodge2(padding = 0,
+                                      width = .95)) +
+  geom_linerange(aes(ymin = ci_lwr,
+                     ymax = ci_upr),
+                 size = .7,
+                 position = position_dodge2(width = .90)) +
+  labs(x = "", y = "Estimated percentage from preceding link") +
+  scale_fill_manual(
+    values = c(
+      'alternative' = "#FFA500",
+      'extremist'  = "#CD5C5C",
+      'mainstream'  =  "#015CB9",
+      'other' = "#E3E6E6",
+      'Non-video on-platform'  =  "#7f7f7f",
+      'Off-platform'  =  "#2D2E32"
+    ),
+    breaks  = c(
+      'alternative',
+      'other',
+      'extremist',
+      'Non-video on-platform',
+      'mainstream',
+      'Off-platform'
+    ),
+    labels = c(
+      'alternative' = "Alternative\nchannels",
+      'extremist' = "Extremist\nchannels",
+      'mainstream'  =  "Mainstream\nmedia",
+      'other' = "Other\nchannels",
+      'Non-video on-platform'  = "Non-video \non-platform",
+      'Off-platform'  = "Off-platform"
+    ),
+    name = "Type of preceding link:"
+  ) +
+  scale_y_continuous(
+    limits = c(0, 60),
+    labels = paste0(seq(0, 60, 20), "%"),
+    breaks = seq(0, 60, 20)
+  ) +
+  ggthemes::theme_gdocs() +
+  theme(
+    legend.position = 'bottom',
+    legend.direction = 'horizontal',
+    panel.grid.major.y = element_line(color = "grey95"),
+    panel.grid.major.x = element_blank(),
+    axis.text.x = element_text(size = 12),
+    plot.background = element_rect(color = "white")
+  )
+
+on_platform_referrers_by_channel_plot
+```
+
+
+## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
+
 
 ```{r fig.height = 10}
+aggregated_referrers_by_channel <- youtube_referrers_data %>%
+  group_by(channel_type) %>%
+  count(all_referrers_grouped) %>%
+  filter(!is.na(all_referrers_grouped)) %>%
+  mutate(
+    total = sum(n),
+    proportion = (n / sum(n)),
+    std_err = sqrt((proportion * (1 - proportion)) / total),
+    ci_lwr = 100 * (proportion - std_err * 1.96),
+    ci_upr = 100 * (proportion + std_err * 1.96),
+    percentage = 100 * proportion,
+    on_off_platform = case_when(
+      all_referrers_grouped %in% c(str_replace(names(external_referrers), "_", " "), "other off-platform") ~ "off-platform",
+      all_referrers_grouped %in% c(internal_referrers, "other on-platform") ~ "on-platform"
+    )
+  ) %>%
+  ungroup() %>%
+  mutate(channel_type_referrer = interaction(channel_type, all_referrers_grouped)) %>%
+  arrange(channel_type, on_off_platform) %>%
+  mutate(order_var = 1:nrow(.)) %>%
+  arrange(on_off_platform, percentage) %>%
+  mutate(
+    all_referrers_grouped = factor(all_referrers_grouped, levels = unique(.$all_referrers_grouped)),
+    all_referrers_grouped = str_replace(all_referrers_grouped, "youtube", "YouTube")
+  )
+
 # on platform panel
 referrers_channel_type_videos_on_platform <-
   aggregated_referrers_by_channel %>%
