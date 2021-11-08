@@ -1,0 +1,2621 @@
+Appendix Tables and Figures
+================
+
+``` r
+### ----------- data
+# survey + extension data for individuals
+merged_data <- read_rds("data/yg_browser_cces_merged.rds")
+# activity data
+at_data <- read_rds("data/activity_yg_cces.rds") 
+# over time data for consumption over time
+at_over_time <- read_rds("data/activity_time_user_by_date.rds")
+at_over_views <- read_rds("data/activity_count_user_by_date.rds")
+```
+
+## Table A1.
+
+``` r
+# select variables of interest
+demo_vars <- c(
+  'gender',
+  'race',
+  'presvote16post',
+  'employ',
+  'educ2',
+  'religion',
+  'marital',
+  'faminc_new',
+  'pid3',
+  'age_group'
+)
+demographics_data <- merged_data %>%
+  dplyr::select(weight_cmd, all_of(demo_vars), browser_sample) %>%
+  fastDummies::dummy_cols(select_columns = all_of(demo_vars))
+# level of each variable
+var_levels <- demographics_data %>% 
+  dplyr::select(-demo_vars, -weight_cmd, -browser_sample) %>% 
+  names()
+
+# function to calculate (un)weighted stats depending on sample
+weighted_stats_fxn <- function (var, sample) {
+  require(TAM)
+  require(diagis)
+  if (sample == "full") {
+    d <- # take non-null in variable
+      demographics_data[complete.cases(demographics_data[[var]], demographics_data$weight_cmd), , drop =
+                          FALSE][[var]]
+    w <-
+      demographics_data$weight_cmd[complete.cases(demographics_data[[var]],  demographics_data$weight_cmd)]
+  } else if (sample == "browser") {
+    d <- # non-Nulls in extension sample
+      demographics_data[complete.cases(demographics_data[[var]], demographics_data$weight_cmd) &
+                          demographics_data$browser_sample == "browser", , drop = FALSE][[var]]
+    w <-
+      demographics_data$weight_cmd[complete.cases(demographics_data[[var]],  demographics_data$weight_cmd) &
+                                     demographics_data$browser_sample == "browser"]
+  }
+  out <- data.frame(
+    "variable" = str_split(string = var, pattern = "_(?=[^_]+$)")[[1]][1] ,
+    "level" = str_split(string = var, pattern = "_(?=[^_]+$)")[[1]][2] ,
+    "n" = length(d),
+    "unweighted_mean" = mean(d, na.rm = T),
+    "weighted_mean" = TAM::weighted_mean(d, w = w),
+    "unweighted_se" = sd(d, na.rm = T) / sqrt(length(d)),
+    "weighted_se" = diagis::weighted_se(d, w = w, na.rm = TRUE),
+    "sample" = sample
+  )
+  return(out)
+}
+
+# function to format table
+custom_kable_weighted <- function(data, 
+                                  col_names = c("", "Weighted", "Unweighted")) {
+  kbl(
+    data %>% dplyr::select(-variable),
+    booktabs = TRUE,
+    caption = "Full and extension sample demographics",
+    format = "html",
+    align = "c",
+    digits = 2,
+    linesep = "",
+    col.names = col_names
+  )  %>%
+    kable_styling(latex_options =  "HOLD_position",
+                  font_size = 10,
+                  #bootstrap_options = c("striped","condensed"),
+                  stripe_index = c(1, 5, 13, 17, 21, 29, 35, 41, 51, 57)) %>%
+    group_rows("Gender", 1, 4,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Race", 5, 8,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("2016 presidential vote", 9, 12,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Employment status", 13, 16,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Education", 16, 24,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Religion", 25, 30,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Marital status", 31, 36,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Family income", 37, 46,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Party identification", 47, 52,
+               background = "gray!6",
+               latex_gap_space = "0em") %>%
+    group_rows("Age", 53, 60,
+               background = "gray!6",
+               latex_gap_space = "0em") %>% 
+    footnote(
+      c("Weighted estimates use YouGov survey weights.",
+        "Standard errors are in parentheses."))%>%
+    row_spec(61, extra_latex_after = "\\cline{3-4}")%>%
+    row_spec(62, hline_after = TRUE)
+}
+```
+
+``` r
+# get (un)weighted estimates for extension sample
+browser_sample <-
+  map(var_levels, ~weighted_stats_fxn(.x, sample = "browser"))
+# get (un)weighted estimates for full survey sample
+full_sample <-
+  map(var_levels, ~weighted_stats_fxn(.x, sample = "full"))
+
+# merge full and extension estimates together
+demographic_stats_table <- browser_sample %>%
+  bind_rows() %>%
+  left_join(
+    bind_rows(full_sample),
+    by = c("variable", "level"),
+    suffix = c(".browser", ".full")
+  ) %>%
+  mutate_at(
+    vars(
+      starts_with("unweighted_"),
+      starts_with("weighted_")
+    ),
+    list( ~ format(round(., 2), nsmall = 2) )
+  )
+
+# number of respondents in survey sample
+n_full <- 
+  demographics_data %>% 
+  nrow()
+# number of respondents in extension sample
+n_browser <- 
+  demographics_data %>% 
+  filter(browser_sample == "browser") %>% 
+  nrow()
+```
+
+``` r
+# reformat 
+full_summ <- demographic_stats_table %>%
+  dplyr::select(
+    variable,
+    level,
+    weighted_mean.full,
+    weighted_se.full,
+    unweighted_mean.full,
+    unweighted_se.full
+  ) %>%
+  mutate(
+    unweighted_se.full = paste0("(", as.character(unweighted_se.full), ")"),
+    weighted_se.full = paste0("(", as.character(weighted_se.full), ")"),
+    weighted_mean.full = as.character(weighted_mean.full),
+    unweighted_mean.full  = as.character(unweighted_mean.full)
+  ) %>%
+  pivot_longer(c(
+    weighted_mean.full,
+    weighted_se.full,
+    unweighted_mean.full,
+    unweighted_se.full
+  )) %>%
+  mutate(weighted = ifelse(str_detect(name, "unweighted"), "unweighted", "weighted")) %>%
+  pivot_wider(-c(value), weighted) %>%
+  mutate(
+    weighted = ifelse(is.na(weighted), lag(weighted, n = 2L), weighted),
+    unweighted = ifelse(is.na(unweighted), lead(unweighted, n = 2L), unweighted)
+  ) %>%
+  filter(str_detect(name, "unweighted")) %>% 
+  filter(level != "NA" & level != "Other") %>% 
+  select(-name) %>%
+  mutate(level = ifelse(1:length(.$level) %% 2 == 0, "", level)) %>%
+  add_row(
+    variable = "",
+    level = "",
+    weighted = paste0("n = ", n_full),
+    unweighted = paste0("n = ", n_full)
+  ) 
+
+# extension sample
+browser_summ <- demographic_stats_table %>%
+  dplyr::select(
+    variable,
+    level,
+    weighted_mean.browser,
+    weighted_se.browser,
+    unweighted_mean.browser,
+    unweighted_se.browser
+  ) %>%
+  mutate(
+    unweighted_se.browser = paste0("(", as.character(unweighted_se.browser), ")"),
+    weighted_se.browser = paste0("(", as.character(weighted_se.browser), ")"),
+    weighted_mean.browser = as.character(weighted_mean.browser),
+    unweighted_mean.browser  = as.character(unweighted_mean.browser)
+  ) %>%
+  pivot_longer(
+    c(
+      weighted_mean.browser,
+      weighted_se.browser,
+      unweighted_mean.browser,
+      unweighted_se.browser
+    )
+  ) %>%
+  mutate(weighted = ifelse(str_detect(name, "unweighted"), "unweighted", "weighted")) %>%
+  pivot_wider(-c(value), weighted) %>%
+  mutate(
+    weighted = ifelse(is.na(weighted), lag(weighted, n = 2L), weighted),
+    unweighted = ifelse(is.na(unweighted), lead(unweighted, n = 2L), unweighted)
+  ) %>%
+  filter(str_detect(name, "unweighted")) %>%
+  filter(level != "NA" & level != "Other") %>% 
+  select(-name) %>%
+  mutate(level = ifelse(1:length(.$level) %% 2 == 0, "", level)) %>%
+  add_row(
+    variable = "",
+    level = "",
+    weighted = paste0("n = ", n_browser),
+    unweighted = paste0("n = ", n_browser)
+  )
+
+# put full and extension sample tables together...
+combined_table <- full_summ %>%
+  rename(full_weighted = weighted,
+         full_unweighted = unweighted) %>%
+  bind_cols(
+    browser_summ %>%
+      rename(
+        extension_weighted = weighted,
+        extension_unweighted = unweighted
+      ) %>% 
+      select(-variable, -level)
+  )
+
+# print table
+custom_kable_weighted(combined_table,
+                      col_names = c("", "Full weighted", "Full unweighted", 
+                                    "Extension weighted", "Extension unweighted"))
+```
+
+<table class="table" style="font-size: 10px; margin-left: auto; margin-right: auto;">
+
+<caption style="font-size: initial !important;">
+
+Full and extension sample demographics
+
+</caption>
+
+<thead>
+
+<tr>
+
+<th style="text-align:center;">
+
+</th>
+
+<th style="text-align:center;">
+
+Full weighted
+
+</th>
+
+<th style="text-align:center;">
+
+Full unweighted
+
+</th>
+
+<th style="text-align:center;">
+
+Extension weighted
+
+</th>
+
+<th style="text-align:center;">
+
+Extension unweighted
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr grouplength="4">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Gender</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Female
+
+</td>
+
+<td style="text-align:center;">
+
+0.48
+
+</td>
+
+<td style="text-align:center;">
+
+0.46
+
+</td>
+
+<td style="text-align:center;">
+
+0.49
+
+</td>
+
+<td style="text-align:center;">
+
+0.49
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Male
+
+</td>
+
+<td style="text-align:center;">
+
+0.52
+
+</td>
+
+<td style="text-align:center;">
+
+0.54
+
+</td>
+
+<td style="text-align:center;">
+
+0.51
+
+</td>
+
+<td style="text-align:center;">
+
+0.51
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="4">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Race</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+White
+
+</td>
+
+<td style="text-align:center;">
+
+0.68
+
+</td>
+
+<td style="text-align:center;">
+
+0.76
+
+</td>
+
+<td style="text-align:center;">
+
+0.69
+
+</td>
+
+<td style="text-align:center;">
+
+0.75
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Non-white
+
+</td>
+
+<td style="text-align:center;">
+
+0.32
+
+</td>
+
+<td style="text-align:center;">
+
+0.24
+
+</td>
+
+<td style="text-align:center;">
+
+0.31
+
+</td>
+
+<td style="text-align:center;">
+
+0.25
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="4">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>2016 presidential vote</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Donald Trump
+
+</td>
+
+<td style="text-align:center;">
+
+0.33
+
+</td>
+
+<td style="text-align:center;">
+
+0.40
+
+</td>
+
+<td style="text-align:center;">
+
+0.19
+
+</td>
+
+<td style="text-align:center;">
+
+0.20
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Hillary Clinton
+
+</td>
+
+<td style="text-align:center;">
+
+0.28
+
+</td>
+
+<td style="text-align:center;">
+
+0.31
+
+</td>
+
+<td style="text-align:center;">
+
+0.40
+
+</td>
+
+<td style="text-align:center;">
+
+0.49
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="4">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Employment status</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Employed
+
+</td>
+
+<td style="text-align:center;">
+
+0.46
+
+</td>
+
+<td style="text-align:center;">
+
+0.49
+
+</td>
+
+<td style="text-align:center;">
+
+0.48
+
+</td>
+
+<td style="text-align:center;">
+
+0.51
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Unemployed
+
+</td>
+
+<td style="text-align:center;">
+
+0.12
+
+</td>
+
+<td style="text-align:center;">
+
+0.10
+
+</td>
+
+<td style="text-align:center;">
+
+0.12
+
+</td>
+
+<td style="text-align:center;">
+
+0.10
+
+</td>
+
+</tr>
+
+<tr grouplength="9">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Education</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="2">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.00)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+High school graduate
+
+</td>
+
+<td style="text-align:center;">
+
+0.35
+
+</td>
+
+<td style="text-align:center;">
+
+0.19
+
+</td>
+
+<td style="text-align:center;">
+
+0.26
+
+</td>
+
+<td style="text-align:center;">
+
+0.14
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Some college
+
+</td>
+
+<td style="text-align:center;">
+
+0.35
+
+</td>
+
+<td style="text-align:center;">
+
+0.37
+
+</td>
+
+<td style="text-align:center;">
+
+0.37
+
+</td>
+
+<td style="text-align:center;">
+
+0.35
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+4-year
+
+</td>
+
+<td style="text-align:center;">
+
+0.19
+
+</td>
+
+<td style="text-align:center;">
+
+0.26
+
+</td>
+
+<td style="text-align:center;">
+
+0.24
+
+</td>
+
+<td style="text-align:center;">
+
+0.28
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Post-grad
+
+</td>
+
+<td style="text-align:center;">
+
+0.11
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+<td style="text-align:center;">
+
+0.13
+
+</td>
+
+<td style="text-align:center;">
+
+0.23
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="6">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Religion</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Atheist/Agnostic
+
+</td>
+
+<td style="text-align:center;">
+
+0.37
+
+</td>
+
+<td style="text-align:center;">
+
+0.35
+
+</td>
+
+<td style="text-align:center;">
+
+0.47
+
+</td>
+
+<td style="text-align:center;">
+
+0.46
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Protestant
+
+</td>
+
+<td style="text-align:center;">
+
+0.32
+
+</td>
+
+<td style="text-align:center;">
+
+0.34
+
+</td>
+
+<td style="text-align:center;">
+
+0.26
+
+</td>
+
+<td style="text-align:center;">
+
+0.27
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Roman Catholic
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+<td style="text-align:center;">
+
+0.15
+
+</td>
+
+<td style="text-align:center;">
+
+0.14
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="6">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Marital status</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Divorced
+
+</td>
+
+<td style="text-align:center;">
+
+0.11
+
+</td>
+
+<td style="text-align:center;">
+
+0.12
+
+</td>
+
+<td style="text-align:center;">
+
+0.10
+
+</td>
+
+<td style="text-align:center;">
+
+0.12
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Married
+
+</td>
+
+<td style="text-align:center;">
+
+0.43
+
+</td>
+
+<td style="text-align:center;">
+
+0.53
+
+</td>
+
+<td style="text-align:center;">
+
+0.39
+
+</td>
+
+<td style="text-align:center;">
+
+0.48
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Never married
+
+</td>
+
+<td style="text-align:center;">
+
+0.35
+
+</td>
+
+<td style="text-align:center;">
+
+0.26
+
+</td>
+
+<td style="text-align:center;">
+
+0.39
+
+</td>
+
+<td style="text-align:center;">
+
+0.30
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="10">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Family income</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+\< $10,000
+
+</td>
+
+<td style="text-align:center;">
+
+0.07
+
+</td>
+
+<td style="text-align:center;">
+
+0.05
+
+</td>
+
+<td style="text-align:center;">
+
+0.08
+
+</td>
+
+<td style="text-align:center;">
+
+0.05
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.00)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+$10,000 - $29,999
+
+</td>
+
+<td style="text-align:center;">
+
+0.21
+
+</td>
+
+<td style="text-align:center;">
+
+0.16
+
+</td>
+
+<td style="text-align:center;">
+
+0.22
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+$30,000 - $69,999
+
+</td>
+
+<td style="text-align:center;">
+
+0.36
+
+</td>
+
+<td style="text-align:center;">
+
+0.36
+
+</td>
+
+<td style="text-align:center;">
+
+0.36
+
+</td>
+
+<td style="text-align:center;">
+
+0.35
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+$70,000 - $119,999
+
+</td>
+
+<td style="text-align:center;">
+
+0.24
+
+</td>
+
+<td style="text-align:center;">
+
+0.27
+
+</td>
+
+<td style="text-align:center;">
+
+0.23
+
+</td>
+
+<td style="text-align:center;">
+
+0.26
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+\> $120,000
+
+</td>
+
+<td style="text-align:center;">
+
+0.11
+
+</td>
+
+<td style="text-align:center;">
+
+0.17
+
+</td>
+
+<td style="text-align:center;">
+
+0.12
+
+</td>
+
+<td style="text-align:center;">
+
+0.16
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="6">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Party identification</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Democrat
+
+</td>
+
+<td style="text-align:center;">
+
+0.37
+
+</td>
+
+<td style="text-align:center;">
+
+0.35
+
+</td>
+
+<td style="text-align:center;">
+
+0.51
+
+</td>
+
+<td style="text-align:center;">
+
+0.54
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Independent
+
+</td>
+
+<td style="text-align:center;">
+
+0.32
+
+</td>
+
+<td style="text-align:center;">
+
+0.32
+
+</td>
+
+<td style="text-align:center;">
+
+0.29
+
+</td>
+
+<td style="text-align:center;">
+
+0.28
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+Republican
+
+</td>
+
+<td style="text-align:center;">
+
+0.31
+
+</td>
+
+<td style="text-align:center;">
+
+0.33
+
+</td>
+
+<td style="text-align:center;">
+
+0.20
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr grouplength="8">
+
+<td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
+
+<strong>Age</strong>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+18-34
+
+</td>
+
+<td style="text-align:center;">
+
+0.27
+
+</td>
+
+<td style="text-align:center;">
+
+0.16
+
+</td>
+
+<td style="text-align:center;">
+
+0.33
+
+</td>
+
+<td style="text-align:center;">
+
+0.21
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+35-54
+
+</td>
+
+<td style="text-align:center;">
+
+0.33
+
+</td>
+
+<td style="text-align:center;">
+
+0.34
+
+</td>
+
+<td style="text-align:center;">
+
+0.31
+
+</td>
+
+<td style="text-align:center;">
+
+0.37
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+55-64
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+<td style="text-align:center;">
+
+0.23
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+<td style="text-align:center;">
+
+0.24
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+65+
+
+</td>
+
+<td style="text-align:center;">
+
+0.21
+
+</td>
+
+<td style="text-align:center;">
+
+0.27
+
+</td>
+
+<td style="text-align:center;">
+
+0.18
+
+</td>
+
+<td style="text-align:center;">
+
+0.19
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center; padding-left:  2em;" indentlevel="1">
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.02)
+
+</td>
+
+<td style="text-align:center;">
+
+(0.01)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:center;">
+
+</td>
+
+<td style="text-align:center;">
+
+n = 4000
+
+</td>
+
+<td style="text-align:center;">
+
+n = 4000
+
+</td>
+
+<td style="text-align:center;">
+
+n = 1236
+
+</td>
+
+<td style="text-align:center;">
+
+n = 1236
+
+</td>
+
+</tr>
+
+</tbody>
+
+<tfoot>
+
+<tr>
+
+<td style="padding: 0; border: 0;" colspan="100%">
+
+<span style="font-style: italic;">Note: </span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="padding: 0; border: 0;" colspan="100%">
+
+<sup></sup> Weighted estimates use YouGov survey weights.
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="padding: 0; border: 0;" colspan="100%">
+
+<sup></sup> Standard errors are in parentheses.
+
+</td>
+
+</tr>
+
+</tfoot>
+
+</table>
+
+## Figure A1: Total participants with browser activity data over time
+
+``` r
+# study period
+date_range <- as.Date(c("2020-07-21", "2020-12-31"))
+# all dates in this period
+date_vector <-
+  as.Date(seq(date_range[1], date_range[2], by = "day"))
+
+# count number of unique individuals per day
+users_by_mat <-
+  matrix(
+    data = 0,
+    nrow = nrow(at_data),
+    ncol = length(date_vector)
+  )
+for (i in 1:nrow(at_data)) {
+  start_id <-
+    which(date_vector == as.Date(at_data[i, ]$activity_start_date))
+  end_id <-
+    which(date_vector == as.Date(at_data[i, ]$activity_end_date))
+  # interpolate between start and end date
+  users_by_mat[i, start_id:end_id] <- 1
+}
+
+# tally total number for each day
+n_users_by_date <- tibble(date = date_vector,
+                          n_activity_users = colSums(users_by_mat))
+
+# plot
+n_users_by_date %>%
+  ggplot(aes(x = date, y = n_activity_users)) +
+  geom_col(alpha = .8,
+           position = position_dodge2(padding = .1)) +
+  labs(x = "", y = "Number of participants") +
+  theme_minimal()
+```
+
+<img src="appendix-figures_files/figure-gfm/attrition-1.png" style="display: block; margin: auto;" />
+
+## Figure A2: Consumption levels over time by channel type
+
+``` r
+# averages by days
+# views
+day_count_averages <- at_over_views %>%
+  group_by(full_date, source) %>%
+  summarise(avg_count_day = weighted.mean(value, w = weight_cmd, na.rm = T)) %>%
+  ungroup() %>%
+  complete(., full_date, source, fill = list(avg_count_day = 0,
+                                             avg_count_day = 0)) 
+# time elapsed
+day_time_averages <- at_over_time %>%
+  group_by(full_date, source) %>%
+  summarise(
+    avg_time_day = weighted.mean(value, w = weight_cmd, na.rm = T) / 60, # to minutes
+  ) %>%
+  ungroup() %>%
+  complete(., full_date, source, fill = list(avg_time_day = 0,
+                                             prop_time_day = 0)) 
+
+# calculate centered moving averages for each channel type
+# views
+ma_count <- day_count_averages %>%
+  group_by(source) %>%
+  mutate(
+    ma7_time = rollmean(avg_count_day, k = 7, fill = NA),
+    ma14_time = rollmean(avg_count_day, k = 14, fill = NA),
+    ma21_time = rollmean(avg_count_day, k = 21, fill = NA),
+    ln_time = log(avg_count_day),
+    ln_ma14_time = rollapplyr(
+      ln_time,
+      14,
+      mean,
+      na.rm = TRUE,
+      by = 1,
+      partial = TRUE,
+      fill = NA
+    )
+  )
+# time elapsed
+ma_time <- day_time_averages %>%
+  group_by(source) %>%
+  mutate(
+    ma7_time = rollmean(avg_time_day, k = 7, fill = NA),
+    ma14_time = rollmean(avg_time_day, k = 14, fill = NA),
+    ma21_time = rollmean(avg_time_day, k = 21, fill = NA),
+    ln_time = log(avg_time_day),
+    ln_ma14_time = rollapplyr(
+      ln_time,
+      14,
+      mean,
+      na.rm = TRUE,
+      by = 1,
+      partial = TRUE,
+      fill = NA
+    )
+  )
+
+# plots
+sma_count_plot <- ma_count %>%
+  mutate(source = recode_channel_type_fxn(source)) %>%
+  ggplot(aes(x = full_date, y = avg_count_day,
+             color = source)) +
+  geom_point(alpha = .6) +
+  geom_line(
+    data =  . %>% filter((month(full_date) >= 8 &
+                            lubridate::day(full_date) >= 15) |  month(full_date) >= 9),
+    aes(y = ma21_time,
+        color = source),
+    size = 1
+  ) +
+  scale_color_manual(
+    values = c(
+      "Alternative \nchannel" = "#FFA500",
+      "Extremist \nchannel" = "#CD5C5C",
+      "Mainstream media \nchannel" = "#015CB9",
+      "Other \nchannel" = "#E3E6E6"
+    ),
+    name = ""
+  ) +
+  labs(x = "",
+       y = "Average number of visits to\nchannel videos")  +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(linetype = guide_legend(""))
+
+sma_count_plot
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
+``` r
+sma_time_plot <- ma_time %>%
+  mutate(source = recode_channel_type_fxn(source)) %>%
+  ggplot(aes(x = full_date, y = avg_time_day,
+             color = source)) +
+  geom_point(alpha = .6) +
+  geom_line(
+    data = . %>% filter((
+      month(full_date) >= 8 &
+        lubridate::day(full_date) >= 15
+    ) |  month(full_date) >= 9),
+    aes(y = ma21_time,
+        color = source),
+    size = 1
+  ) +
+  scale_color_manual(
+    values = c(
+      "Alternative \nchannel" = "#FFA500",
+      "Extremist \nchannel" = "#CD5C5C",
+      "Mainstream media \nchannel" = "#015CB9",
+      "Other \nchannel" = "#E3E6E6"
+    ),
+    name = ""
+  ) +
+  labs(x = "",
+       y = "Average minutes spent on\nchannel videos")  +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(linetype = guide_legend(""))
+
+sma_time_plot
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-2.png" style="display: block; margin: auto;" />

@@ -1,11 +1,18 @@
 ---
-title: "Untitled"
+title: "Appendix Tables and Figures"
 output: github_document
+editor_options: 
+  chunk_output_type: console
+always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
+# code chunk settings
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.width = 12,
+                      fig.align = 'center')
 
 usethis::use_blank_slate()
 
@@ -13,17 +20,45 @@ usethis::use_blank_slate()
 pacman::p_load(tidyverse,
                sjlabelled,
                sjmisc,
-               psych,
                lubridate,
-               srvyr,
-               purrr,
+               survey,
+               zoo,
                kableExtra)
-
-### ----------- data
-merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 ```
 
-### Table A1.
+```{r data}
+### ----------- data
+# survey + extension data for individuals
+merged_data <- read_rds("data/yg_browser_cces_merged.rds")
+# activity data
+at_data <- read_rds("data/activity_yg_cces.rds") 
+# over time data for consumption over time
+at_over_time <- read_rds("data/activity_time_user_by_date.rds")
+at_over_views <- read_rds("data/activity_count_user_by_date.rds")
+```
+
+
+
+```{r helper functions, include = FALSE}
+# string wrap for factor variables
+str_wrap_factor <- function(x, ...) {
+  levels(x) <- str_wrap(levels(x), ...)
+  x
+}
+
+# better labels for channel types
+recode_channel_type_fxn <- function(old_name) {
+  recode(
+    old_name,
+    alternative = "Alternative \nchannel",
+    extremist = "Extremist \nchannel",
+    mainstream = "Mainstream media \nchannel",
+    other = "Other \nchannel"
+  )
+}
+```
+
+## Table A1.
 
 ```{r calculate demog distribution}
 # select variables of interest
@@ -39,11 +74,11 @@ demo_vars <- c(
   'pid3',
   'age_group'
 )
-DEMOG_data <- merged_data %>%
+demographics_data <- merged_data %>%
   dplyr::select(weight_cmd, all_of(demo_vars), browser_sample) %>%
   fastDummies::dummy_cols(select_columns = all_of(demo_vars))
 # level of each variable
-var_levels <- DEMOG_data %>% 
+var_levels <- demographics_data %>% 
   dplyr::select(-demo_vars, -weight_cmd, -browser_sample) %>% 
   names()
 
@@ -53,18 +88,18 @@ weighted_stats_fxn <- function (var, sample) {
   require(diagis)
   if (sample == "full") {
     d <- # take non-null in variable
-      DEMOG_data[complete.cases(DEMOG_data[[var]], DEMOG_data$weight_cmd), , drop =
-                   FALSE][[var]]
+      demographics_data[complete.cases(demographics_data[[var]], demographics_data$weight_cmd), , drop =
+                          FALSE][[var]]
     w <-
-      DEMOG_data$weight_cmd[complete.cases(DEMOG_data[[var]],  DEMOG_data$weight_cmd)]
+      demographics_data$weight_cmd[complete.cases(demographics_data[[var]],  demographics_data$weight_cmd)]
   } else if (sample == "browser") {
     d <- # non-Nulls in extension sample
-      DEMOG_data[complete.cases(DEMOG_data[[var]], DEMOG_data$weight_cmd) &
-                   DEMOG_data$browser_sample == "browser", , drop = FALSE][[var]]
+      demographics_data[complete.cases(demographics_data[[var]], demographics_data$weight_cmd) &
+                          demographics_data$browser_sample == "browser", , drop = FALSE][[var]]
     w <-
-      DEMOG_data$weight_cmd[complete.cases(DEMOG_data[[var]],  DEMOG_data$weight_cmd) &
-                          DEMOG_data$browser_sample == "browser"]
-  } 
+      demographics_data$weight_cmd[complete.cases(demographics_data[[var]],  demographics_data$weight_cmd) &
+                                     demographics_data$browser_sample == "browser"]
+  }
   out <- data.frame(
     "variable" = str_split(string = var, pattern = "_(?=[^_]+$)")[[1]][1] ,
     "level" = str_split(string = var, pattern = "_(?=[^_]+$)")[[1]][2] ,
@@ -85,7 +120,7 @@ custom_kable_weighted <- function(data,
     data %>% dplyr::select(-variable),
     booktabs = TRUE,
     caption = "Full and extension sample demographics",
-    format = "latex",
+    format = "html",
     align = "c",
     digits = 2,
     linesep = "",
@@ -98,31 +133,31 @@ custom_kable_weighted <- function(data,
     group_rows("Gender", 1, 4,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Race", 5, 12,
+    group_rows("Race", 5, 8,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("2016 presidential vote", 13, 16,
+    group_rows("2016 presidential vote", 9, 12,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Employment status", 17, 20,
+    group_rows("Employment status", 13, 16,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Education", 21, 28,
+    group_rows("Education", 16, 24,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Religion", 29, 34,
+    group_rows("Religion", 25, 30,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Marital status", 35, 40,
+    group_rows("Marital status", 31, 36,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Family income", 41, 50,
+    group_rows("Family income", 37, 46,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Party identification", 51, 56,
+    group_rows("Party identification", 47, 52,
                background = "gray!6",
                latex_gap_space = "0em") %>%
-    group_rows("Age", 57, 61,
+    group_rows("Age", 53, 60,
                background = "gray!6",
                latex_gap_space = "0em") %>% 
     footnote(
@@ -141,13 +176,29 @@ browser_sample <-
 full_sample <-
   map(var_levels, ~weighted_stats_fxn(.x, sample = "full"))
 
+# merge full and extension estimates together
+demographic_stats_table <- browser_sample %>%
+  bind_rows() %>%
+  left_join(
+    bind_rows(full_sample),
+    by = c("variable", "level"),
+    suffix = c(".browser", ".full")
+  ) %>%
+  mutate_at(
+    vars(
+      starts_with("unweighted_"),
+      starts_with("weighted_")
+    ),
+    list( ~ format(round(., 2), nsmall = 2) )
+  )
+
 # number of respondents in survey sample
 n_full <- 
-  DEMOG_data %>% 
+  demographics_data %>% 
   nrow()
 # number of respondents in extension sample
 n_browser <- 
-  DEMOG_data %>% 
+  demographics_data %>% 
   filter(browser_sample == "browser") %>% 
   nrow()
 ```
@@ -155,7 +206,7 @@ n_browser <-
 
 ```{r }
 # reformat 
-full_summ <- SUMM_stats_tlb %>%
+full_summ <- demographic_stats_table %>%
   dplyr::select(
     variable,
     level,
@@ -194,7 +245,7 @@ full_summ <- SUMM_stats_tlb %>%
   ) 
 
 # extension sample
-browser_summ <- SUMM_stats_tlb %>%
+browser_summ <- demographic_stats_table %>%
   dplyr::select(
     variable,
     level,
@@ -255,11 +306,166 @@ custom_kable_weighted(combined_table,
 ```
 
 
-```{r}
+## Figure A1: Total participants with browser activity data over time
 
+```{r attrition}
+# study period
+date_range <- as.Date(c("2020-07-21", "2020-12-31"))
+# all dates in this period
+date_vector <-
+  as.Date(seq(date_range[1], date_range[2], by = "day"))
+
+# count number of unique individuals per day
+users_by_mat <-
+  matrix(
+    data = 0,
+    nrow = nrow(at_data),
+    ncol = length(date_vector)
+  )
+for (i in 1:nrow(at_data)) {
+  start_id <-
+    which(date_vector == as.Date(at_data[i, ]$activity_start_date))
+  end_id <-
+    which(date_vector == as.Date(at_data[i, ]$activity_end_date))
+  # interpolate between start and end date
+  users_by_mat[i, start_id:end_id] <- 1
+}
+
+# tally total number for each day
+n_users_by_date <- tibble(date = date_vector,
+                          n_activity_users = colSums(users_by_mat))
+
+# plot
+n_users_by_date %>%
+  ggplot(aes(x = date, y = n_activity_users)) +
+  geom_col(alpha = .8,
+           position = position_dodge2(padding = .1)) +
+  labs(x = "", y = "Number of participants") +
+  theme_minimal()
 ```
 
 
+## Figure A2: Consumption levels over time by channel type
 
 
+```{r}
+# averages by days
+# views
+day_count_averages <- at_over_views %>%
+  group_by(full_date, source) %>%
+  summarise(avg_count_day = weighted.mean(value, w = weight_cmd, na.rm = T)) %>%
+  ungroup() %>%
+  complete(., full_date, source, fill = list(avg_count_day = 0,
+                                             avg_count_day = 0)) 
+# time elapsed
+day_time_averages <- at_over_time %>%
+  group_by(full_date, source) %>%
+  summarise(
+    avg_time_day = weighted.mean(value, w = weight_cmd, na.rm = T) / 60, # to minutes
+  ) %>%
+  ungroup() %>%
+  complete(., full_date, source, fill = list(avg_time_day = 0,
+                                             prop_time_day = 0)) 
 
+# calculate centered moving averages for each channel type
+# views
+ma_count <- day_count_averages %>%
+  group_by(source) %>%
+  mutate(
+    ma7_time = rollmean(avg_count_day, k = 7, fill = NA),
+    ma14_time = rollmean(avg_count_day, k = 14, fill = NA),
+    ma21_time = rollmean(avg_count_day, k = 21, fill = NA),
+    ln_time = log(avg_count_day),
+    ln_ma14_time = rollapplyr(
+      ln_time,
+      14,
+      mean,
+      na.rm = TRUE,
+      by = 1,
+      partial = TRUE,
+      fill = NA
+    )
+  )
+# time elapsed
+ma_time <- day_time_averages %>%
+  group_by(source) %>%
+  mutate(
+    ma7_time = rollmean(avg_time_day, k = 7, fill = NA),
+    ma14_time = rollmean(avg_time_day, k = 14, fill = NA),
+    ma21_time = rollmean(avg_time_day, k = 21, fill = NA),
+    ln_time = log(avg_time_day),
+    ln_ma14_time = rollapplyr(
+      ln_time,
+      14,
+      mean,
+      na.rm = TRUE,
+      by = 1,
+      partial = TRUE,
+      fill = NA
+    )
+  )
+
+# plots
+sma_count_plot <- ma_count %>%
+  mutate(source = recode_channel_type_fxn(source)) %>%
+  ggplot(aes(x = full_date, y = avg_count_day,
+             color = source)) +
+  geom_point(alpha = .6) +
+  geom_line(
+    data =  . %>% filter((month(full_date) >= 8 &
+                            lubridate::day(full_date) >= 15) |  month(full_date) >= 9),
+    aes(y = ma21_time,
+        color = source),
+    size = 1
+  ) +
+  scale_color_manual(
+    values = c(
+      "Alternative \nchannel" = "#FFA500",
+      "Extremist \nchannel" = "#CD5C5C",
+      "Mainstream media \nchannel" = "#015CB9",
+      "Other \nchannel" = "#E3E6E6"
+    ),
+    name = ""
+  ) +
+  labs(x = "",
+       y = "Average number of visits to\nchannel videos")  +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(linetype = guide_legend(""))
+
+sma_count_plot
+
+sma_time_plot <- ma_time %>%
+  mutate(source = recode_channel_type_fxn(source)) %>%
+  ggplot(aes(x = full_date, y = avg_time_day,
+             color = source)) +
+  geom_point(alpha = .6) +
+  geom_line(
+    data = . %>% filter((
+      month(full_date) >= 8 &
+        lubridate::day(full_date) >= 15
+    ) |  month(full_date) >= 9),
+    aes(y = ma21_time,
+        color = source),
+    size = 1
+  ) +
+  scale_color_manual(
+    values = c(
+      "Alternative \nchannel" = "#FFA500",
+      "Extremist \nchannel" = "#CD5C5C",
+      "Mainstream media \nchannel" = "#015CB9",
+      "Other \nchannel" = "#E3E6E6"
+    ),
+    name = ""
+  ) +
+  labs(x = "",
+       y = "Average minutes spent on\nchannel videos")  +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(linetype = guide_legend(""))
+
+sma_time_plot
+```
+
+
+## Figure A3
