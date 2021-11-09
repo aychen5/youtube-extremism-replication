@@ -37,12 +37,746 @@ channel_types <- c("alternative",
                    "other")
 
 # dependent variables (time spent per week) by channel type
-minutes_activity_time_all_week <- paste0(
-  "minutes_activity_yt_video_time_elapsed_capped_total_",
-  channel_types,
-  "_all_week"
-)
+minutes_activity_time_all_week <- c(
+    "minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week",
+    "minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week",
+    "minutes_activity_yt_video_time_elapsed_capped_total_mainstream_all_week",
+    "minutes_activity_yt_video_time_elapsed_capped_total_other_all_week"
+  )
+
+# dummies for whether participant watch any of 
+any_channel_type <- c("at_alt",
+                      "at_ext",
+                      "at_msm",
+                      "at_other")
+
+# whether participant watched any video that they subscribed to from X channel
+any_subscribed_channel_type <- c(
+  "at_any_alternative_subscribed",
+  "at_any_extremist_subscribed",
+  "at_any_mainstream_subscribed",
+  "at_any_other_subscribed"
+) 
 ```
+
+``` r
+weighted_mean_fxn <- function(x,
+                              data) {
+  svy_at <- svydesign(ids = ~ 1,
+                      data = data,
+                      weights = ~ weight_cmd)
+  
+  result <- svymean(~ get(x), design = svy_at, na.rm = T)
+  
+  median_result <-
+    svyquantile(
+      ~ get(x),
+      quantiles = .5,
+      design = svy_at,
+      na.rm = T,
+      ci = TRUE
+    )$quantiles[1]
+  
+  output <- tibble(
+    channel_type = str_extract(x, paste0(channel_types, collapse = "|")),
+    raw_mean = mean(pull(data, get(x)), na.rm = T),
+    raw_se = sd(pull(data, get(x)), na.rm = T) / sqrt(nrow(na.omit(data[, x]))),
+    weighted_mean = coef(result),
+    weighted_median = median_result,
+    weighted_se = SE(result)[1],
+    lwr95 = weighted_mean - 1.96 * weighted_se,
+    upr95 = weighted_mean + 1.96 * weighted_se,
+    lwr90 = weighted_mean - 1.64 * weighted_se,
+    upr90 = weighted_mean + 1.64 * weighted_se
+  ) %>%
+    mutate(
+      channel_type = case_when(
+        channel_type == "alternative" ~ "Alternative",
+        channel_type == "extremist" ~ "Extremist",
+        channel_type == "mainstream" ~ "Mainstream",
+        channel_type == "other" ~ "Other"
+      )
+    )
+  
+  return(output)
+}
+
+weighted_prop_fxn <- function(x, data) {
+  
+  weighted <- data %>%
+    group_by(get(x)) %>%
+    summarise(total = sum(weight_cmd)) %>%
+    na.omit()
+  
+  result <- prop.table(weighted$total) * 100
+  
+  result_unweighted <- prop.table(table(data[x])) * 100
+  
+  output <- tibble(
+    channel_type = str_extract(x, "alt|ext|msm|other"),
+    raw_prop = result_unweighted[2],
+    raw_se = sqrt((raw_prop * (100 - raw_prop)) / nrow(na.omit(data[, x]))),
+    weighted_prop = result[2],
+    weighted_se =  sqrt((weighted_prop * (
+      100 - weighted_prop
+    )) / nrow(na.omit(data[, x]))),
+    lwr95 = weighted_prop - 1.96 * weighted_se,
+    upr95 = weighted_prop + 1.96 * weighted_se,
+    lwr90 = weighted_prop - 1.64 * weighted_se,
+    upr90 = weighted_prop + 1.64 * weighted_se
+  ) %>%
+    mutate(
+      channel_type = case_when(
+        channel_type == "alt" ~ "Alternative",
+        channel_type == "ext" ~ "Extremist",
+        channel_type == "msm" ~ "Mainstream",
+        channel_type == "other" ~ "Other"
+      )
+    )
+  return(output)
+}
+```
+
+### Exposure level estimates (page 4)
+
+Just 15% of the sample for whom we have browser activity data (n=1,181)
+viewed any video from an alternative channel and only 6% viewed any
+video from an extremist channel. By comparison, 44% viewed at least one
+video from a mainstream media channel.
+
+``` r
+map_dfr(any_channel_type, ~ weighted_prop_fxn(.x, at_data)) %>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_prop
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_se
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_prop
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_se
+
+</th>
+
+<th style="text-align:right;">
+
+lwr95
+
+</th>
+
+<th style="text-align:right;">
+
+upr95
+
+</th>
+
+<th style="text-align:right;">
+
+lwr90
+
+</th>
+
+<th style="text-align:right;">
+
+upr90
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alternative
+
+</td>
+
+<td style="text-align:right;">
+
+14.06
+
+</td>
+
+<td style="text-align:right;">
+
+1.01
+
+</td>
+
+<td style="text-align:right;">
+
+15.43
+
+</td>
+
+<td style="text-align:right;">
+
+1.05
+
+</td>
+
+<td style="text-align:right;">
+
+13.37
+
+</td>
+
+<td style="text-align:right;">
+
+17.49
+
+</td>
+
+<td style="text-align:right;">
+
+13.71
+
+</td>
+
+<td style="text-align:right;">
+
+17.16
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Extremist
+
+</td>
+
+<td style="text-align:right;">
+
+5.67
+
+</td>
+
+<td style="text-align:right;">
+
+0.67
+
+</td>
+
+<td style="text-align:right;">
+
+6.12
+
+</td>
+
+<td style="text-align:right;">
+
+0.70
+
+</td>
+
+<td style="text-align:right;">
+
+4.75
+
+</td>
+
+<td style="text-align:right;">
+
+7.48
+
+</td>
+
+<td style="text-align:right;">
+
+4.97
+
+</td>
+
+<td style="text-align:right;">
+
+7.26
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Mainstream
+
+</td>
+
+<td style="text-align:right;">
+
+44.54
+
+</td>
+
+<td style="text-align:right;">
+
+1.45
+
+</td>
+
+<td style="text-align:right;">
+
+43.48
+
+</td>
+
+<td style="text-align:right;">
+
+1.44
+
+</td>
+
+<td style="text-align:right;">
+
+40.65
+
+</td>
+
+<td style="text-align:right;">
+
+46.31
+
+</td>
+
+<td style="text-align:right;">
+
+41.12
+
+</td>
+
+<td style="text-align:right;">
+
+45.85
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Other
+
+</td>
+
+<td style="text-align:right;">
+
+88.48
+
+</td>
+
+<td style="text-align:right;">
+
+0.93
+
+</td>
+
+<td style="text-align:right;">
+
+88.75
+
+</td>
+
+<td style="text-align:right;">
+
+0.92
+
+</td>
+
+<td style="text-align:right;">
+
+86.95
+
+</td>
+
+<td style="text-align:right;">
+
+90.55
+
+</td>
+
+<td style="text-align:right;">
+
+87.24
+
+</td>
+
+<td style="text-align:right;">
+
+90.26
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+Among the set of people who saw at least one extremist channel video,
+for instance, 52% saw at least one video from an extremist channel they
+subscribe to during the study period. Similarly, 39% of all people who
+saw at least one alternative channel video viewed at least one video
+from a channel to which they subscribed.
+
+``` r
+# dfs with those who viewed any alternative/extremist/mainstream channel
+viewed_any_channel_type <- list(
+  at_data %>% filter(at_alt == 1),
+  at_data %>% filter(at_ext == 1),
+  at_data %>% filter(at_msm == 1),
+  at_data %>% filter(at_other == 1)
+)
+
+map2_dfr(.x = any_subscribed_channel_type,
+         .y = viewed_any_channel_type,
+         ~ weighted_prop_fxn(.x, .y)) %>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_prop
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_se
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_prop
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_se
+
+</th>
+
+<th style="text-align:right;">
+
+lwr95
+
+</th>
+
+<th style="text-align:right;">
+
+upr95
+
+</th>
+
+<th style="text-align:right;">
+
+lwr90
+
+</th>
+
+<th style="text-align:right;">
+
+upr90
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alternative
+
+</td>
+
+<td style="text-align:right;">
+
+39.16
+
+</td>
+
+<td style="text-align:right;">
+
+3.79
+
+</td>
+
+<td style="text-align:right;">
+
+38.99
+
+</td>
+
+<td style="text-align:right;">
+
+3.79
+
+</td>
+
+<td style="text-align:right;">
+
+31.57
+
+</td>
+
+<td style="text-align:right;">
+
+46.41
+
+</td>
+
+<td style="text-align:right;">
+
+32.79
+
+</td>
+
+<td style="text-align:right;">
+
+45.20
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Extremist
+
+</td>
+
+<td style="text-align:right;">
+
+41.79
+
+</td>
+
+<td style="text-align:right;">
+
+6.03
+
+</td>
+
+<td style="text-align:right;">
+
+51.69
+
+</td>
+
+<td style="text-align:right;">
+
+6.11
+
+</td>
+
+<td style="text-align:right;">
+
+39.72
+
+</td>
+
+<td style="text-align:right;">
+
+63.65
+
+</td>
+
+<td style="text-align:right;">
+
+41.67
+
+</td>
+
+<td style="text-align:right;">
+
+61.70
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+NA
+
+</td>
+
+<td style="text-align:right;">
+
+20.34
+
+</td>
+
+<td style="text-align:right;">
+
+1.76
+
+</td>
+
+<td style="text-align:right;">
+
+20.26
+
+</td>
+
+<td style="text-align:right;">
+
+1.75
+
+</td>
+
+<td style="text-align:right;">
+
+16.82
+
+</td>
+
+<td style="text-align:right;">
+
+23.69
+
+</td>
+
+<td style="text-align:right;">
+
+17.39
+
+</td>
+
+<td style="text-align:right;">
+
+23.13
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Other
+
+</td>
+
+<td style="text-align:right;">
+
+61.05
+
+</td>
+
+<td style="text-align:right;">
+
+1.51
+
+</td>
+
+<td style="text-align:right;">
+
+61.39
+
+</td>
+
+<td style="text-align:right;">
+
+1.51
+
+</td>
+
+<td style="text-align:right;">
+
+58.44
+
+</td>
+
+<td style="text-align:right;">
+
+64.34
+
+</td>
+
+<td style="text-align:right;">
+
+58.92
+
+</td>
+
+<td style="text-align:right;">
+
+63.86
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 ## Figure 1: Distribution of video views by subscription status and channel type
 
@@ -132,7 +866,1041 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
 summarize_subscribe_plot
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
+### Exposure level estimates (page 5)
+
+Among the participants who viewed at least one video from an alternative
+or extremist channel, the time spent watching them was relatively low:
+26 minutes per week for alternative channel videos and 8 minutes for
+extremist channel videos. The comparison statistics are 12 minutes per
+week for mainstream media channel videos and 214 minutes per week for
+videos from other channels
+
+``` r
+map2_dfr(.x = minutes_activity_time_all_week,
+         .y = viewed_any_channel_type,
+         ~ weighted_mean_fxn(.x, .y)) %>%
+  kbl(format = "html",
+      digits = 2) %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_mean
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_se
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_mean
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_median
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_se
+
+</th>
+
+<th style="text-align:right;">
+
+lwr95
+
+</th>
+
+<th style="text-align:right;">
+
+upr95
+
+</th>
+
+<th style="text-align:right;">
+
+lwr90
+
+</th>
+
+<th style="text-align:right;">
+
+upr90
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alternative
+
+</td>
+
+<td style="text-align:right;">
+
+27.31
+
+</td>
+
+<td style="text-align:right;">
+
+6.38
+
+</td>
+
+<td style="text-align:right;">
+
+25.72
+
+</td>
+
+<td style="text-align:right;">
+
+1.09
+
+</td>
+
+<td style="text-align:right;">
+
+6.16
+
+</td>
+
+<td style="text-align:right;">
+
+13.65
+
+</td>
+
+<td style="text-align:right;">
+
+37.78
+
+</td>
+
+<td style="text-align:right;">
+
+15.62
+
+</td>
+
+<td style="text-align:right;">
+
+35.81
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Extremist
+
+</td>
+
+<td style="text-align:right;">
+
+8.66
+
+</td>
+
+<td style="text-align:right;">
+
+2.32
+
+</td>
+
+<td style="text-align:right;">
+
+8.09
+
+</td>
+
+<td style="text-align:right;">
+
+0.58
+
+</td>
+
+<td style="text-align:right;">
+
+2.33
+
+</td>
+
+<td style="text-align:right;">
+
+3.51
+
+</td>
+
+<td style="text-align:right;">
+
+12.66
+
+</td>
+
+<td style="text-align:right;">
+
+4.26
+
+</td>
+
+<td style="text-align:right;">
+
+11.91
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Mainstream
+
+</td>
+
+<td style="text-align:right;">
+
+14.14
+
+</td>
+
+<td style="text-align:right;">
+
+3.14
+
+</td>
+
+<td style="text-align:right;">
+
+11.90
+
+</td>
+
+<td style="text-align:right;">
+
+1.15
+
+</td>
+
+<td style="text-align:right;">
+
+2.35
+
+</td>
+
+<td style="text-align:right;">
+
+7.29
+
+</td>
+
+<td style="text-align:right;">
+
+16.52
+
+</td>
+
+<td style="text-align:right;">
+
+8.04
+
+</td>
+
+<td style="text-align:right;">
+
+15.76
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Other
+
+</td>
+
+<td style="text-align:right;">
+
+185.76
+
+</td>
+
+<td style="text-align:right;">
+
+15.77
+
+</td>
+
+<td style="text-align:right;">
+
+214.22
+
+</td>
+
+<td style="text-align:right;">
+
+20.36
+
+</td>
+
+<td style="text-align:right;">
+
+22.97
+
+</td>
+
+<td style="text-align:right;">
+
+169.21
+
+</td>
+
+<td style="text-align:right;">
+
+259.24
+
+</td>
+
+<td style="text-align:right;">
+
+176.56
+
+</td>
+
+<td style="text-align:right;">
+
+251.89
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+(62 minutes per week for subscribers to one or more alternative channels
+\[6%\] versus 0.2 minutes per week for non-subscribers \[9%\]) and (15
+minutes per week for subscribers \[3%\] versus 0.04 minute per week for
+non-subscribers \[3%\]).
+
+``` r
+# dfs for those subsscribed to any X channel
+subscribed_any_channel_type <- list(
+  at_data %>% filter(at_any_alternative_subscribed == 1),
+  at_data %>% filter(at_any_extremist_subscribed == 1),
+  at_data %>% filter(at_any_mainstream_subscribed == 1),
+  at_data %>% filter(at_any_other_subscribed == 1)
+)
+
+# dummy for NOT subsscribed to any X channel
+notsubscribed_any_channel_type <- list(
+  at_data %>% filter(at_any_alternative_subscribed != 1),
+  at_data %>% filter(at_any_extremist_subscribed != 1),
+  at_data %>% filter(at_any_mainstream_subscribed != 1),
+  at_data %>% filter(at_any_other_subscribed != 1)
+)
+
+# calculate weighted mean for each channel type
+subscriber_estimates <- map2_dfr(.x = minutes_activity_time_all_week,
+                                 .y = subscribed_any_channel_type,
+                                 ~ weighted_mean_fxn(.x, .y)) %>%
+  mutate(subscription_status = paste0(channel_types,
+                                      " subscriber"))
+
+nonsubscriber_estimates <- map2_dfr(.x = minutes_activity_time_all_week,
+                                    .y = notsubscribed_any_channel_type,
+                                    ~ weighted_mean_fxn(.x, .y))  %>%
+  mutate(subscription_status = paste0(channel_types,
+                                      " subscriber"))
+
+bind_rows(subscriber_estimates,
+          nonsubscriber_estimates) %>% 
+  kbl(format = "html",
+      digits = 2) %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_mean
+
+</th>
+
+<th style="text-align:right;">
+
+raw\_se
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_mean
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_median
+
+</th>
+
+<th style="text-align:right;">
+
+weighted\_se
+
+</th>
+
+<th style="text-align:right;">
+
+lwr95
+
+</th>
+
+<th style="text-align:right;">
+
+upr95
+
+</th>
+
+<th style="text-align:right;">
+
+lwr90
+
+</th>
+
+<th style="text-align:right;">
+
+upr90
+
+</th>
+
+<th style="text-align:left;">
+
+subscription\_status
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alternative
+
+</td>
+
+<td style="text-align:right;">
+
+64.11
+
+</td>
+
+<td style="text-align:right;">
+
+15.09
+
+</td>
+
+<td style="text-align:right;">
+
+62.22
+
+</td>
+
+<td style="text-align:right;">
+
+23.96
+
+</td>
+
+<td style="text-align:right;">
+
+14.82
+
+</td>
+
+<td style="text-align:right;">
+
+33.17
+
+</td>
+
+<td style="text-align:right;">
+
+91.28
+
+</td>
+
+<td style="text-align:right;">
+
+37.91
+
+</td>
+
+<td style="text-align:right;">
+
+86.53
+
+</td>
+
+<td style="text-align:left;">
+
+alternative subscriber
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Extremist
+
+</td>
+
+<td style="text-align:right;">
+
+19.15
+
+</td>
+
+<td style="text-align:right;">
+
+4.92
+
+</td>
+
+<td style="text-align:right;">
+
+14.56
+
+</td>
+
+<td style="text-align:right;">
+
+5.69
+
+</td>
+
+<td style="text-align:right;">
+
+4.83
+
+</td>
+
+<td style="text-align:right;">
+
+5.10
+
+</td>
+
+<td style="text-align:right;">
+
+24.02
+
+</td>
+
+<td style="text-align:right;">
+
+6.64
+
+</td>
+
+<td style="text-align:right;">
+
+22.48
+
+</td>
+
+<td style="text-align:left;">
+
+extremist subscriber
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Mainstream
+
+</td>
+
+<td style="text-align:right;">
+
+45.98
+
+</td>
+
+<td style="text-align:right;">
+
+14.79
+
+</td>
+
+<td style="text-align:right;">
+
+37.65
+
+</td>
+
+<td style="text-align:right;">
+
+7.73
+
+</td>
+
+<td style="text-align:right;">
+
+11.28
+
+</td>
+
+<td style="text-align:right;">
+
+15.54
+
+</td>
+
+<td style="text-align:right;">
+
+59.76
+
+</td>
+
+<td style="text-align:right;">
+
+19.15
+
+</td>
+
+<td style="text-align:right;">
+
+56.15
+
+</td>
+
+<td style="text-align:left;">
+
+mainstream subscriber
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Other
+
+</td>
+
+<td style="text-align:right;">
+
+274.13
+
+</td>
+
+<td style="text-align:right;">
+
+20.74
+
+</td>
+
+<td style="text-align:right;">
+
+329.42
+
+</td>
+
+<td style="text-align:right;">
+
+93.63
+
+</td>
+
+<td style="text-align:right;">
+
+34.59
+
+</td>
+
+<td style="text-align:right;">
+
+261.63
+
+</td>
+
+<td style="text-align:right;">
+
+397.22
+
+</td>
+
+<td style="text-align:right;">
+
+272.70
+
+</td>
+
+<td style="text-align:right;">
+
+386.15
+
+</td>
+
+<td style="text-align:left;">
+
+other subscriber
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Alternative
+
+</td>
+
+<td style="text-align:right;">
+
+0.33
+
+</td>
+
+<td style="text-align:right;">
+
+0.14
+
+</td>
+
+<td style="text-align:right;">
+
+0.24
+
+</td>
+
+<td style="text-align:right;">
+
+0.00
+
+</td>
+
+<td style="text-align:right;">
+
+0.08
+
+</td>
+
+<td style="text-align:right;">
+
+0.09
+
+</td>
+
+<td style="text-align:right;">
+
+0.39
+
+</td>
+
+<td style="text-align:right;">
+
+0.11
+
+</td>
+
+<td style="text-align:right;">
+
+0.37
+
+</td>
+
+<td style="text-align:left;">
+
+alternative subscriber
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Extremist
+
+</td>
+
+<td style="text-align:right;">
+
+0.04
+
+</td>
+
+<td style="text-align:right;">
+
+0.01
+
+</td>
+
+<td style="text-align:right;">
+
+0.04
+
+</td>
+
+<td style="text-align:right;">
+
+0.00
+
+</td>
+
+<td style="text-align:right;">
+
+0.02
+
+</td>
+
+<td style="text-align:right;">
+
+0.00
+
+</td>
+
+<td style="text-align:right;">
+
+0.07
+
+</td>
+
+<td style="text-align:right;">
+
+0.01
+
+</td>
+
+<td style="text-align:right;">
+
+0.06
+
+</td>
+
+<td style="text-align:left;">
+
+extremist subscriber
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Mainstream
+
+</td>
+
+<td style="text-align:right;">
+
+2.34
+
+</td>
+
+<td style="text-align:right;">
+
+0.32
+
+</td>
+
+<td style="text-align:right;">
+
+2.04
+
+</td>
+
+<td style="text-align:right;">
+
+0.00
+
+</td>
+
+<td style="text-align:right;">
+
+0.33
+
+</td>
+
+<td style="text-align:right;">
+
+1.39
+
+</td>
+
+<td style="text-align:right;">
+
+2.69
+
+</td>
+
+<td style="text-align:right;">
+
+1.49
+
+</td>
+
+<td style="text-align:right;">
+
+2.58
+
+</td>
+
+<td style="text-align:left;">
+
+mainstream subscriber
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+Other
+
+</td>
+
+<td style="text-align:right;">
+
+35.41
+
+</td>
+
+<td style="text-align:right;">
+
+16.89
+
+</td>
+
+<td style="text-align:right;">
+
+23.37
+
+</td>
+
+<td style="text-align:right;">
+
+1.37
+
+</td>
+
+<td style="text-align:right;">
+
+8.00
+
+</td>
+
+<td style="text-align:right;">
+
+7.69
+
+</td>
+
+<td style="text-align:right;">
+
+39.06
+
+</td>
+
+<td style="text-align:right;">
+
+10.25
+
+</td>
+
+<td style="text-align:right;">
+
+36.50
+
+</td>
+
+<td style="text-align:left;">
+
+other subscriber
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 ## Figure 2. Concentration of exposure to alternative and extremist channels
 
@@ -280,7 +2048,34 @@ time_cumsum_plot_zoomout +
                            on_top = TRUE)
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+
+### Exposure level estimates (page 5–6)
+
+1.5% of participants (17 people) account for 79% of total time spent on
+videos from alternative channels.
+
+``` r
+at_cum_time_user %>% 
+  filter(source == "alternative" & cum_views <= .8) %>% 
+  pull(cum_user) %>% 
+  max()
+```
+
+    ## [1] 0.01561862
+
+This imbalance is even more severe for extremist channels, where 0.6% of
+participants (9 people) were responsible for 80% of total time spent on
+these videos.
+
+``` r
+at_cum_time_user %>% 
+  filter(source == "extremist" & cum_views <= .8) %>% 
+  pull(cum_user) %>% 
+  max()
+```
+
+    ## [1] 0.006480922
 
 ## Figure 3. YouTube video diets of alternative and extremist superconsumers
 
@@ -350,6 +2145,62 @@ top_time_all_weeks_most_ext <- at_data_supers  %>%
   )
 ```
 
+### Exposure level estimates (page 6–7)
+
+Alternative channel superconsumers spend a median of 23 hours (1376
+minutes) each week watching YouTube.
+
+``` r
+at_data_supers %>% 
+  filter(super_alternative == 1) %>% 
+  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
+  median()
+```
+
+    ## [1] 1375.584
+
+Extremist channel superconsumers spend a median of 17 hours (1009
+minutes) each week watching YouTube.
+
+``` r
+at_data_supers %>% 
+  filter(super_extremist == 1) %>%  
+  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
+  median()
+```
+
+    ## [1] 1008.905
+
+Median time per week across all participants is 0.2 hours (13 minutes).
+
+``` r
+at_data_supers %>% 
+  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
+  median()
+```
+
+    ## [1] 13.25878
+
+Number of alternative superconsumers is 17.
+
+``` r
+at_data_supers %>% 
+  filter(super_alternative == 1) %>% 
+  nrow()
+```
+
+    ## [1] 17
+
+Number of extremist superconsumers is 9.
+
+``` r
+at_data_supers %>% 
+  filter(super_extremist == 1) %>% 
+  nrow()
+```
+
+    ## [1] 9
+
 ``` r
 topuser_plot <- function (data,
                           channel_type,
@@ -360,14 +2211,19 @@ topuser_plot <- function (data,
                           figure_space) {
   
   nobs <- nrow(data %>% distinct(caseid))
-  
-  p <- ggplot(data, aes(x = rank, 
-                      y = minutes_value,
-                      fill = channel_type)) +
-    geom_col(position = position_stack(reverse = TRUE))
+
   
   if (channel_type == 'Extremist') {
-    p <-  p +
+    
+    p <- data %>%
+      mutate(channel_type = factor(
+        channel_type,
+        levels = c("extremist", "alternative", "mainstream", "other")
+      )) %>%
+      ggplot(., aes(x = rank,
+                    y = minutes_value,
+                    fill = channel_type)) +
+      geom_col(position = position_stack(reverse = TRUE)) +
       geom_image(
         data = . %>%
           filter((super_alternative == 1) &
@@ -379,7 +2235,11 @@ topuser_plot <- function (data,
       )
     
   } else if (channel_type == 'Alternative') {
-    p <-  p +
+    p <-  data %>% 
+      ggplot(., aes(x = rank, 
+                      y = minutes_value,
+                      fill = channel_type)) +
+      geom_col(position = position_stack(reverse = TRUE)) +
       geom_image(
         data = . %>%
           filter((super_extremist == 1) &
@@ -508,7 +2368,7 @@ topuser_plot(
   )
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 ``` r
 topuser_plot(
@@ -522,7 +2382,7 @@ topuser_plot(
   )
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-2.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-14-2.png" style="display: block; margin: auto;" />
 
 ## Figure 4. Predictors of watch time
 
@@ -920,7 +2780,7 @@ on_platform_referrers_by_channel_plot <-
 on_platform_referrers_by_channel_plot
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 ## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
 
@@ -1094,7 +2954,7 @@ plot_grid(
 )
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
 ## Figure 8: Recommendation frequency by type of channel being watched
 
@@ -1684,4 +3544,4 @@ combined %>%
          color = "none")
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
