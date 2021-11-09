@@ -9,7 +9,7 @@
     ]
   },
   "Bioconductor": {
-    "Version": "3.11"
+    "Version": "3.12"
   },
   "Packages": {
     "BH": {
@@ -243,10 +243,10 @@
     },
     "cpp11": {
       "Package": "cpp11",
-      "Version": "0.2.1",
+      "Version": "0.4.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c4c83167f43ca762a9fa998d4fead3ae"
+      "Hash": "70976176dfd7f179f212783aab2547b1"
     },
     "crayon": {
       "Package": "crayon",
@@ -680,10 +680,10 @@
     },
     "lubridate": {
       "Package": "lubridate",
-      "Version": "1.7.10",
+      "Version": "1.8.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "1ebfdc8a3cfe8fe19184f5481972b092"
+      "Hash": "2ff5eedb6ee38fb1b81205c73be1be5a"
     },
     "magick": {
       "Package": "magick",
@@ -764,10 +764,10 @@
     },
     "mvtnorm": {
       "Package": "mvtnorm",
-      "Version": "1.1-2",
+      "Version": "1.1-3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6f0133c3842aef0394dbd844a21d3f5f"
+      "Hash": "7a7541cc284cb2ba3ba7eae645892af5"
     },
     "nlme": {
       "Package": "nlme",
@@ -1041,13 +1041,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "732b2dcfa8608f2569f4c08dd4cf4f10"
-    },
-    "srvyr": {
-      "Package": "srvyr",
-      "Version": "0.4.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "6ff6a6eb83483878e4de6adc658c8c11"
     },
     "stringi": {
       "Package": "stringi",
