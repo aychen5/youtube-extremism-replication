@@ -1643,7 +1643,7 @@ concentration_time_user <- map_dfr(minutes_activity_time_all_week,
 
 # get the %user for 80% watch time
 lab_stat <-
-  cumsum_fxn('activity_yt_video_time_elapsed_capped_total_alternative_all',
+  cumsum_fxn('minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week',
              activity_data) %>%
   filter(round(cum_views, 2) == .8) %>%
   pull(ln_cum_user)
@@ -1861,7 +1861,7 @@ top_time_all_weeks_most_ext <- activity_data_supers  %>%
 
 ### Exposure level estimates (page 6–7)
 
-Alternative channel superconsumers spend a weighted median of 23 hours
+Alternative channel superconsumers spend a weighted median of 29 hours
 (1715 minutes) each week watching YouTube.
 
 ``` r
@@ -2121,6 +2121,8 @@ coef_names <- c("Intercept",
                 "Post-grad",
                 "Non-white")
 ```
+
+### \= maybe add diagnostics here?
 
 ``` r
 time_models <- bind_rows(QP_time_fit)

@@ -495,7 +495,7 @@ concentration_time_user <- map_dfr(minutes_activity_time_all_week,
 
 # get the %user for 80% watch time
 lab_stat <-
-  cumsum_fxn('activity_yt_video_time_elapsed_capped_total_alternative_all',
+  cumsum_fxn('minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week',
              activity_data) %>%
   filter(round(cum_views, 2) == .8) %>%
   pull(ln_cum_user)
@@ -957,6 +957,8 @@ coef_names <- c("Intercept",
                 "Non-white")
 ```
 
+
+### = maybe add diagnostics here? 
 
 ```{r coefficient plot, fig.height = 9}
 time_models <- bind_rows(QP_time_fit)
