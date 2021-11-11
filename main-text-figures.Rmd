@@ -178,6 +178,9 @@ svy_at <- svydesign(ids = ~ 1,
                     data = at_data,
                     weights = ~ weight_cmd)
 
+# color palette 
+color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
+
 # all channel categoies
 channel_types <- c("alternative",
                    "extremist",
@@ -234,9 +237,7 @@ weighted_mean_fxn <- function(x,
     weighted_median = median_result,
     weighted_se = SE(result)[1],
     lwr95 = weighted_mean - 1.96 * weighted_se,
-    upr95 = weighted_mean + 1.96 * weighted_se,
-    lwr90 = weighted_mean - 1.64 * weighted_se,
-    upr90 = weighted_mean + 1.64 * weighted_se
+    upr95 = weighted_mean + 1.96 * weighted_se
   ) %>%
     mutate(
       channel_type = case_when(
@@ -270,9 +271,7 @@ weighted_prop_fxn <- function(x, data) {
       100 - weighted_prop
     )) / nrow(na.omit(data[, x]))),
     lwr95 = weighted_prop - 1.96 * weighted_se,
-    upr95 = weighted_prop + 1.96 * weighted_se,
-    lwr90 = weighted_prop - 1.64 * weighted_se,
-    upr90 = weighted_prop + 1.64 * weighted_se
+    upr95 = weighted_prop + 1.96 * weighted_se
   ) %>%
     mutate(
       channel_type = case_when(
@@ -363,7 +362,7 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
     labels = paste0(seq(0, 100, by = 20), "%")
   ) +
   scale_fill_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     name = "",
     labels = c(
       "Alternative channel",
@@ -373,7 +372,7 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
     )
   ) +
   scale_color_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     name = "",
     labels = c(
       "Alternative channel",
@@ -518,7 +517,7 @@ time_cumsum_plot_inset <- at_cum_time_user %>%
       "Mainstream media\nchannels",
       "Other\nchannels"
     ),
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
+    values = color_palette
   ) +
   geom_segment(aes(
     x = -4,
@@ -590,7 +589,7 @@ time_cumsum_plot_zoomout <- at_cum_time_user %>%
       "Mainstream media\nchannels",
       "Other\nchannels"
     ),
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
+    values = color_palette
   ) +
   annotate(geom = "rect", col = "black", fill = "white",
            lwd = 2,
@@ -872,53 +871,6 @@ plot_grid(
   rel_heights = c(1, .1)
 )
 
-```
-
-
-## Figure AX.
-
-Distribution of time spent per week on channels for anyone who watched an alternative (extremist) channel video over the course of the study. Bars are in descending order of most to least time on alternative (extremist) channel videos.
-
-```{r }
-# anyone who watched at least one alternative
-top_time_all_weeks_most_any_alt <- at_data_supers  %>% 
-  filter(at_alt == 1)  %>% 
-  arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week)) %>% 
-  mutate(rank = 1:nrow(.)) %>% 
-  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>% 
-  mutate(channel_type = str_extract(str_replace(name, "_all_week$", ""), "[a-z]+$"),
-         minutes_value = value,
-         image = "https://i.postimg.cc/bwL3hjPY/user-icon-extremist.png" ) 
-
-# anyone who watched at least one extremist
-top_time_all_weeks_most_any_ext <- at_data_supers  %>% 
-  filter(at_ext == 1)  %>% 
-  arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week)) %>% 
-  mutate(rank = 1:nrow(.)) %>% 
-  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>% 
-  mutate(channel_type = str_extract(str_replace(name, "_all_week$", ""), "[a-z]+$"),
-         minutes_value = value,
-         image = "https://i.postimg.cc/D0BPKrVj/user-icon-alternative.png" )
-
-topuser_plot(
-    data = top_time_all_weeks_most_any_alt,
-    figure_size = .02,
-    figure_space = -100,
-    channel_type = "Alternative",
-    title = "Alternative channel superconsumers",
-    ylabel = "Minutes per week on YouTube videos",
-    y_limit = 3e3
-  )
-
-topuser_plot(
-    data = top_time_all_weeks_most_any_ext,
-    figure_size = .02,
-    figure_space = -160,
-    channel_type = "Extremist",
-    title = "Extremist channel superconsumers",
-    ylabel = "Minutes per week on YouTube videos",
-    y_limit = 3e3
-  )
 ```
 
 
@@ -1213,6 +1165,34 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
   )
 ```
 
+
+### Correlates of exposure (page 9)
+
+When hostile sexism is at its minimum value of 1, expected levels are 0.4 minutes per week spent watching alternative channel videos and 0.08 minutes for extremist channel videos. These predicted values increase to 383 and 51 minutes, respectively, when hostile sexism is at its maximum value of 5 (with the greatest marginal increases as hostile sexism reaches its highest levels).
+
+```{r}
+predicted_data_alternative %>% 
+  filter(fem_cts %in% c(min(fem_cts), max(fem_cts)) ) %>% 
+  select(fem_cts, fit_response) %>% 
+  rename(`Hostile sexism score` = fem_cts,
+         `Predicted value` = fit_response) %>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+```{r}
+predicted_data_extremist %>% 
+  filter(fem_cts %in% c(min(fem_cts), max(fem_cts)) ) %>% 
+  select(fem_cts, fit_response)%>% 
+  rename(`Hostile sexism score` = fem_cts,
+         `Predicted value` = fit_response) %>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+
 ## Figure 6: Pages viewed immediately prior to YouTube videos by channel type
 
 ```{r}
@@ -1319,6 +1299,58 @@ on_platform_referrers_by_channel_plot
 ```
 
 
+### Internal and external referrers (page 10)
+
+49% and 51% of referrers to alternative and extremist channel videos, respectively, were off-platform sources compared to 41% and 44%, respectively, for videos from mainstream media channels and other channels. 
+
+```{r}
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type == "Off-platform") %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+
+...we observe homophily across the video types, with 18% of referrers to alternative videos coming from other alternative video, 14% of referrers to extreme videos coming from other extreme videos, and 26% of referrers to mainstream media videos coming from other mainstream media videos
+
+```{r}
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type == channel_type) %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+
+Interestingly, we observe 5% of referrals to extreme videos coming from alternative videos, but only 0.7% of referrals from alternative videos coming from extreme videos 
+
+```{r}
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type %in% c("alternative", "extremist") &
+           channel_type %in% c("alternative", "extremist")) %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+
+Lastly, we observe that alternative, extreme, and mainstream media videos all receive roughly equal referrals from videos in other channels (13--16%) and other on-platform sources (16--19%).
+
+```{r}
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type%in% c("other", "Non-video on-platform")&
+           channel_type %in% c("alternative", "extremist", "mainstream") ) %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+
 ## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
 
 
@@ -1376,7 +1408,7 @@ referrers_channel_type_videos_on_platform <-
                  size = .8) +
   #coord_cartesian(ylim = c(0, 50)) +
   scale_fill_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     labels = c(
       "Alternative\nchannels",
       "Extremist\nchannels",
@@ -1447,7 +1479,7 @@ referrers_channel_type_videos_off_platform <-
     labels = paste0(seq(0, 60, 10), "%")
   ) +
   scale_fill_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     labels = c(
       "Alternative\nchannel videos",
       "Extremist\nchannel videos",
@@ -2054,13 +2086,13 @@ combined %>%
   scale_y_continuous(limits = c(-10, 100),
                      breaks = seq(0, 100, by = 20),
                      labels = paste0(seq(0, 100, by = 20),"%") )+
-  scale_fill_manual(values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+  scale_fill_manual(values = color_palette,
                     name = "",
                     labels = c("Alternative channel",
                                "Extremist channel",
                                "Mainstream media channel",
                                "Other channel")) +
-  scale_color_manual(values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+  scale_color_manual(values = color_palette,
                     name = "",
                     labels = c("Alternative channel",
                                "Extremist channel",
