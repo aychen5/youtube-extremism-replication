@@ -2,8 +2,11 @@ Figures in Main Text
 ================
 
 ``` r
+# survey + extension data for individuals
+merged_data <- read_rds("data/yg_browser_cces_merged.rds")
+
 # activity data
-at_data <- read_rds("data/activity_yg_cces.rds") 
+activity_data <- read_rds("data/activity_yg_cces.rds") 
 
 # subscriptions data
 summarize_subscribe_table <-
@@ -27,8 +30,11 @@ recs_data <-
 ``` r
 # attach survey weights
 svy_at <- svydesign(ids = ~ 1,
-                    data = at_data,
+                    data = activity_data,
                     weights = ~ weight_cmd)
+
+# color palette 
+color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
 
 # all channel categoies
 channel_types <- c("alternative",
@@ -85,9 +91,7 @@ weighted_mean_fxn <- function(x,
     weighted_median = median_result,
     weighted_se = SE(result)[1],
     lwr95 = weighted_mean - 1.96 * weighted_se,
-    upr95 = weighted_mean + 1.96 * weighted_se,
-    lwr90 = weighted_mean - 1.64 * weighted_se,
-    upr90 = weighted_mean + 1.64 * weighted_se
+    upr95 = weighted_mean + 1.96 * weighted_se
   ) %>%
     mutate(
       channel_type = case_when(
@@ -121,9 +125,7 @@ weighted_prop_fxn <- function(x, data) {
       100 - weighted_prop
     )) / nrow(na.omit(data[, x]))),
     lwr95 = weighted_prop - 1.96 * weighted_se,
-    upr95 = weighted_prop + 1.96 * weighted_se,
-    lwr90 = weighted_prop - 1.64 * weighted_se,
-    upr90 = weighted_prop + 1.64 * weighted_se
+    upr95 = weighted_prop + 1.96 * weighted_se
   ) %>%
     mutate(
       channel_type = case_when(
@@ -145,7 +147,7 @@ video from an extremist channel. By comparison, 44% viewed at least one
 video from a mainstream media channel.
 
 ``` r
-map_dfr(any_channel_type, ~ weighted_prop_fxn(.x, at_data)) %>% 
+map_dfr(any_channel_type, ~ weighted_prop_fxn(.x, activity_data)) %>% 
   kbl(digits = 2, 
       format = "html") %>% 
   kable_styling()
@@ -199,18 +201,6 @@ upr95
 
 </th>
 
-<th style="text-align:right;">
-
-lwr90
-
-</th>
-
-<th style="text-align:right;">
-
-upr90
-
-</th>
-
 </tr>
 
 </thead>
@@ -261,18 +251,6 @@ Alternative
 
 </td>
 
-<td style="text-align:right;">
-
-13.71
-
-</td>
-
-<td style="text-align:right;">
-
-17.16
-
-</td>
-
 </tr>
 
 <tr>
@@ -316,18 +294,6 @@ Extremist
 <td style="text-align:right;">
 
 7.48
-
-</td>
-
-<td style="text-align:right;">
-
-4.97
-
-</td>
-
-<td style="text-align:right;">
-
-7.26
 
 </td>
 
@@ -377,18 +343,6 @@ Mainstream
 
 </td>
 
-<td style="text-align:right;">
-
-41.12
-
-</td>
-
-<td style="text-align:right;">
-
-45.85
-
-</td>
-
 </tr>
 
 <tr>
@@ -435,18 +389,6 @@ Other
 
 </td>
 
-<td style="text-align:right;">
-
-87.24
-
-</td>
-
-<td style="text-align:right;">
-
-90.26
-
-</td>
-
 </tr>
 
 </tbody>
@@ -462,10 +404,10 @@ from a channel to which they subscribed.
 ``` r
 # dfs with those who viewed any alternative/extremist/mainstream channel
 viewed_any_channel_type <- list(
-  at_data %>% filter(at_alt == 1),
-  at_data %>% filter(at_ext == 1),
-  at_data %>% filter(at_msm == 1),
-  at_data %>% filter(at_other == 1)
+  activity_data %>% filter(at_alt == 1),
+  activity_data %>% filter(at_ext == 1),
+  activity_data %>% filter(at_msm == 1),
+  activity_data %>% filter(at_other == 1)
 )
 
 map2_dfr(.x = any_subscribed_channel_type,
@@ -524,18 +466,6 @@ upr95
 
 </th>
 
-<th style="text-align:right;">
-
-lwr90
-
-</th>
-
-<th style="text-align:right;">
-
-upr90
-
-</th>
-
 </tr>
 
 </thead>
@@ -586,18 +516,6 @@ Alternative
 
 </td>
 
-<td style="text-align:right;">
-
-32.79
-
-</td>
-
-<td style="text-align:right;">
-
-45.20
-
-</td>
-
 </tr>
 
 <tr>
@@ -641,18 +559,6 @@ Extremist
 <td style="text-align:right;">
 
 63.65
-
-</td>
-
-<td style="text-align:right;">
-
-41.67
-
-</td>
-
-<td style="text-align:right;">
-
-61.70
 
 </td>
 
@@ -702,18 +608,6 @@ NA
 
 </td>
 
-<td style="text-align:right;">
-
-17.39
-
-</td>
-
-<td style="text-align:right;">
-
-23.13
-
-</td>
-
 </tr>
 
 <tr>
@@ -757,18 +651,6 @@ Other
 <td style="text-align:right;">
 
 64.34
-
-</td>
-
-<td style="text-align:right;">
-
-58.92
-
-</td>
-
-<td style="text-align:right;">
-
-63.86
 
 </td>
 
@@ -819,7 +701,7 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
     labels = paste0(seq(0, 100, by = 20), "%")
   ) +
   scale_fill_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     name = "",
     labels = c(
       "Alternative channel",
@@ -829,7 +711,7 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
     )
   ) +
   scale_color_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     name = "",
     labels = c(
       "Alternative channel",
@@ -940,18 +822,6 @@ upr95
 
 </th>
 
-<th style="text-align:right;">
-
-lwr90
-
-</th>
-
-<th style="text-align:right;">
-
-upr90
-
-</th>
-
 </tr>
 
 </thead>
@@ -1008,18 +878,6 @@ Alternative
 
 </td>
 
-<td style="text-align:right;">
-
-15.62
-
-</td>
-
-<td style="text-align:right;">
-
-35.81
-
-</td>
-
 </tr>
 
 <tr>
@@ -1069,18 +927,6 @@ Extremist
 <td style="text-align:right;">
 
 12.66
-
-</td>
-
-<td style="text-align:right;">
-
-4.26
-
-</td>
-
-<td style="text-align:right;">
-
-11.91
 
 </td>
 
@@ -1136,18 +982,6 @@ Mainstream
 
 </td>
 
-<td style="text-align:right;">
-
-8.04
-
-</td>
-
-<td style="text-align:right;">
-
-15.76
-
-</td>
-
 </tr>
 
 <tr>
@@ -1200,18 +1034,6 @@ Other
 
 </td>
 
-<td style="text-align:right;">
-
-176.56
-
-</td>
-
-<td style="text-align:right;">
-
-251.89
-
-</td>
-
 </tr>
 
 </tbody>
@@ -1226,18 +1048,18 @@ non-subscribers \[3%\]).
 ``` r
 # dfs for those subsscribed to any X channel
 subscribed_any_channel_type <- list(
-  at_data %>% filter(at_any_alternative_subscribed == 1),
-  at_data %>% filter(at_any_extremist_subscribed == 1),
-  at_data %>% filter(at_any_mainstream_subscribed == 1),
-  at_data %>% filter(at_any_other_subscribed == 1)
+  activity_data %>% filter(at_any_alternative_subscribed == 1),
+  activity_data %>% filter(at_any_extremist_subscribed == 1),
+  activity_data %>% filter(at_any_mainstream_subscribed == 1),
+  activity_data %>% filter(at_any_other_subscribed == 1)
 )
 
 # dummy for NOT subsscribed to any X channel
 notsubscribed_any_channel_type <- list(
-  at_data %>% filter(at_any_alternative_subscribed != 1),
-  at_data %>% filter(at_any_extremist_subscribed != 1),
-  at_data %>% filter(at_any_mainstream_subscribed != 1),
-  at_data %>% filter(at_any_other_subscribed != 1)
+  activity_data %>% filter(at_any_alternative_subscribed != 1),
+  activity_data %>% filter(at_any_extremist_subscribed != 1),
+  activity_data %>% filter(at_any_mainstream_subscribed != 1),
+  activity_data %>% filter(at_any_other_subscribed != 1)
 )
 
 # calculate weighted mean for each channel type
@@ -1314,18 +1136,6 @@ upr95
 
 </th>
 
-<th style="text-align:right;">
-
-lwr90
-
-</th>
-
-<th style="text-align:right;">
-
-upr90
-
-</th>
-
 <th style="text-align:left;">
 
 subscription\_status
@@ -1388,18 +1198,6 @@ Alternative
 
 </td>
 
-<td style="text-align:right;">
-
-37.91
-
-</td>
-
-<td style="text-align:right;">
-
-86.53
-
-</td>
-
 <td style="text-align:left;">
 
 alternative subscriber
@@ -1455,18 +1253,6 @@ Extremist
 <td style="text-align:right;">
 
 24.02
-
-</td>
-
-<td style="text-align:right;">
-
-6.64
-
-</td>
-
-<td style="text-align:right;">
-
-22.48
 
 </td>
 
@@ -1528,18 +1314,6 @@ Mainstream
 
 </td>
 
-<td style="text-align:right;">
-
-19.15
-
-</td>
-
-<td style="text-align:right;">
-
-56.15
-
-</td>
-
 <td style="text-align:left;">
 
 mainstream subscriber
@@ -1595,18 +1369,6 @@ Other
 <td style="text-align:right;">
 
 397.22
-
-</td>
-
-<td style="text-align:right;">
-
-272.70
-
-</td>
-
-<td style="text-align:right;">
-
-386.15
 
 </td>
 
@@ -1668,18 +1430,6 @@ Alternative
 
 </td>
 
-<td style="text-align:right;">
-
-0.11
-
-</td>
-
-<td style="text-align:right;">
-
-0.37
-
-</td>
-
 <td style="text-align:left;">
 
 alternative subscriber
@@ -1735,18 +1485,6 @@ Extremist
 <td style="text-align:right;">
 
 0.07
-
-</td>
-
-<td style="text-align:right;">
-
-0.01
-
-</td>
-
-<td style="text-align:right;">
-
-0.06
 
 </td>
 
@@ -1808,18 +1546,6 @@ Mainstream
 
 </td>
 
-<td style="text-align:right;">
-
-1.49
-
-</td>
-
-<td style="text-align:right;">
-
-2.58
-
-</td>
-
 <td style="text-align:left;">
 
 mainstream subscriber
@@ -1878,18 +1604,6 @@ Other
 
 </td>
 
-<td style="text-align:right;">
-
-10.25
-
-</td>
-
-<td style="text-align:right;">
-
-36.50
-
-</td>
-
 <td style="text-align:left;">
 
 other subscriber
@@ -1924,18 +1638,18 @@ cumsum_fxn <- function (var, data) {
 }
 
 # calculate for all channel types
-at_cum_time_user <- map_dfr(minutes_activity_time_all_week, 
-                            ~cumsum_fxn(.x, at_data))
+concentration_time_user <- map_dfr(minutes_activity_time_all_week, 
+                            ~cumsum_fxn(.x, activity_data))
 
 # get the %user for 80% watch time
 lab_stat <-
   cumsum_fxn('activity_yt_video_time_elapsed_capped_total_alternative_all',
-             at_data) %>%
+             activity_data) %>%
   filter(round(cum_views, 2) == .8) %>%
   pull(ln_cum_user)
 
 # log 10 on x-axis
-time_cumsum_plot_inset <- at_cum_time_user %>%
+time_cumsum_plot_inset <- concentration_time_user %>%
   ggplot(aes(x = ln_cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   geom_point(
@@ -1954,7 +1668,7 @@ time_cumsum_plot_inset <- at_cum_time_user %>%
       "Mainstream media\nchannels",
       "Other\nchannels"
     ),
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
+    values = color_palette
   ) +
   geom_segment(aes(
     x = -4,
@@ -2013,7 +1727,7 @@ time_cumsum_plot_inset <- at_cum_time_user %>%
   )
 
 # without logging x
-time_cumsum_plot_zoomout <- at_cum_time_user %>%
+time_cumsum_plot_zoomout <- concentration_time_user %>%
   ggplot(aes(x = cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   scale_y_continuous(labels = scales::percent) +
@@ -2026,7 +1740,7 @@ time_cumsum_plot_zoomout <- at_cum_time_user %>%
       "Mainstream media\nchannels",
       "Other\nchannels"
     ),
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
+    values = color_palette
   ) +
   annotate(geom = "rect", col = "black", fill = "white",
            lwd = 2,
@@ -2056,7 +1770,7 @@ time_cumsum_plot_zoomout +
 videos from alternative channels.
 
 ``` r
-at_cum_time_user %>% 
+concentration_time_user %>% 
   filter(source == "alternative" & cum_views <= .8) %>% 
   pull(cum_user) %>% 
   max()
@@ -2069,7 +1783,7 @@ participants (9 people) were responsible for 80% of total time spent on
 these videos.
 
 ``` r
-at_cum_time_user %>% 
+concentration_time_user %>% 
   filter(source == "extremist" & cum_views <= .8) %>% 
   pull(cum_user) %>% 
   max()
@@ -2087,9 +1801,9 @@ channel videos.
 
 ``` r
 # join with rest of survey data
-at_data_supers <- at_data %>%
+activity_data_supers <- activity_data %>%
   left_join(
-    at_cum_time_user %>%
+    concentration_time_user %>%
       select(caseid, cum_views,  source) %>%
       pivot_wider(
         names_from = "source",
@@ -2107,7 +1821,7 @@ at_data_supers <- at_data %>%
 
 
 # select the top alternative super consumers
-top_time_all_weeks_most_alt <- at_data_supers  %>%
+top_time_all_weeks_most_alt <- activity_data_supers  %>%
   filter(super_alternative == 1)  %>%
   arrange(desc(
     minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week
@@ -2126,7 +1840,7 @@ top_time_all_weeks_most_alt <- at_data_supers  %>%
   )
 
 # select the top extremist super consumers
-top_time_all_weeks_most_ext <- at_data_supers  %>%
+top_time_all_weeks_most_ext <- activity_data_supers  %>%
   filter(super_extremist == 1)  %>%
   arrange(desc(
     minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week
@@ -2147,44 +1861,48 @@ top_time_all_weeks_most_ext <- at_data_supers  %>%
 
 ### Exposure level estimates (page 6–7)
 
-Alternative channel superconsumers spend a median of 23 hours (1376
+Alternative channel superconsumers spend a weighted median of 23 hours
+(1715 minutes) each week watching YouTube.
+
+``` r
+alternative_superconsumers <- activity_data_supers %>% 
+  filter(super_alternative == 1) 
+
+weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
+                  data = alternative_superconsumers) %>% 
+  pull(weighted_median) 
+```
+
+    ## [1] 1714.798
+
+Extremist channel superconsumers spend a median of 16 hours (979
 minutes) each week watching YouTube.
 
 ``` r
-at_data_supers %>% 
-  filter(super_alternative == 1) %>% 
-  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
-  median()
+extemist_superconsumers <- activity_data_supers %>% 
+  filter(super_extremist == 1) 
+
+weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
+                  data = extemist_superconsumers)  %>% 
+  pull(weighted_median) 
 ```
 
-    ## [1] 1375.584
+    ## [1] 979.0627
 
-Extremist channel superconsumers spend a median of 17 hours (1009
-minutes) each week watching YouTube.
+Median time per week across all participants is 0.2 hours (14 minutes).
 
 ``` r
-at_data_supers %>% 
-  filter(super_extremist == 1) %>%  
-  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
-  median()
+weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
+                  data = activity_data_supers)  %>% 
+  pull(weighted_median) 
 ```
 
-    ## [1] 1008.905
-
-Median time per week across all participants is 0.2 hours (13 minutes).
-
-``` r
-at_data_supers %>% 
-  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
-  median()
-```
-
-    ## [1] 13.25878
+    ## [1] 14.28387
 
 Number of alternative superconsumers is 17.
 
 ``` r
-at_data_supers %>% 
+activity_data_supers %>% 
   filter(super_alternative == 1) %>% 
   nrow()
 ```
@@ -2194,7 +1912,7 @@ at_data_supers %>%
 Number of extremist superconsumers is 9.
 
 ``` r
-at_data_supers %>% 
+activity_data_supers %>% 
   filter(super_extremist == 1) %>% 
   nrow()
 ```
@@ -2329,61 +2047,6 @@ plot_grid(
 
 <img src="main-text-figures_files/figure-gfm/combined plots-1.png" style="display: block; margin: auto;" />
 
-## Figure AX.
-
-Distribution of time spent per week on channels for anyone who watched
-an alternative (extremist) channel video over the course of the study.
-Bars are in descending order of most to least time on alternative
-(extremist) channel videos.
-
-``` r
-# anyone who watched at least one alternative
-top_time_all_weeks_most_any_alt <- at_data_supers  %>% 
-  filter(at_alt == 1)  %>% 
-  arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week)) %>% 
-  mutate(rank = 1:nrow(.)) %>% 
-  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>% 
-  mutate(channel_type = str_extract(str_replace(name, "_all_week$", ""), "[a-z]+$"),
-         minutes_value = value,
-         image = "https://i.postimg.cc/bwL3hjPY/user-icon-extremist.png" ) 
-
-# anyone who watched at least one extremist
-top_time_all_weeks_most_any_ext <- at_data_supers  %>% 
-  filter(at_ext == 1)  %>% 
-  arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week)) %>% 
-  mutate(rank = 1:nrow(.)) %>% 
-  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>% 
-  mutate(channel_type = str_extract(str_replace(name, "_all_week$", ""), "[a-z]+$"),
-         minutes_value = value,
-         image = "https://i.postimg.cc/D0BPKrVj/user-icon-alternative.png" )
-
-topuser_plot(
-    data = top_time_all_weeks_most_any_alt,
-    figure_size = .02,
-    figure_space = -100,
-    channel_type = "Alternative",
-    title = "Alternative channel superconsumers",
-    ylabel = "Minutes per week on YouTube videos",
-    y_limit = 3e3
-  )
-```
-
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
-
-``` r
-topuser_plot(
-    data = top_time_all_weeks_most_any_ext,
-    figure_size = .02,
-    figure_space = -160,
-    channel_type = "Extremist",
-    title = "Extremist channel superconsumers",
-    ylabel = "Minutes per week on YouTube videos",
-    y_limit = 3e3
-  )
-```
-
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-14-2.png" style="display: block; margin: auto;" />
-
 ## Figure 4. Predictors of watch time
 
 ``` r
@@ -2401,7 +2064,7 @@ time_fs <- list(
 
 ``` r
 # function to calculate rocust quasipoisson 
-robust_weighted_quasipoisson <- function(data = at_data,
+robust_weighted_quasipoisson <- function(data = activity_data,
                                          formula,
                                          robust_output = TRUE) {
   fit <- glm(
@@ -2530,15 +2193,15 @@ get_predictions <- function (model_name,
   # new data fixing all other covariates, varying hostile sexism
   new_data <- 
     expand.grid(
-          rr_cts = median(at_data$rr_cts, na.rm = T),
-          jw_cts = median(at_data$jw_cts, na.rm = T),
+          rr_cts = median(activity_data$rr_cts, na.rm = T),
+          jw_cts = median(activity_data$jw_cts, na.rm = T),
           fem_cts = seq(
             min(data$fem_cts, na.rm = T),
             max(data$fem_cts, na.rm = T),
             by = .25
           ),
-          week = median(at_data$week, na.rm = T),
-          age = median(at_data$age, na.rm = T),
+          week = median(activity_data$week, na.rm = T),
+          age = median(activity_data$age, na.rm = T),
           gender = modes$gender,
           educ2 = modes$educ2,
           race = modes$race
@@ -2547,14 +2210,14 @@ get_predictions <- function (model_name,
   mod_mat <-
     expand.grid(
       intercept = 1,
-      rr_cts = median(at_data$rr_cts, na.rm = T),
-      jw_cts = median(at_data$jw_cts, na.rm = T),
+      rr_cts = median(activity_data$rr_cts, na.rm = T),
+      jw_cts = median(activity_data$jw_cts, na.rm = T),
       fem_cts = seq(
-        min(at_data$fem_cts, na.rm = T),
-        max(at_data$fem_cts, na.rm = T),
+        min(activity_data$fem_cts, na.rm = T),
+        max(activity_data$fem_cts, na.rm = T),
         by = .25
       ),
-      age = median(at_data$age, na.rm = T),
+      age = median(activity_data$age, na.rm = T),
       genderMale = 1.00000,
       `educ2Some college` = 1.00000,
       `educ24-year` = 0,
@@ -2602,14 +2265,14 @@ get_predictions <- function (model_name,
 ``` r
 predicted_data_alternative <- get_predictions(
   model_name = "time_alternative_full",
-  data = at_data,
+  data = activity_data,
   model = QP_time_fit_noSE
 ) %>%
   mutate(channel_type = "alternative")
 
 predicted_data_extremist <- get_predictions(
   model_name = "time_extremist_full",
-  data = at_data,
+  data = activity_data,
   model = QP_time_fit_noSE
 ) %>%
   mutate(channel_type = "extremist")
@@ -2629,7 +2292,7 @@ predicted_data[channel_type == "extremist", y_max := 500]
 
 ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
   geom_rug(
-    data = at_data %>%
+    data = activity_data %>%
       filter(!is.na(.data[['fem_cts']])),
     aes(x = .data[['fem_cts']], y = 0),
     color = "darkgrey",
@@ -2674,6 +2337,157 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
 ```
 
 <img src="main-text-figures_files/figure-gfm/predicted value plots-1.png" style="display: block; margin: auto;" />
+
+### Correlates of exposure (page 9)
+
+When hostile sexism is at its minimum value of 1, expected levels are
+0.4 minutes per week spent watching alternative channel videos and 0.08
+minutes for extremist channel videos. These predicted values increase to
+383 and 51 minutes, respectively, when hostile sexism is at its maximum
+value of 5 (with the greatest marginal increases as hostile sexism
+reaches its highest levels).
+
+``` r
+predicted_data_alternative %>% 
+  filter(fem_cts %in% c(min(fem_cts), max(fem_cts)) ) %>% 
+  select(fem_cts, fit_response) %>% 
+  rename(`Hostile sexism score` = fem_cts,
+         `Predicted value` = fit_response) %>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;">
+
+Hostile sexism score
+
+</th>
+
+<th style="text-align:right;">
+
+Predicted value
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:right;">
+
+0.41
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+5
+
+</td>
+
+<td style="text-align:right;">
+
+383.01
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+``` r
+predicted_data_extremist %>% 
+  filter(fem_cts %in% c(min(fem_cts), max(fem_cts)) ) %>% 
+  select(fem_cts, fit_response)%>% 
+  rename(`Hostile sexism score` = fem_cts,
+         `Predicted value` = fit_response) %>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:right;">
+
+Hostile sexism score
+
+</th>
+
+<th style="text-align:right;">
+
+Predicted value
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:right;">
+
+1
+
+</td>
+
+<td style="text-align:right;">
+
+0.08
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+5
+
+</td>
+
+<td style="text-align:right;">
+
+51.00
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 ## Figure 6: Pages viewed immediately prior to YouTube videos by channel type
 
@@ -2780,7 +2594,597 @@ on_platform_referrers_by_channel_plot <-
 on_platform_referrers_by_channel_plot
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+
+### Internal and external referrers (page 10)
+
+49% and 51% of referrers to alternative and extremist channel videos,
+respectively, were off-platform sources compared to 41% and 44%,
+respectively, for videos from mainstream media channels and other
+channels.
+
+``` r
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type == "Off-platform") %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:left;">
+
+youtube\_video\_referrers\_by\_channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+percentage
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:left;">
+
+Off-platform
+
+</td>
+
+<td style="text-align:right;">
+
+48.58
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:left;">
+
+Off-platform
+
+</td>
+
+<td style="text-align:right;">
+
+50.89
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+mainstream
+
+</td>
+
+<td style="text-align:left;">
+
+Off-platform
+
+</td>
+
+<td style="text-align:right;">
+
+40.46
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+other
+
+</td>
+
+<td style="text-align:left;">
+
+Off-platform
+
+</td>
+
+<td style="text-align:right;">
+
+43.86
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+…we observe homophily across the video types, with 18% of referrers to
+alternative videos coming from other alternative video, 14% of referrers
+to extreme videos coming from other extreme videos, and 26% of referrers
+to mainstream media videos coming from other mainstream media videos
+
+``` r
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type == channel_type) %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:left;">
+
+youtube\_video\_referrers\_by\_channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+percentage
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:right;">
+
+18.30
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:right;">
+
+13.90
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+mainstream
+
+</td>
+
+<td style="text-align:left;">
+
+mainstream
+
+</td>
+
+<td style="text-align:right;">
+
+25.88
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+other
+
+</td>
+
+<td style="text-align:left;">
+
+other
+
+</td>
+
+<td style="text-align:right;">
+
+35.93
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+Interestingly, we observe 5% of referrals to extreme videos coming from
+alternative videos, but only 0.7% of referrals from alternative videos
+coming from extreme videos
+
+``` r
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type %in% c("alternative", "extremist") &
+           channel_type %in% c("alternative", "extremist")) %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:left;">
+
+youtube\_video\_referrers\_by\_channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+percentage
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:right;">
+
+18.30
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:right;">
+
+0.72
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:right;">
+
+5.05
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:right;">
+
+13.90
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+Lastly, we observe that alternative, extreme, and mainstream media
+videos all receive roughly equal referrals from videos in other channels
+(13–16%) and other on-platform sources (16–19%).
+
+``` r
+on_platform_referrers_by_channel %>% 
+  filter(youtube_video_referrers_by_channel_type%in% c("other", "Non-video on-platform")&
+           channel_type %in% c("alternative", "extremist", "mainstream") ) %>% 
+  select(channel_type, youtube_video_referrers_by_channel_type, percentage)%>% 
+  kbl(digits = 2, 
+      format = "html") %>% 
+  kable_styling()
+```
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+
+<thead>
+
+<tr>
+
+<th style="text-align:left;">
+
+channel\_type
+
+</th>
+
+<th style="text-align:left;">
+
+youtube\_video\_referrers\_by\_channel\_type
+
+</th>
+
+<th style="text-align:right;">
+
+percentage
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:left;">
+
+other
+
+</td>
+
+<td style="text-align:right;">
+
+15.56
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+alternative
+
+</td>
+
+<td style="text-align:left;">
+
+Non-video on-platform
+
+</td>
+
+<td style="text-align:right;">
+
+16.24
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:left;">
+
+other
+
+</td>
+
+<td style="text-align:right;">
+
+12.72
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+extremist
+
+</td>
+
+<td style="text-align:left;">
+
+Non-video on-platform
+
+</td>
+
+<td style="text-align:right;">
+
+17.01
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+mainstream
+
+</td>
+
+<td style="text-align:left;">
+
+other
+
+</td>
+
+<td style="text-align:right;">
+
+13.66
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+mainstream
+
+</td>
+
+<td style="text-align:left;">
+
+Non-video on-platform
+
+</td>
+
+<td style="text-align:right;">
+
+19.42
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 ## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
 
@@ -2838,7 +3242,7 @@ referrers_channel_type_videos_on_platform <-
                  size = .8) +
   #coord_cartesian(ylim = c(0, 50)) +
   scale_fill_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     labels = c(
       "Alternative\nchannels",
       "Extremist\nchannels",
@@ -2909,7 +3313,7 @@ referrers_channel_type_videos_off_platform <-
     labels = paste0(seq(0, 60, 10), "%")
   ) +
   scale_fill_manual(
-    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+    values = color_palette,
     labels = c(
       "Alternative\nchannel videos",
       "Extremist\nchannel videos",
@@ -2954,7 +3358,7 @@ plot_grid(
 )
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
 
 ## Figure 8: Recommendation frequency by type of channel being watched
 
@@ -3354,7 +3758,7 @@ recs_followed_grid
 
 ``` r
 # select all subscription variables
-sub_data <- at_data %>% 
+sub_data <- activity_data %>% 
   select(ends_with("subscribed"),
          ends_with("unclassified"),
          -contains("adl"),
@@ -3516,13 +3920,13 @@ combined %>%
   scale_y_continuous(limits = c(-10, 100),
                      breaks = seq(0, 100, by = 20),
                      labels = paste0(seq(0, 100, by = 20),"%") )+
-  scale_fill_manual(values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+  scale_fill_manual(values = color_palette,
                     name = "",
                     labels = c("Alternative channel",
                                "Extremist channel",
                                "Mainstream media channel",
                                "Other channel")) +
-  scale_color_manual(values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6"),
+  scale_color_manual(values = color_palette,
                     name = "",
                     labels = c("Alternative channel",
                                "Extremist channel",
@@ -3544,4 +3948,65 @@ combined %>%
          color = "none")
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/recs by sub-1.png" style="display: block; margin: auto;" />
+
+## Methods
+
+### Study participants stats (page 19)
+
+### Survey measures of racial resentment and hostile sexism stats (page 24)
+
+Racial resentment and hostile sexism measures were also included in our
+2020 survey; responses showed a high degree of persistence over time
+(\(r=.92\) for racial resentment, \(r =.79\) for hostile sexism).
+
+``` r
+#persistence racial resentment
+merged_data %>%
+  mutate(radicalize = case_when(rr_cts < 2.5 & rr_blk_mean > 3.5 ~ "radicalize",
+                                rr_cts > 3.5 & rr_blk_mean < 2.5 ~ "de-radicalize",
+                                TRUE ~ "neither")) %>%
+  ggplot(aes(rr_cts, rr_blk_mean)) +
+  geom_jitter(aes(col = radicalize),
+              size = 3, alpha = .8) +
+  scale_color_manual(name = "",  
+                     values = c("dodgerblue", "grey", "salmon")) +
+  labs(x = "Racial resentment score, 2018", y = "Racial resentment score, 2020") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+<img src="main-text-figures_files/figure-gfm/persist rr-1.png" style="display: block; margin: auto;" />
+
+``` r
+cor(merged_data$rr_blk_mean, merged_data$rr_cts,
+    use = "complete.obs",
+    method = 'pearson')
+```
+
+    ## [1] 0.9191482
+
+``` r
+# hostile sexism
+merged_data%>%
+  mutate(radicalize = case_when(fem_cts < 2.5 & fem_mean > 3.5 ~ "radicalize",
+                                fem_cts > 3.5 & fem_mean < 2.5 ~ "de-radicalize",
+                                TRUE ~ "neither")) %>%
+  ggplot(aes(fem_cts, fem_mean)) +
+  geom_jitter(aes(col = radicalize),
+              size = 3, alpha = .8) +
+  scale_color_manual(name = "", values = c("dodgerblue", "grey", "salmon")) +
+  labs(x = "Hostile sexism score, 2018", y = "Hostile sexism score, 2020") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+<img src="main-text-figures_files/figure-gfm/persist hostile sexism-1.png" style="display: block; margin: auto;" />
+
+``` r
+cor(merged_data$fem_mean, merged_data$fem_cts,
+    use = "complete.obs",
+    method = 'pearson')
+```
+
+    ## [1] 0.7947342

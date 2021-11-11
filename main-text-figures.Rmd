@@ -40,8 +40,11 @@ pacman::p_load(tidyverse,
 
 
 ```{r data}
+# survey + extension data for individuals
+merged_data <- read_rds("data/yg_browser_cces_merged.rds")
+
 # activity data
-at_data <- read_rds("data/activity_yg_cces.rds") 
+activity_data <- read_rds("data/activity_yg_cces.rds") 
 
 # subscriptions data
 summarize_subscribe_table <-
@@ -161,7 +164,7 @@ refactor_fxn <- function (var_list) {
 }
 # get modal values
 mode_fxn <- function(var) {
-  factor(which.max(table(with(at_data, get(
+  factor(which.max(table(with(activity_data, get(
     var
   )))) %>% names())
 }
@@ -175,7 +178,7 @@ names(modes) <- vars
 ```{r define variables}
 # attach survey weights
 svy_at <- svydesign(ids = ~ 1,
-                    data = at_data,
+                    data = activity_data,
                     weights = ~ weight_cmd)
 
 # color palette 
@@ -292,7 +295,7 @@ weighted_prop_fxn <- function(x, data) {
 Just 15% of the sample for whom we have browser activity data (n=1,181) viewed any video from an alternative channel and only 6% viewed any video from an extremist channel. By comparison, 44% viewed at least one video from a mainstream media channel. 
 
 ```{r}
-map_dfr(any_channel_type, ~ weighted_prop_fxn(.x, at_data)) %>% 
+map_dfr(any_channel_type, ~ weighted_prop_fxn(.x, activity_data)) %>% 
   kbl(digits = 2, 
       format = "html") %>% 
   kable_styling()
@@ -304,10 +307,10 @@ Among the set of people who saw at least one extremist channel video, for instan
 ```{r}
 # dfs with those who viewed any alternative/extremist/mainstream channel
 viewed_any_channel_type <- list(
-  at_data %>% filter(at_alt == 1),
-  at_data %>% filter(at_ext == 1),
-  at_data %>% filter(at_msm == 1),
-  at_data %>% filter(at_other == 1)
+  activity_data %>% filter(at_alt == 1),
+  activity_data %>% filter(at_ext == 1),
+  activity_data %>% filter(at_msm == 1),
+  activity_data %>% filter(at_other == 1)
 )
 
 map2_dfr(.x = any_subscribed_channel_type,
@@ -429,18 +432,18 @@ map2_dfr(.x = minutes_activity_time_all_week,
 ```{r}
 # dfs for those subsscribed to any X channel
 subscribed_any_channel_type <- list(
-  at_data %>% filter(at_any_alternative_subscribed == 1),
-  at_data %>% filter(at_any_extremist_subscribed == 1),
-  at_data %>% filter(at_any_mainstream_subscribed == 1),
-  at_data %>% filter(at_any_other_subscribed == 1)
+  activity_data %>% filter(at_any_alternative_subscribed == 1),
+  activity_data %>% filter(at_any_extremist_subscribed == 1),
+  activity_data %>% filter(at_any_mainstream_subscribed == 1),
+  activity_data %>% filter(at_any_other_subscribed == 1)
 )
 
 # dummy for NOT subsscribed to any X channel
 notsubscribed_any_channel_type <- list(
-  at_data %>% filter(at_any_alternative_subscribed != 1),
-  at_data %>% filter(at_any_extremist_subscribed != 1),
-  at_data %>% filter(at_any_mainstream_subscribed != 1),
-  at_data %>% filter(at_any_other_subscribed != 1)
+  activity_data %>% filter(at_any_alternative_subscribed != 1),
+  activity_data %>% filter(at_any_extremist_subscribed != 1),
+  activity_data %>% filter(at_any_mainstream_subscribed != 1),
+  activity_data %>% filter(at_any_other_subscribed != 1)
 )
 
 # calculate weighted mean for each channel type
@@ -487,18 +490,18 @@ cumsum_fxn <- function (var, data) {
 }
 
 # calculate for all channel types
-at_cum_time_user <- map_dfr(minutes_activity_time_all_week, 
-                            ~cumsum_fxn(.x, at_data))
+concentration_time_user <- map_dfr(minutes_activity_time_all_week, 
+                            ~cumsum_fxn(.x, activity_data))
 
 # get the %user for 80% watch time
 lab_stat <-
   cumsum_fxn('activity_yt_video_time_elapsed_capped_total_alternative_all',
-             at_data) %>%
+             activity_data) %>%
   filter(round(cum_views, 2) == .8) %>%
   pull(ln_cum_user)
 
 # log 10 on x-axis
-time_cumsum_plot_inset <- at_cum_time_user %>%
+time_cumsum_plot_inset <- concentration_time_user %>%
   ggplot(aes(x = ln_cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   geom_point(
@@ -576,7 +579,7 @@ time_cumsum_plot_inset <- at_cum_time_user %>%
   )
 
 # without logging x
-time_cumsum_plot_zoomout <- at_cum_time_user %>%
+time_cumsum_plot_zoomout <- concentration_time_user %>%
   ggplot(aes(x = cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   scale_y_continuous(labels = scales::percent) +
@@ -617,7 +620,7 @@ time_cumsum_plot_zoomout +
 1.5% of participants (17 people) account for 79% of total time spent on videos from alternative channels.
 
 ```{r}
-at_cum_time_user %>% 
+concentration_time_user %>% 
   filter(source == "alternative" & cum_views <= .8) %>% 
   pull(cum_user) %>% 
   max()
@@ -626,7 +629,7 @@ at_cum_time_user %>%
 This imbalance is even more severe for extremist channels, where 0.6% of participants (9 people) were responsible for 80% of total time spent on these videos.
 
 ```{r}
-at_cum_time_user %>% 
+concentration_time_user %>% 
   filter(source == "extremist" & cum_views <= .8) %>% 
   pull(cum_user) %>% 
   max()
@@ -640,9 +643,9 @@ Distribution of time spent per week on channels for alternative (extremist) supe
 
 ```{r calculate cumulative sums}
 # join with rest of survey data
-at_data_supers <- at_data %>%
+activity_data_supers <- activity_data %>%
   left_join(
-    at_cum_time_user %>%
+    concentration_time_user %>%
       select(caseid, cum_views,  source) %>%
       pivot_wider(
         names_from = "source",
@@ -660,7 +663,7 @@ at_data_supers <- at_data %>%
 
 
 # select the top alternative super consumers
-top_time_all_weeks_most_alt <- at_data_supers  %>%
+top_time_all_weeks_most_alt <- activity_data_supers  %>%
   filter(super_alternative == 1)  %>%
   arrange(desc(
     minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week
@@ -679,7 +682,7 @@ top_time_all_weeks_most_alt <- at_data_supers  %>%
   )
 
 # select the top extremist super consumers
-top_time_all_weeks_most_ext <- at_data_supers  %>%
+top_time_all_weeks_most_ext <- activity_data_supers  %>%
   filter(super_extremist == 1)  %>%
   arrange(desc(
     minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week
@@ -700,37 +703,41 @@ top_time_all_weeks_most_ext <- at_data_supers  %>%
 
 ### Exposure level estimates (page 6--7)
 
-Alternative channel superconsumers spend a median of 23 hours (1376 minutes) each week watching YouTube.
+Alternative channel superconsumers spend a weighted median of 29 hours (1715 minutes) each week watching YouTube.
 
 ```{r}
-at_data_supers %>% 
-  filter(super_alternative == 1) %>% 
-  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
-  median()
+alternative_superconsumers <- activity_data_supers %>% 
+  filter(super_alternative == 1) 
+
+weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
+                  data = alternative_superconsumers) %>% 
+  pull(weighted_median) 
 ```
 
 
-Extremist channel superconsumers spend a median of 17 hours (1009 minutes) each week watching YouTube.
+Extremist channel superconsumers spend a median of 16 hours (979 minutes) each week watching YouTube.
 
 ```{r}
-at_data_supers %>% 
-  filter(super_extremist == 1) %>%  
-  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
-  median()
+extemist_superconsumers <- activity_data_supers %>% 
+  filter(super_extremist == 1) 
+
+weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
+                  data = extemist_superconsumers)  %>% 
+  pull(weighted_median) 
 ```
 
-Median time per week across all participants is 0.2 hours (13 minutes).
+Median time per week across all participants is 0.2 hours (14 minutes).
 
 ```{r}
-at_data_supers %>% 
-  pull(minutes_at_yt_video_time_elapsed_capped_total_week) %>% 
-  median()
+weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
+                  data = activity_data_supers)  %>% 
+  pull(weighted_median) 
 ```
 
 Number of alternative superconsumers is 17.
 
 ```{r}
-at_data_supers %>% 
+activity_data_supers %>% 
   filter(super_alternative == 1) %>% 
   nrow()
 ```
@@ -738,7 +745,7 @@ at_data_supers %>%
 Number of extremist superconsumers is 9.
 
 ```{r}
-at_data_supers %>% 
+activity_data_supers %>% 
   filter(super_extremist == 1) %>% 
   nrow()
 ```
@@ -892,7 +899,7 @@ time_fs <- list(
 
 ```{r estimate quasipoisson}
 # function to calculate rocust quasipoisson 
-robust_weighted_quasipoisson <- function(data = at_data,
+robust_weighted_quasipoisson <- function(data = activity_data,
                                          formula,
                                          robust_output = TRUE) {
   fit <- glm(
@@ -1021,15 +1028,15 @@ get_predictions <- function (model_name,
   # new data fixing all other covariates, varying hostile sexism
   new_data <- 
     expand.grid(
-          rr_cts = median(at_data$rr_cts, na.rm = T),
-          jw_cts = median(at_data$jw_cts, na.rm = T),
+          rr_cts = median(activity_data$rr_cts, na.rm = T),
+          jw_cts = median(activity_data$jw_cts, na.rm = T),
           fem_cts = seq(
             min(data$fem_cts, na.rm = T),
             max(data$fem_cts, na.rm = T),
             by = .25
           ),
-          week = median(at_data$week, na.rm = T),
-          age = median(at_data$age, na.rm = T),
+          week = median(activity_data$week, na.rm = T),
+          age = median(activity_data$age, na.rm = T),
           gender = modes$gender,
           educ2 = modes$educ2,
           race = modes$race
@@ -1038,14 +1045,14 @@ get_predictions <- function (model_name,
   mod_mat <-
     expand.grid(
       intercept = 1,
-      rr_cts = median(at_data$rr_cts, na.rm = T),
-      jw_cts = median(at_data$jw_cts, na.rm = T),
+      rr_cts = median(activity_data$rr_cts, na.rm = T),
+      jw_cts = median(activity_data$jw_cts, na.rm = T),
       fem_cts = seq(
-        min(at_data$fem_cts, na.rm = T),
-        max(at_data$fem_cts, na.rm = T),
+        min(activity_data$fem_cts, na.rm = T),
+        max(activity_data$fem_cts, na.rm = T),
         by = .25
       ),
-      age = median(at_data$age, na.rm = T),
+      age = median(activity_data$age, na.rm = T),
       genderMale = 1.00000,
       `educ2Some college` = 1.00000,
       `educ24-year` = 0,
@@ -1094,14 +1101,14 @@ get_predictions <- function (model_name,
 ```{r predicted value plots}
 predicted_data_alternative <- get_predictions(
   model_name = "time_alternative_full",
-  data = at_data,
+  data = activity_data,
   model = QP_time_fit_noSE
 ) %>%
   mutate(channel_type = "alternative")
 
 predicted_data_extremist <- get_predictions(
   model_name = "time_extremist_full",
-  data = at_data,
+  data = activity_data,
   model = QP_time_fit_noSE
 ) %>%
   mutate(channel_type = "extremist")
@@ -1121,7 +1128,7 @@ predicted_data[channel_type == "extremist", y_max := 500]
 
 ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
   geom_rug(
-    data = at_data %>%
+    data = activity_data %>%
       filter(!is.na(.data[['fem_cts']])),
     aes(x = .data[['fem_cts']], y = 0),
     color = "darkgrey",
@@ -1922,9 +1929,9 @@ recs_followed_grid
 
 ## Figure 10: YouTube recommendations by subscription status and channel type
 
-```{r}
+```{r recs by sub}
 # select all subscription variables
-sub_data <- at_data %>% 
+sub_data <- activity_data %>% 
   select(ends_with("subscribed"),
          ends_with("unclassified"),
          -contains("adl"),
@@ -2112,6 +2119,55 @@ combined %>%
          pattern = guide_legend(override.aes = list(fill = "white", 
                                                     color = "black")),
          color = "none")
+```
+
+
+## Methods
+
+### Study participants stats (page 19)
+
+### Survey measures of racial resentment and hostile sexism stats (page 24)
+
+Racial resentment and hostile sexism measures were also included in our 2020 survey; responses showed a high degree of persistence over time ($r=.92$ for racial resentment, $r =.79$ for hostile sexism).
+
+```{r persist rr}
+#persistence racial resentment
+merged_data %>%
+  mutate(radicalize = case_when(rr_cts < 2.5 & rr_blk_mean > 3.5 ~ "radicalize",
+                                rr_cts > 3.5 & rr_blk_mean < 2.5 ~ "de-radicalize",
+                                TRUE ~ "neither")) %>%
+  ggplot(aes(rr_cts, rr_blk_mean)) +
+  geom_jitter(aes(col = radicalize),
+              size = 3, alpha = .8) +
+  scale_color_manual(name = "",  
+                     values = c("dodgerblue", "grey", "salmon")) +
+  labs(x = "Racial resentment score, 2018", y = "Racial resentment score, 2020") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+
+cor(merged_data$rr_blk_mean, merged_data$rr_cts,
+    use = "complete.obs",
+    method = 'pearson')
+```
+
+```{r persist hostile sexism}
+# hostile sexism
+merged_data%>%
+  mutate(radicalize = case_when(fem_cts < 2.5 & fem_mean > 3.5 ~ "radicalize",
+                                fem_cts > 3.5 & fem_mean < 2.5 ~ "de-radicalize",
+                                TRUE ~ "neither")) %>%
+  ggplot(aes(fem_cts, fem_mean)) +
+  geom_jitter(aes(col = radicalize),
+              size = 3, alpha = .8) +
+  scale_color_manual(name = "", values = c("dodgerblue", "grey", "salmon")) +
+  labs(x = "Hostile sexism score, 2018", y = "Hostile sexism score, 2020") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+cor(merged_data$fem_mean, merged_data$fem_cts,
+    use = "complete.obs",
+    method = 'pearson')
 ```
 
 
