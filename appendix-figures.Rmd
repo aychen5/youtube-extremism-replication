@@ -32,7 +32,7 @@ pacman::p_load(tidyverse,
 # survey + extension data for individuals
 merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 # activity data
-at_data <- read_rds("data/activity_yg_cces.rds") 
+activity_data <- read_rds("data/activity_yg_cces.rds") 
 # over time data for consumption over time
 at_over_time <- read_rds("data/activity_time_user_by_date.rds")
 at_over_views <- read_rds("data/activity_count_user_by_date.rds")
@@ -399,14 +399,14 @@ date_vector <-
 users_by_mat <-
   matrix(
     data = 0,
-    nrow = nrow(at_data),
+    nrow = nrow(activity_data),
     ncol = length(date_vector)
   )
-for (i in 1:nrow(at_data)) {
+for (i in 1:nrow(activity_data)) {
   start_id <-
-    which(date_vector == as.Date(at_data[i, ]$activity_start_date))
+    which(date_vector == as.Date(activity_data[i, ]$activity_start_date))
   end_id <-
-    which(date_vector == as.Date(at_data[i, ]$activity_end_date))
+    which(date_vector == as.Date(activity_data[i, ]$activity_end_date))
   # interpolate between start and end date
   users_by_mat[i, start_id:end_id] <- 1
 }
@@ -571,7 +571,7 @@ sma_time_plot
 ```
 
 
-## Figure AX.
+## Figure A3. and A4.
 
 Distribution of time spent per week on channels for anyone who watched an alternative (extremist) channel video over the course of the study. Bars are in descending order of most to least time on alternative (extremist) channel videos.
 
@@ -604,7 +604,7 @@ minutes_activity_time_all_week <- c(
 
 # calculate for all channel types
 at_cum_time_user <- map_dfr(minutes_activity_time_all_week, 
-                            ~cumsum_fxn(.x, at_data))
+                            ~cumsum_fxn(.x, activity_data))
 
 topuser_plot <- function (data,
                           channel_type,
@@ -686,7 +686,7 @@ topuser_plot <- function (data,
 }
 
 # join with rest of survey data
-at_data_supers <- at_data %>%
+activity_data_supers <- activity_data %>%
   left_join(
     at_cum_time_user %>%
       select(caseid, cum_views,  source) %>%
@@ -706,7 +706,7 @@ at_data_supers <- at_data %>%
 
 
 # anyone who watched at least one alternative
-top_time_all_weeks_most_any_alt <- at_data_supers  %>% 
+top_time_all_weeks_most_any_alt <- activity_data_supers  %>% 
   filter(at_alt == 1)  %>% 
   arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week)) %>% 
   mutate(rank = 1:nrow(.)) %>% 
@@ -716,7 +716,7 @@ top_time_all_weeks_most_any_alt <- at_data_supers  %>%
          image = "https://i.postimg.cc/bwL3hjPY/user-icon-extremist.png" ) 
 
 # anyone who watched at least one extremist
-top_time_all_weeks_most_any_ext <- at_data_supers  %>% 
+top_time_all_weeks_most_any_ext <- activity_data_supers  %>% 
   filter(at_ext == 1)  %>% 
   arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week)) %>% 
   mutate(rank = 1:nrow(.)) %>% 
@@ -730,7 +730,7 @@ topuser_plot(
     figure_size = .02,
     figure_space = -100,
     channel_type = "Alternative",
-    title = "Alternative channel superconsumers",
+    title = "Particpants who watched any alternative channel video",
     ylabel = "Minutes per week on YouTube videos",
     y_limit = 3e3
   )
@@ -740,18 +740,12 @@ topuser_plot(
     figure_size = .02,
     figure_space = -160,
     channel_type = "Extremist",
-    title = "Extremist channel superconsumers",
+    title = "Particpants who watched any extremist channel video",
     ylabel = "Minutes per week on YouTube videos",
     y_limit = 3e3
   )
 ```
 
-
-## Figure A3
-
-```{r}
-
-```
 
 ## Figure A
 
@@ -833,13 +827,13 @@ visit_pid_fs <- list(
   f_visit_pid_mainstream_all
 )
 
-robust_weighted_quasipoisson <- function(data = at_data, 
+robust_weighted_quasipoisson <- function(data = activity_data, 
                                          formula,
                                          robust_output = TRUE) {
   fit <- glm(formula, 
              family = quasipoisson(link = "log"),
              offset = log(week),
-             data = at_data,
+             data = activity_data,
              weights = weight_cmd) 
   
   results <- fit
@@ -1033,19 +1027,11 @@ fire_visit_plot
 
 ## Figure A13: Concentration of exposure to alternative and extremist channels (view counts)
 
-```{r}
-minutes_activity_time_all_week <- c{
-  ""
-}
-
-# calculate for all channel types
-at_cum_time_user <- map_dfr(minutes_activity_time_all_week, 
-                            ~cumsum_fxn(.x, at_data))
-
+```{r eval = FALSE}
 # get the %user for 80% watch time
 lab_stat <-
   cumsum_fxn('activity_yt_video_time_elapsed_capped_total_alternative_all',
-             at_data) %>%
+             activity_data) %>%
   filter(round(cum_views, 2) == .8) %>%
   pull(ln_cum_user)
 

@@ -6,10 +6,13 @@ Appendix Tables and Figures
 # survey + extension data for individuals
 merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 # activity data
-at_data <- read_rds("data/activity_yg_cces.rds") 
+activity_data <- read_rds("data/activity_yg_cces.rds") 
 # over time data for consumption over time
 at_over_time <- read_rds("data/activity_time_user_by_date.rds")
 at_over_views <- read_rds("data/activity_count_user_by_date.rds")
+
+# color palette 
+color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
 ```
 
 ## Table A1.
@@ -2466,14 +2469,14 @@ date_vector <-
 users_by_mat <-
   matrix(
     data = 0,
-    nrow = nrow(at_data),
+    nrow = nrow(activity_data),
     ncol = length(date_vector)
   )
-for (i in 1:nrow(at_data)) {
+for (i in 1:nrow(activity_data)) {
   start_id <-
-    which(date_vector == as.Date(at_data[i, ]$activity_start_date))
+    which(date_vector == as.Date(activity_data[i, ]$activity_start_date))
   end_id <-
-    which(date_vector == as.Date(at_data[i, ]$activity_end_date))
+    which(date_vector == as.Date(activity_data[i, ]$activity_end_date))
   # interpolate between start and end date
   users_by_mat[i, start_id:end_id] <- 1
 }
@@ -2492,6 +2495,29 @@ n_users_by_date %>%
 ```
 
 <img src="appendix-figures_files/figure-gfm/attrition-1.png" style="display: block; margin: auto;" />
+
+Distribution of time in study
+
+``` r
+# average number of days in study
+ggplot(tibble(days_enrolled = rowSums(users_by_mat))) +
+  geom_histogram(aes(x = days_enrolled),
+                 alpha = .8,
+                 bins = length(date_vector)/2) +
+  geom_vline(xintercept = median(rowSums(users_by_mat)),
+             color = "blue") +
+  labs(x = "Days enrolled in study",
+       y = "Number of participants") +
+  annotate(geom = "text", 
+           label = paste0("median = ", median(rowSums(users_by_mat)), " days"),
+           angle = 90,
+           color = "blue",
+           x =  median(rowSums(users_by_mat)) - 2,
+           y = 150) +
+  theme_minimal()
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 ## Figure A2: Consumption levels over time by channel type
 
@@ -2583,7 +2609,7 @@ sma_count_plot <- ma_count %>%
 sma_count_plot
 ```
 
-<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
 ``` r
 sma_time_plot <- ma_time %>%
@@ -2618,4 +2644,590 @@ sma_time_plot <- ma_time %>%
 sma_time_plot
 ```
 
-<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-2.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-4-2.png" style="display: block; margin: auto;" />
+
+## Figure A3. and A4.
+
+Distribution of time spent per week on channels for anyone who watched
+an alternative (extremist) channel video over the course of the study.
+Bars are in descending order of most to least time on alternative
+(extremist) channel videos.
+
+``` r
+#cumulative time spent on that channel and the cumulative user 
+cumsum_fxn <- function (var, data) {
+  channel_type <-
+      str_replace(str_extract(var, "[a-z]+_all_week$"), "_all_week", "")
+  data %>%
+    arrange(desc(.data[[var]])) %>%
+    mutate(
+      users = weight_cmd / sum(.$weight_cmd, na.rm = T),
+      views = (.data[[var]] / sum(.data[[var]], na.rm = T)),
+      cum_user = cumsum(users),
+      cum_views = cumsum(views),
+      ln_cum_user = log10(cumsum(users)),
+      ln_cum_views = log10(cumsum(views)),
+      source = channel_type
+    ) %>%
+    select(cum_user, cum_views, ln_cum_user, source, caseid, weight_cmd)
+}
+
+# dependent variables (time spent per week) by channel type
+minutes_activity_time_all_week <- c(
+    "minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week",
+    "minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week",
+    "minutes_activity_yt_video_time_elapsed_capped_total_mainstream_all_week",
+    "minutes_activity_yt_video_time_elapsed_capped_total_other_all_week"
+  )
+
+# calculate for all channel types
+at_cum_time_user <- map_dfr(minutes_activity_time_all_week, 
+                            ~cumsum_fxn(.x, activity_data))
+
+topuser_plot <- function (data,
+                          channel_type,
+                          title,
+                          ylabel,
+                          y_limit = 5e4,
+                          figure_size,
+                          figure_space) {
+  
+  nobs <- nrow(data %>% distinct(caseid))
+
+  
+  if (channel_type == 'Extremist') {
+    
+    p <- data %>%
+      mutate(channel_type = factor(
+        channel_type,
+        levels = c("extremist", "alternative", "mainstream", "other")
+      )) %>%
+      ggplot(., aes(x = rank,
+                    y = minutes_value,
+                    fill = channel_type)) +
+      geom_col(position = position_stack(reverse = TRUE)) +
+      geom_image(
+        data = . %>%
+          filter((super_alternative == 1) &
+                   channel_type == "other"),
+        aes(image = image,
+            y = figure_space),
+        size = figure_size,
+        show.legend = FALSE
+      )
+    
+  } else if (channel_type == 'Alternative') {
+    p <-  data %>% 
+      ggplot(., aes(x = rank, 
+                      y = minutes_value,
+                      fill = channel_type)) +
+      geom_col(position = position_stack(reverse = TRUE)) +
+      geom_image(
+        data = . %>%
+          filter((super_extremist == 1) &
+                   channel_type == "other"),
+        aes(image = image,
+            y = figure_space),
+        size = figure_size,
+        show.legend = FALSE
+      )
+  }
+  
+  p +
+    scale_fill_manual(
+      name = "",
+      values = c(
+        "alternative" = "#FFA500",
+        "extremist" = "#CD5C5C",
+        "mainstream" = "#015CB9",
+        "other" = "#E3E6E6"
+      ),
+      labels = c(
+        "alternative" = "Alternative \nchannels",
+        "extremist" = "Extremist \nchannels",
+        "mainstream" = "Mainstream \nmedia",
+        "other" = "Other \nchannels"
+      )
+    ) +
+    labs(x = "",
+         y = ylabel,
+         title = paste0(title, " (n = ", nobs, ")")) +
+    theme_minimal() +
+    theme(
+      legend.position = 'bottom',
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.title.x = element_text(hjust = .95)
+    ) +
+    coord_cartesian(ylim = c(-160, y_limit))
+}
+
+# join with rest of survey data
+activity_data_supers <- activity_data %>%
+  left_join(
+    at_cum_time_user %>%
+      select(caseid, cum_views,  source) %>%
+      pivot_wider(
+        names_from = "source",
+        names_glue = "cumsum_{source}",
+        values_from = "cum_views"
+      ),
+    by = "caseid"
+  ) %>%
+  # define a superconsumer as someone who is in the top 80th percentile of watch time per week
+  mutate(
+    super_alternative = if_else(cumsum_alternative <= .8, 1, 0),
+    super_extremist = if_else(cumsum_extremist <= .8, 1, 0),
+    super_mainstream = if_else(cumsum_mainstream <= .8, 1, 0)
+  )
+
+
+# anyone who watched at least one alternative
+top_time_all_weeks_most_any_alt <- activity_data_supers  %>% 
+  filter(at_alt == 1)  %>% 
+  arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week)) %>% 
+  mutate(rank = 1:nrow(.)) %>% 
+  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>% 
+  mutate(channel_type = str_extract(str_replace(name, "_all_week$", ""), "[a-z]+$"),
+         minutes_value = value,
+         image = "https://i.postimg.cc/bwL3hjPY/user-icon-extremist.png" ) 
+
+# anyone who watched at least one extremist
+top_time_all_weeks_most_any_ext <- activity_data_supers  %>% 
+  filter(at_ext == 1)  %>% 
+  arrange(desc(minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week)) %>% 
+  mutate(rank = 1:nrow(.)) %>% 
+  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>% 
+  mutate(channel_type = str_extract(str_replace(name, "_all_week$", ""), "[a-z]+$"),
+         minutes_value = value,
+         image = "https://i.postimg.cc/D0BPKrVj/user-icon-alternative.png" )
+
+topuser_plot(
+    data = top_time_all_weeks_most_any_alt,
+    figure_size = .02,
+    figure_space = -100,
+    channel_type = "Alternative",
+    title = "Particpants who watched any alternative channel video",
+    ylabel = "Minutes per week on YouTube videos",
+    y_limit = 3e3
+  )
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+
+``` r
+topuser_plot(
+    data = top_time_all_weeks_most_any_ext,
+    figure_size = .02,
+    figure_space = -160,
+    channel_type = "Extremist",
+    title = "Particpants who watched any extremist channel video",
+    ylabel = "Minutes per week on YouTube videos",
+    y_limit = 3e3
+  )
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-5-2.png" style="display: block; margin: auto;" />
+
+## Figure A
+
+``` r
+# with different rr measure (rr_over_mean_cces)
+
+f_time_alternative_all <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_over_mean_cces + jw_cts + fem_cts + age + gender + educ2 + race
+  )
+f_time_extremist_all <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_over_mean_cces + jw_cts + fem_cts + age + gender + educ2 + race
+  )
+f_time_mainstream_all <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_over_mean_cces + jw_cts + fem_cts + age + gender + educ2 + race
+  )
+f_visit_alternative_all <-
+  formula(
+    activity_yt_n_video_alternative_all ~  rr_over_mean_cces + jw_cts + fem_cts + age + gender + educ2 + race
+  )
+f_visit_extremist_all <-
+  formula(activity_yt_n_video_extremist_all ~  rr_over_mean_cces + jw_cts + fem_cts + age + gender + educ2 + race)
+
+f_visit_mainstream_all <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  rr_over_mean_cces + jw_cts + fem_cts + age + gender + educ2 + race
+  )
+
+# with party ID
+f_time_pid_alternative_all <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race + pid_lean
+  )
+f_time_pid_extremist_all <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race + pid_lean
+  )
+f_time_pid_mainstream_all <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race + pid_lean
+  )
+f_visit_pid_alternative_all <-
+  formula(
+    activity_yt_n_video_alternative_all ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race + pid_lean
+  )
+f_visit_pid_extremist_all <-
+  formula(
+    activity_yt_n_video_extremist_all ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race + pid_lean
+  )
+f_visit_pid_mainstream_all <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  rr_cts + jw_cts + fem_cts + age + gender + educ2 + race  + pid_lean
+  )
+
+
+#toutes
+time_fs <- list(
+  f_time_alternative_all,
+  f_time_extremist_all,
+  f_time_mainstream_all
+)
+visit_fs <- list(
+  f_visit_alternative_all,
+  f_visit_extremist_all,
+  f_visit_mainstream_all
+)
+
+#toutes
+time_pid_fs <- list(
+  f_time_pid_alternative_all,
+  f_time_pid_extremist_all,
+  f_time_pid_mainstream_all
+)
+visit_pid_fs <- list(
+  f_visit_pid_alternative_all,
+  f_visit_pid_extremist_all,
+  f_visit_pid_mainstream_all
+)
+
+robust_weighted_quasipoisson <- function(data = activity_data, 
+                                         formula,
+                                         robust_output = TRUE) {
+  fit <- glm(formula, 
+             family = quasipoisson(link = "log"),
+             offset = log(week),
+             data = activity_data,
+             weights = weight_cmd) 
+  
+  results <- fit
+  
+  if (robust_output == TRUE) {
+    cov_mod <- vcovHC(fit, type = "HC0")
+    std_err <- sqrt(diag(cov_mod))
+    q_val <- qnorm(0.975) # stick to 95% CI
+    
+    results <- bind_cols(
+      predictor = fit$coefficients %>% names(),
+      estimate = coef(fit),
+      robust_se = std_err,
+      z = (coef(fit) / std_err),
+      p_val = 1.96 * pnorm(abs(coef(fit) / std_err), lower.tail = FALSE),
+      ci_lwr = coef(fit) - q_val  * std_err,
+      ci_upr = coef(fit) + q_val  * std_err,
+    ) %>%
+      mutate(
+        stat_sig = if_else(p_val < .05, "*", ""),
+        channel_type = str_extract(as.character(formula)[2], "alternative|extremist|mainstream")
+      ) 
+  }
+  return(results)
+}
+
+coef_plot <- function(data) {
+  
+  if (str_detect(deparse(substitute(data)), "time")) {
+    facet_labels <- c(
+      "alternative" = str_wrap("Minutes/week on alternative channel videos", width = 30),
+      "extremist" = str_wrap("Minutes/week on extremist channel videos", width = 30),
+      "mainstream" = str_wrap("Minutes/week on mainstream media channel videos", width = 30)
+    )
+  } else {
+    facet_labels <- c(
+      "alternative" = str_wrap("Views/week on alternative channel videos", width = 30),
+      "extremist" = str_wrap("Views/week on extremist channel videos", width = 30),
+      "mainstream" = str_wrap("Views/week on mainstream media channel videos", width = 30)
+    )
+  }
+
+  
+  data %>%
+    filter(predictor != "(Intercept)") %>%
+    mutate(predictor = refactor_fxn(recode_fxn(predictor))) %>%
+    ggplot(aes(x = estimate, y = str_wrap_factor(predictor, width = 12))) +
+    geom_vline(xintercept = 0, lty = 2) +
+    geom_linerange(
+      aes(
+        xmin = ci_lwr,
+        xmax = ci_upr,
+        color = channel_type
+      ),
+      size = 9,
+      show.legend = FALSE
+    ) +
+    geom_point(
+      size = 10,
+      shape = 21,
+      stroke = 1,
+      color = "black",
+      fill = "#FFFFFF"
+    ) +
+    geom_text(aes(label = round(estimate, 2)),
+              size = 3.5, color = "black") +
+    geom_text(
+      aes(label = stat_sig),
+      size = 8,
+      nudge_x = .45,
+      nudge_y = .25
+    ) +
+    facet_wrap(~ channel_type,
+               labeller = as_labeller(facet_labels)) +
+    scale_color_manual(
+      values = c(
+        "alternative" = "#FFA500",
+        "extremist" = "#CD5C5C",
+        "mainstream" = "#015CB9"
+      )
+    ) +
+    labs(y = "", x = "Quasipoisson coefficient") +
+    theme_bw() +
+    theme(
+      strip.text = element_text(size = 12, hjust = .5),
+      strip.background = element_rect(fill = "grey", color = "grey"),
+      axis.text.y = element_text(size = 12)
+    )
+}
+```
+
+``` r
+QP_visit_fit <- list()
+QP_time_fit <- list()
+QP_visit_pid_fit <- list()
+QP_time_pid_fit <- list()
+
+for (i in 1:length(time_fs)) {
+  QP_visit_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_fs[[i]])
+  QP_time_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_fs[[i]])
+  QP_visit_pid_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_pid_fs[[i]])
+  QP_time_pid_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_pid_fs[[i]])
+}
+
+
+names(QP_time_fit) <-
+  c("time_alternative_full",
+    "time_extremist_full",
+    "time_mainstream_full")
+names(QP_visit_fit) <-
+  c("visit_alternative_full",
+    "visit_extremist_full",
+    "visit_mainstream_full")
+names(QP_time_pid_fit) <-
+  c("time_pid_alternative_full",
+    "time_pid_extremist_full",
+    "time_pid_mainstream_full")
+names(QP_visit_pid_fit) <-
+  c("visit_pid_alternative_full",
+    "visit_pid_extremist_full",
+    "visit_pid_mainstream_full")
+
+
+coef_names <- c("Intercept",
+                "Denial of racism",
+                "Feeling Jews",
+                "Hostile sexism",
+                "Age",
+                "Male",
+                "Some college",
+                "Bachelor's degree",
+                "Post-grad",
+                "Non-white")
+```
+
+## Figure A7
+
+``` r
+time_pid_models <- bind_rows(QP_time_pid_fit)
+
+pid_time_plot <- coef_plot(data = time_pid_models) 
+pid_time_plot
+```
+
+<img src="appendix-figures_files/figure-gfm/PID time plot-1.png" style="display: block; margin: auto;" />
+
+``` r
+visit_pid_models <- bind_rows(QP_visit_pid_fit)
+
+pid_visit_plot <- coef_plot(data = visit_pid_models) 
+pid_visit_plot
+```
+
+<img src="appendix-figures_files/figure-gfm/PID visit plot-1.png" style="display: block; margin: auto;" />
+
+## Figure A8
+
+``` r
+time_models <- bind_rows(QP_time_fit)
+
+fire_time_plot <- coef_plot(data = time_models)
+fire_time_plot
+```
+
+<img src="appendix-figures_files/figure-gfm/FIRE time plot-1.png" style="display: block; margin: auto;" />
+
+``` r
+visit_models <- bind_rows(QP_visit_fit)
+
+fire_visit_plot <- coef_plot(data = visit_models)
+fire_visit_plot
+```
+
+<img src="appendix-figures_files/figure-gfm/FIRE visit plot-1.png" style="display: block; margin: auto;" />
+
+## Figure A9: Correlation between browser history and activity
+
+## Table A4: Predictors of proportion of time spent on alternative/extremist videos by day
+
+## Figure A10: Differences in perceptions of YouTube between full sample and extension sample
+
+## Figure A11: Percentage of views to each channel type by video number within session
+
+## Figure A12: Percentage of views to each channel type by total session length
+
+## Table A5: External referrers to alternative and extremist channel videos
+
+## Figure A13: Concentration of exposure to alternative and extremist channels (view counts)
+
+``` r
+# get the %user for 80% watch time
+lab_stat <-
+  cumsum_fxn('activity_yt_video_time_elapsed_capped_total_alternative_all',
+             activity_data) %>%
+  filter(round(cum_views, 2) == .8) %>%
+  pull(ln_cum_user)
+
+# log 10 on x-axis
+time_cumsum_plot_inset <- at_cum_time_user %>%
+  ggplot(aes(x = ln_cum_user, y = cum_views, color = source)) +
+  geom_line(size = 2) +
+  geom_point(
+    aes(x = lab_stat, y = .8),
+    color = 'black',
+    shape = 4,
+    stroke = 1,
+    size = 1.5
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_color_manual(
+    name = "",
+    labels = c(
+      "Alternative\nchannels",
+      "Extremist\nchannels",
+      "Mainstream media\nchannels",
+      "Other\nchannels"
+    ),
+    values = color_palette
+  ) +
+  geom_segment(aes(
+    x = -4,
+    xend = lab_stat,
+    y = .8,
+    yend = .8
+  ),
+  lty = 2,
+  color = 'black') +
+  geom_segment(aes(
+    x = lab_stat,
+    xend = lab_stat,
+    y = 0,
+    yend = .8
+  ),
+  lty = 2,
+  color = 'black') +
+  geom_curve(
+    aes(
+      x = -2.5,
+      xend = lab_stat,
+      y = .9,
+      yend = .8
+    ),
+    curvature = 0.25,
+    angle = 35,
+    color = 'black'
+  ) +
+  scale_x_continuous(
+    limits = c(-4, 0),
+    breaks = seq(-4, 0,
+                 by = 1),
+    labels = paste0((round(10 ^ (
+      seq(-4, 0,
+          by = 1)
+    ), 3)) * 100, "%")
+  ) +
+  annotate(
+    "text",
+    x = -3,
+    y = .95,
+    label = str_wrap(paste0(
+      round(10^(lab_stat) * 100, 1),
+      "% of users account for 80% of time \nspent viewing alternative channel videos."
+    ), width = 45),
+    size = 2.5
+  ) +
+  labs(x = expression(log[10]~ "(Percentage of users)"), 
+       y = "Percentage of total exposure (minutes)") +
+  theme_minimal() +
+  theme(
+    plot.background = element_blank(),
+    legend.position = 'bottom',
+    axis.title.x = element_text(size = 10),
+    axis.title.y = element_text(size = 10)
+  )
+
+# without logging x
+time_cumsum_plot_zoomout <- at_cum_time_user %>%
+  ggplot(aes(x = cum_user, y = cum_views, color = source)) +
+  geom_line(size = 2) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(labels = scales::percent) +
+  scale_color_manual(
+    name = "",
+    labels = c(
+      "Alternative\nchannels",
+      "Extremist\nchannels",
+      "Mainstream media\nchannels",
+      "Other\nchannels"
+    ),
+    values = color_palette
+  ) +
+  annotate(geom = "rect", col = "black", fill = "white",
+           lwd = 2,
+           ymin = 0, ymax = .87, xmin = .28, xmax = 1) +
+  labs(x = "Percentage of users", y = "Percentage of total exposure (minutes)") +
+  theme_minimal() +
+  theme(
+    plot.background = element_blank(),
+    legend.position = 'bottom',
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12)
+  )
+
+# combine inset (logged) and non-log 
+time_cumsum_plot_zoomout +
+  patchwork::inset_element(time_cumsum_plot_inset +
+                             guides(color = "none"), 
+                           left = 0.3, bottom = 0.05, right = .95, top = .85,
+                           on_top = TRUE)
+```
