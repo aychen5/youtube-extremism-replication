@@ -35,7 +35,8 @@ pacman::p_load(tidyverse,
                purrr,
                ggimage,
                ggpattern,
-               kableExtra)
+               kableExtra,
+               stargazer)
 ```
 
 
@@ -410,6 +411,23 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
     color = "none"
   )
 summarize_subscribe_plot
+```
+
+
+```{r fig 1 table, eval=FALSE, include=FALSE}
+# this table was created upstream and output as table is read in directly
+summarize_subscribe_table %>% 
+  separate("channel_type", into = "channel_type", extra = "drop") %>% 
+  select("Subscription status" = subscribed_group,
+         "Channel type" = channel_type,
+         "N" = n,
+         "Percent" = percent,
+         "Std. Error" = stderr) %>% 
+  kbl(digits = 2, 
+      booktabs = T,
+      format = "latex") %>% 
+  kable_styling() %>% 
+  save_kable("main-text-figures_files/figure1.tex",float = FALSE)
 ```
 
 
@@ -958,7 +976,38 @@ coef_names <- c("Intercept",
 ```
 
 
-### = maybe add diagnostics here? 
+
+```{r quasipoisson n}
+# need to take original model object without robust standard errors first, then separately estimate robust covariance matrix 
+QP_time_fit_noSE <- map(time_fs,
+                        ~robust_weighted_quasipoisson(formula = .x,
+                                                      robust_output = FALSE))
+names(QP_time_fit_noSE) <-
+  c("time_alternative_full",
+    "time_extremist_full",
+    "time_mainstream_full")
+```
+
+##### dispersion
+
+```{r dispersion}
+for (m in 1:length(time_fs)) {
+  phi <- # calculate ratio between deviance residuals and residual degrees of freedom
+    sum(residuals(QP_time_fit_noSE[[m]], type = "pearson") ^ 2) / QP_time_fit_noSE[[m]]$df.residual
+  print(phi)
+}
+```
+
+
+##### check multicollinearity
+
+Compute Generalized VIFs ($VIF ^{(1/(2*df))}$) that makes adjustment for categorical variables.
+
+```{r vif}
+map(1:length(QP_time_fit_noSE),  ~car::vif(QP_time_fit_noSE[[.x]]))
+```
+
+
 
 ```{r coefficient plot, fig.height = 9}
 time_models <- bind_rows(QP_time_fit)
@@ -1012,17 +1061,44 @@ time_models %>%
 ```
 
 
+```{r fig 4 output, include = FALSE, eval=FALSE}
+robust_SEs <- time_models$robust_se
+robust_pvals<- time_models$p_val
+texreg(QP_time_fit_noSE,
+       digits = 2,
+       booktabs = TRUE, 
+       label = "tab:fig4table",
+       caption = "Quasipoisson coefficients for correlates of time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
+       # texreg reads models as separate lists
+       override.pvalues = list(robust_pvals[1:10],
+                    robust_pvals[11:20],
+                    robust_pvals[21:30]),
+       override.se = list(robust_SEs[1:10],
+                    robust_SEs[11:20],
+                    robust_SEs[21:30]),
+       custom.model.names = c("Alternative",
+                                 "Extremist",
+                                 "Mainstream"),
+       custom.coef.map =
+         list(
+            "fem_cts" = "Hostile sexism",
+            "rr_cts" = "Racial resentment",
+            "jw_cts" = "Feeling Jews",
+            "age" = "Age",
+            "genderMale" =  "Male",
+            "raceNon-white" = "Non-white",
+            "educ2Some college" = "Some college",
+            "educ24-year" = "Bachelor's degree",
+            "educ2Post-grad" = "Post-grad",
+            "(Intercept)" = "Intercept"
+         ),
+          file = "main-text-figures_files/figure4.tex")
+```
+
+
 ## Figure 5. Hostile sexism as predictor of alternative and extremist channel viewing
 
 ```{r calculate predicted values}
-# predict() needs to take original model object without robust standard errors first, then separately estimate robust covariance matrix 
-QP_time_fit_noSE <- map(time_fs,
-                        ~ robust_weighted_quasipoisson(formula = .x,
-                                                       robust_output = FALSE))
-names(QP_time_fit_noSE) <-
-  c("time_alternative_full",
-    "time_extremist_full",
-    "time_mainstream_full")
 
 get_predictions <- function (model_name,
                              data,
