@@ -81,7 +81,8 @@ weighted_mean_fxn <- function(x,
       design = svy_at,
       na.rm = T,
       ci = TRUE
-    )$quantiles[1]
+    )[[1]][1]
+  
   
   output <- tibble(
     channel_type = str_extract(x, paste0(channel_types, collapse = "|")),
@@ -154,245 +155,125 @@ map_dfr(any_channel_type, ~ weighted_prop_fxn(.x, activity_data)) %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:right;">
-
-raw\_prop
-
+raw_prop
 </th>
-
 <th style="text-align:right;">
-
-raw\_se
-
+raw_se
 </th>
-
 <th style="text-align:right;">
-
-weighted\_prop
-
+weighted_prop
 </th>
-
 <th style="text-align:right;">
-
-weighted\_se
-
+weighted_se
 </th>
-
 <th style="text-align:right;">
-
 lwr95
-
 </th>
-
 <th style="text-align:right;">
-
 upr95
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 Alternative
-
 </td>
-
 <td style="text-align:right;">
-
 14.06
-
 </td>
-
 <td style="text-align:right;">
-
 1.01
-
 </td>
-
 <td style="text-align:right;">
-
 15.43
-
 </td>
-
 <td style="text-align:right;">
-
 1.05
-
 </td>
-
 <td style="text-align:right;">
-
 13.37
-
 </td>
-
 <td style="text-align:right;">
-
 17.49
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Extremist
-
 </td>
-
 <td style="text-align:right;">
-
 5.67
-
 </td>
-
 <td style="text-align:right;">
-
 0.67
-
 </td>
-
 <td style="text-align:right;">
-
 6.12
-
 </td>
-
 <td style="text-align:right;">
-
 0.70
-
 </td>
-
 <td style="text-align:right;">
-
 4.75
-
 </td>
-
 <td style="text-align:right;">
-
 7.48
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Mainstream
-
 </td>
-
 <td style="text-align:right;">
-
 44.54
-
 </td>
-
 <td style="text-align:right;">
-
 1.45
-
 </td>
-
 <td style="text-align:right;">
-
 43.48
-
 </td>
-
 <td style="text-align:right;">
-
 1.44
-
 </td>
-
 <td style="text-align:right;">
-
 40.65
-
 </td>
-
 <td style="text-align:right;">
-
 46.31
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Other
-
 </td>
-
 <td style="text-align:right;">
-
 88.48
-
 </td>
-
 <td style="text-align:right;">
-
 0.93
-
 </td>
-
 <td style="text-align:right;">
-
 88.75
-
 </td>
-
 <td style="text-align:right;">
-
 0.92
-
 </td>
-
 <td style="text-align:right;">
-
 86.95
-
 </td>
-
 <td style="text-align:right;">
-
 90.55
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 Among the set of people who saw at least one extremist channel video,
@@ -419,245 +300,125 @@ map2_dfr(.x = any_subscribed_channel_type,
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:right;">
-
-raw\_prop
-
+raw_prop
 </th>
-
 <th style="text-align:right;">
-
-raw\_se
-
+raw_se
 </th>
-
 <th style="text-align:right;">
-
-weighted\_prop
-
+weighted_prop
 </th>
-
 <th style="text-align:right;">
-
-weighted\_se
-
+weighted_se
 </th>
-
 <th style="text-align:right;">
-
 lwr95
-
 </th>
-
 <th style="text-align:right;">
-
 upr95
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 Alternative
-
 </td>
-
 <td style="text-align:right;">
-
 39.16
-
 </td>
-
 <td style="text-align:right;">
-
 3.79
-
 </td>
-
 <td style="text-align:right;">
-
 38.99
-
 </td>
-
 <td style="text-align:right;">
-
 3.79
-
 </td>
-
 <td style="text-align:right;">
-
 31.57
-
 </td>
-
 <td style="text-align:right;">
-
 46.41
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Extremist
-
 </td>
-
 <td style="text-align:right;">
-
 41.79
-
 </td>
-
 <td style="text-align:right;">
-
 6.03
-
 </td>
-
 <td style="text-align:right;">
-
 51.69
-
 </td>
-
 <td style="text-align:right;">
-
 6.11
-
 </td>
-
 <td style="text-align:right;">
-
 39.72
-
 </td>
-
 <td style="text-align:right;">
-
 63.65
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 NA
-
 </td>
-
 <td style="text-align:right;">
-
 20.34
-
 </td>
-
 <td style="text-align:right;">
-
 1.76
-
 </td>
-
 <td style="text-align:right;">
-
 20.26
-
 </td>
-
 <td style="text-align:right;">
-
 1.75
-
 </td>
-
 <td style="text-align:right;">
-
 16.82
-
 </td>
-
 <td style="text-align:right;">
-
 23.69
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Other
-
 </td>
-
 <td style="text-align:right;">
-
 61.05
-
 </td>
-
 <td style="text-align:right;">
-
 1.51
-
 </td>
-
 <td style="text-align:right;">
-
 61.39
-
 </td>
-
 <td style="text-align:right;">
-
 1.51
-
 </td>
-
 <td style="text-align:right;">
-
 58.44
-
 </td>
-
 <td style="text-align:right;">
-
 64.34
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 ## Figure 1: Distribution of video views by subscription status and channel type
@@ -671,6 +432,12 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
       "subscribed to another",
       "not subscribed"
     )
+  ),
+  channel_type = case_when(
+    str_detect(channel_type, "Mainstream") ~ str_replace(channel_type, 'Mainstream media', 'Mainstream media\nchannel videos'),
+    str_detect(channel_type, "Alternative") ~ str_replace(channel_type, 'Alternative channel', 'Alternative channel videos'),
+    str_detect(channel_type, "Extremist") ~ str_replace(channel_type, 'Extremist channel', 'Extremist channel videos'),
+    str_detect(channel_type, "Other") ~ str_replace(channel_type, 'Other channel', 'Other channel videos')
   )) %>%
   ggplot(aes(
     x = channel_type,
@@ -750,6 +517,11 @@ summarize_subscribe_plot
 
 <img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./main-text-figures_files/subscriptions_by_other_subscriptions.pdf',
+       dpi = 600, width = 11, height = 6)
+```
+
 ### Exposure level estimates (page 5)
 
 Among the participants who viewed at least one video from an alternative
@@ -769,275 +541,140 @@ map2_dfr(.x = minutes_activity_time_all_week,
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:right;">
-
-raw\_mean
-
+raw_mean
 </th>
-
 <th style="text-align:right;">
-
-raw\_se
-
+raw_se
 </th>
-
 <th style="text-align:right;">
-
-weighted\_mean
-
+weighted_mean
 </th>
-
 <th style="text-align:right;">
-
-weighted\_median
-
+weighted_median
 </th>
-
 <th style="text-align:right;">
-
-weighted\_se
-
+weighted_se
 </th>
-
 <th style="text-align:right;">
-
 lwr95
-
 </th>
-
 <th style="text-align:right;">
-
 upr95
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 Alternative
-
 </td>
-
 <td style="text-align:right;">
-
 27.31
-
 </td>
-
 <td style="text-align:right;">
-
 6.38
-
 </td>
-
 <td style="text-align:right;">
-
 25.72
-
 </td>
-
 <td style="text-align:right;">
-
 1.09
-
 </td>
-
 <td style="text-align:right;">
-
 6.16
-
 </td>
-
 <td style="text-align:right;">
-
 13.65
-
 </td>
-
 <td style="text-align:right;">
-
 37.78
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Extremist
-
 </td>
-
 <td style="text-align:right;">
-
 8.66
-
 </td>
-
 <td style="text-align:right;">
-
 2.32
-
 </td>
-
 <td style="text-align:right;">
-
 8.09
-
 </td>
-
 <td style="text-align:right;">
-
 0.58
-
 </td>
-
 <td style="text-align:right;">
-
 2.33
-
 </td>
-
 <td style="text-align:right;">
-
 3.51
-
 </td>
-
 <td style="text-align:right;">
-
 12.66
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Mainstream
-
 </td>
-
 <td style="text-align:right;">
-
 14.14
-
 </td>
-
 <td style="text-align:right;">
-
 3.14
-
 </td>
-
 <td style="text-align:right;">
-
 11.90
-
 </td>
-
 <td style="text-align:right;">
-
 1.15
-
 </td>
-
 <td style="text-align:right;">
-
 2.35
-
 </td>
-
 <td style="text-align:right;">
-
 7.29
-
 </td>
-
 <td style="text-align:right;">
-
 16.52
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Other
-
 </td>
-
 <td style="text-align:right;">
-
 185.76
-
 </td>
-
 <td style="text-align:right;">
-
 15.77
-
 </td>
-
 <td style="text-align:right;">
-
 214.22
-
 </td>
-
 <td style="text-align:right;">
-
 20.36
-
 </td>
-
 <td style="text-align:right;">
-
 22.97
-
 </td>
-
 <td style="text-align:right;">
-
 169.21
-
 </td>
-
 <td style="text-align:right;">
-
 259.24
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 (62 minutes per week for subscribers to one or more alternative channels
@@ -1067,553 +704,287 @@ subscriber_estimates <- map2_dfr(.x = minutes_activity_time_all_week,
                                  .y = subscribed_any_channel_type,
                                  ~ weighted_mean_fxn(.x, .y)) %>%
   mutate(subscription_status = paste0(channel_types,
-                                      " subscriber"))
+                                      " sub"))
 
 nonsubscriber_estimates <- map2_dfr(.x = minutes_activity_time_all_week,
                                     .y = notsubscribed_any_channel_type,
                                     ~ weighted_mean_fxn(.x, .y))  %>%
   mutate(subscription_status = paste0(channel_types,
-                                      " subscriber"))
+                                      " non-sub"))
 
 bind_rows(subscriber_estimates,
           nonsubscriber_estimates) %>% 
   kbl(format = "html",
-      digits = 2) %>% 
+      digits = 3) %>% 
   kable_styling()
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:right;">
-
-raw\_mean
-
+raw_mean
 </th>
-
 <th style="text-align:right;">
-
-raw\_se
-
+raw_se
 </th>
-
 <th style="text-align:right;">
-
-weighted\_mean
-
+weighted_mean
 </th>
-
 <th style="text-align:right;">
-
-weighted\_median
-
+weighted_median
 </th>
-
 <th style="text-align:right;">
-
-weighted\_se
-
+weighted_se
 </th>
-
 <th style="text-align:right;">
-
 lwr95
-
 </th>
-
 <th style="text-align:right;">
-
 upr95
-
 </th>
-
 <th style="text-align:left;">
-
-subscription\_status
-
+subscription_status
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 Alternative
-
 </td>
-
 <td style="text-align:right;">
-
-64.11
-
+64.106
 </td>
-
 <td style="text-align:right;">
-
-15.09
-
+15.088
 </td>
-
 <td style="text-align:right;">
-
-62.22
-
+62.224
 </td>
-
 <td style="text-align:right;">
-
-23.96
-
+23.959
 </td>
-
 <td style="text-align:right;">
-
-14.82
-
+14.823
 </td>
-
 <td style="text-align:right;">
-
-33.17
-
+33.171
 </td>
-
 <td style="text-align:right;">
-
-91.28
-
+91.277
 </td>
-
 <td style="text-align:left;">
-
-alternative subscriber
-
+alternative sub
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Extremist
-
 </td>
-
 <td style="text-align:right;">
-
-19.15
-
+19.147
 </td>
-
 <td style="text-align:right;">
-
-4.92
-
+4.923
 </td>
-
 <td style="text-align:right;">
-
-14.56
-
+14.560
 </td>
-
 <td style="text-align:right;">
-
-5.69
-
+5.695
 </td>
-
 <td style="text-align:right;">
-
-4.83
-
+4.827
 </td>
-
 <td style="text-align:right;">
-
-5.10
-
+5.099
 </td>
-
 <td style="text-align:right;">
-
-24.02
-
+24.021
 </td>
-
 <td style="text-align:left;">
-
-extremist subscriber
-
+extremist sub
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Mainstream
-
 </td>
-
 <td style="text-align:right;">
-
-45.98
-
+45.985
 </td>
-
 <td style="text-align:right;">
-
-14.79
-
+14.792
 </td>
-
 <td style="text-align:right;">
-
-37.65
-
+37.652
 </td>
-
 <td style="text-align:right;">
-
-7.73
-
+7.725
 </td>
-
 <td style="text-align:right;">
-
-11.28
-
+11.280
 </td>
-
 <td style="text-align:right;">
-
-15.54
-
+15.544
 </td>
-
 <td style="text-align:right;">
-
-59.76
-
+59.760
 </td>
-
 <td style="text-align:left;">
-
-mainstream subscriber
-
+mainstream sub
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Other
-
 </td>
-
 <td style="text-align:right;">
-
-274.13
-
+274.129
 </td>
-
 <td style="text-align:right;">
-
-20.74
-
+20.739
 </td>
-
 <td style="text-align:right;">
-
-329.42
-
+329.425
 </td>
-
 <td style="text-align:right;">
-
-93.63
-
+93.634
 </td>
-
 <td style="text-align:right;">
-
-34.59
-
+34.588
 </td>
-
 <td style="text-align:right;">
-
-261.63
-
+261.631
 </td>
-
 <td style="text-align:right;">
-
-397.22
-
+397.218
 </td>
-
 <td style="text-align:left;">
-
-other subscriber
-
+other sub
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Alternative
-
 </td>
-
 <td style="text-align:right;">
-
-0.33
-
+0.328
 </td>
-
 <td style="text-align:right;">
-
-0.14
-
+0.135
 </td>
-
 <td style="text-align:right;">
-
-0.24
-
+0.239
 </td>
-
 <td style="text-align:right;">
-
-0.00
-
+0.000
 </td>
-
 <td style="text-align:right;">
-
-0.08
-
+0.078
 </td>
-
 <td style="text-align:right;">
-
-0.09
-
+0.086
 </td>
-
 <td style="text-align:right;">
-
-0.39
-
+0.392
 </td>
-
 <td style="text-align:left;">
-
-alternative subscriber
-
+alternative non-sub
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Extremist
-
 </td>
-
 <td style="text-align:right;">
-
-0.04
-
+0.038
 </td>
-
 <td style="text-align:right;">
-
-0.01
-
+0.015
 </td>
-
 <td style="text-align:right;">
-
-0.04
-
+0.036
 </td>
-
 <td style="text-align:right;">
-
-0.00
-
+0.000
 </td>
-
 <td style="text-align:right;">
-
-0.02
-
+0.016
 </td>
-
 <td style="text-align:right;">
-
-0.00
-
+0.005
 </td>
-
 <td style="text-align:right;">
-
-0.07
-
+0.066
 </td>
-
 <td style="text-align:left;">
-
-extremist subscriber
-
+extremist non-sub
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Mainstream
-
 </td>
-
 <td style="text-align:right;">
-
-2.34
-
+2.344
 </td>
-
 <td style="text-align:right;">
-
-0.32
-
+0.319
 </td>
-
 <td style="text-align:right;">
-
-2.04
-
+2.038
 </td>
-
 <td style="text-align:right;">
-
-0.00
-
+0.000
 </td>
-
 <td style="text-align:right;">
-
-0.33
-
+0.332
 </td>
-
 <td style="text-align:right;">
-
-1.39
-
+1.387
 </td>
-
 <td style="text-align:right;">
-
-2.69
-
+2.689
 </td>
-
 <td style="text-align:left;">
-
-mainstream subscriber
-
+mainstream non-sub
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Other
-
 </td>
-
 <td style="text-align:right;">
-
-35.41
-
+35.413
 </td>
-
 <td style="text-align:right;">
-
-16.89
-
+16.894
 </td>
-
 <td style="text-align:right;">
-
-23.37
-
+23.375
 </td>
-
 <td style="text-align:right;">
-
-1.37
-
+1.372
 </td>
-
 <td style="text-align:right;">
-
-8.00
-
+8.001
 </td>
-
 <td style="text-align:right;">
-
-7.69
-
+7.693
 </td>
-
 <td style="text-align:right;">
-
-39.06
-
+39.057
 </td>
-
 <td style="text-align:left;">
-
-other subscriber
-
+other non-sub
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 ## Figure 2. Concentration of exposure to alternative and extremist channels
@@ -1663,10 +1034,10 @@ time_cumsum_plot_inset <- concentration_time_user %>%
   scale_color_manual(
     name = "",
     labels = c(
-      "Alternative\nchannels",
-      "Extremist\nchannels",
-      "Mainstream media\nchannels",
-      "Other\nchannels"
+      "Alternative\nchannel videos",
+      "Extremist\nchannel videos",
+      "Mainstream media\nchannel videos",
+      "Other\nchannel videos"
     ),
     values = color_palette
   ) +
@@ -1735,10 +1106,10 @@ time_cumsum_plot_zoomout <- concentration_time_user %>%
   scale_color_manual(
     name = "",
     labels = c(
-      "Alternative\nchannels",
-      "Extremist\nchannels",
-      "Mainstream media\nchannels",
-      "Other\nchannels"
+      "Alternative\nchannel videos",
+      "Extremist\nchannel videos",
+      "Mainstream media\nchannel videos",
+      "Other\nchannel videos"
     ),
     values = color_palette
   ) +
@@ -1763,6 +1134,11 @@ time_cumsum_plot_zoomout +
 ```
 
 <img src="main-text-figures_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./main-text-figures_files/cdf_users_time_exposure.pdf',
+      dpi = 600, width = 8, height = 6)
+```
 
 ### Exposure level estimates (page 5–6)
 
@@ -1862,7 +1238,7 @@ top_time_all_weeks_most_ext <- activity_data_supers  %>%
 ### Exposure level estimates (page 6–7)
 
 Alternative channel superconsumers spend a weighted median of 29 hours
-(1715 minutes) each week watching YouTube.
+(1741 minutes) each week watching YouTube.
 
 ``` r
 alternative_superconsumers <- activity_data_supers %>% 
@@ -1875,7 +1251,7 @@ weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
 
     ## [1] 1714.798
 
-Extremist channel superconsumers spend a median of 16 hours (979
+Extremist channel superconsumers spend a median of 16 hours (1009
 minutes) each week watching YouTube.
 
 ``` r
@@ -2047,6 +1423,11 @@ plot_grid(
 
 <img src="main-text-figures_files/figure-gfm/combined plots-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./main-text-figures_files/superconsumers_time_elapsed_week.pdf',
+      dpi = 600, width = 10, height = 5)
+```
+
 ## Figure 4. Predictors of watch time
 
 ``` r
@@ -2122,7 +1503,69 @@ coef_names <- c("Intercept",
                 "Non-white")
 ```
 
-### \= maybe add diagnostics here?
+``` r
+# need to take original model object without robust standard errors first, then separately estimate robust covariance matrix 
+QP_time_fit_noSE <- map(time_fs,
+                        ~robust_weighted_quasipoisson(formula = .x,
+                                                      robust_output = FALSE))
+names(QP_time_fit_noSE) <-
+  c("time_alternative_full",
+    "time_extremist_full",
+    "time_mainstream_full")
+```
+
+##### dispersion
+
+``` r
+for (m in 1:length(time_fs)) {
+  phi <- # calculate ratio between deviance residuals and residual degrees of freedom
+    sum(residuals(QP_time_fit_noSE[[m]], type = "pearson") ^ 2) / QP_time_fit_noSE[[m]]$df.residual
+  print(phi)
+}
+```
+
+    ## [1] 704.1033
+    ## [1] 166.6161
+    ## [1] 1887.55
+
+##### check multicollinearity
+
+Compute Generalized VIFs (*V**I**F*<sup>(1/(2\**d**f*))</sup>) that
+makes adjustment for categorical variables.
+
+``` r
+map(1:length(QP_time_fit_noSE),  ~car::vif(QP_time_fit_noSE[[.x]]))
+```
+
+    ## [[1]]
+    ##             GVIF Df GVIF^(1/(2*Df))
+    ## rr_cts  1.174241  1        1.083624
+    ## jw_cts  1.167858  1        1.080675
+    ## fem_cts 1.162951  1        1.078402
+    ## age     1.162466  1        1.078177
+    ## gender  1.139925  1        1.067673
+    ## educ2   1.132206  3        1.020910
+    ## race    1.126247  1        1.061248
+    ## 
+    ## [[2]]
+    ##             GVIF Df GVIF^(1/(2*Df))
+    ## rr_cts  1.174418  1        1.083706
+    ## jw_cts  1.110369  1        1.053740
+    ## fem_cts 1.167837  1        1.080665
+    ## age     1.092220  1        1.045093
+    ## gender  1.146128  1        1.070573
+    ## educ2   1.139993  3        1.022077
+    ## race    1.058478  1        1.028824
+    ## 
+    ## [[3]]
+    ##             GVIF Df GVIF^(1/(2*Df))
+    ## rr_cts  2.547149  1        1.595979
+    ## jw_cts  1.151366  1        1.073017
+    ## fem_cts 2.492415  1        1.578739
+    ## age     1.183410  1        1.087847
+    ## gender  1.043968  1        1.021748
+    ## educ2   1.150288  3        1.023610
+    ## race    1.092030  1        1.045002
 
 ``` r
 time_models <- bind_rows(QP_time_fit)
@@ -2177,18 +1620,14 @@ time_models %>%
 
 <img src="main-text-figures_files/figure-gfm/coefficient plot-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./main-text-figures_files/qpois_coefficient_time.pdf',
+      dpi = 600, width = 12, height = 6)
+```
+
 ## Figure 5. Hostile sexism as predictor of alternative and extremist channel viewing
 
 ``` r
-# predict() needs to take original model object without robust standard errors first, then separately estimate robust covariance matrix 
-QP_time_fit_noSE <- map(time_fs,
-                        ~ robust_weighted_quasipoisson(formula = .x,
-                                                       robust_output = FALSE))
-names(QP_time_fit_noSE) <-
-  c("time_alternative_full",
-    "time_extremist_full",
-    "time_mainstream_full")
-
 get_predictions <- function (model_name,
                              data,
                              model) {
@@ -2340,6 +1779,11 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
 
 <img src="main-text-figures_files/figure-gfm/predicted value plots-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./main-text-figures_files/hostile_sexism_predicted.pdf',
+      dpi = 600, width = 12, height = 6)
+```
+
 ### Correlates of exposure (page 9)
 
 When hostile sexism is at its minimum value of 1, expected levels are
@@ -2361,63 +1805,34 @@ predicted_data_alternative %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:right;">
-
 Hostile sexism score
-
 </th>
-
 <th style="text-align:right;">
-
 Predicted value
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:right;">
-
 1
-
 </td>
-
 <td style="text-align:right;">
-
 0.41
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 5
-
 </td>
-
 <td style="text-align:right;">
-
 383.01
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 ``` r
@@ -2432,63 +1847,34 @@ predicted_data_extremist %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:right;">
-
 Hostile sexism score
-
 </th>
-
 <th style="text-align:right;">
-
 Predicted value
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:right;">
-
 1
-
 </td>
-
 <td style="text-align:right;">
-
 0.08
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 5
-
 </td>
-
 <td style="text-align:right;">
-
 51.00
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 ## Figure 6: Pages viewed immediately prior to YouTube videos by channel type
@@ -2531,7 +1917,7 @@ on_platform_referrers_by_channel_plot <-
     channel_type = case_when(
       channel_type == "alternative" ~ "Alternative channel videos",
       channel_type == "extremist" ~ "Extremist channel videos",
-      channel_type == "mainstream" ~ "Mainstream media videos",
+      channel_type == "mainstream" ~ "Mainstream media channel videos",
       channel_type == "other" ~ "Other channel videos"
     )
   ) %>%
@@ -2569,10 +1955,10 @@ on_platform_referrers_by_channel_plot <-
       'Off-platform'
     ),
     labels = c(
-      'alternative' = "Alternative\nchannels",
-      'extremist' = "Extremist\nchannels",
-      'mainstream'  =  "Mainstream\nmedia",
-      'other' = "Other\nchannels",
+      'alternative' = "Alternative\nchannel videos",
+      'extremist' = "Extremist\nchannel videos",
+      'mainstream'  =  "Mainstream media\nchannel videos",
+      'other' = "Other\nchannel videos",
       'Non-video on-platform'  = "Non-video \non-platform",
       'Off-platform'  = "Off-platform"
     ),
@@ -2598,6 +1984,11 @@ on_platform_referrers_by_channel_plot
 
 <img src="main-text-figures_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./main-text-figures_files/on_platform_referrers_by_channel.pdf',
+      dpi = 600, width = 12, height = 6)
+```
+
 ### Internal and external referrers (page 10)
 
 49% and 51% of referrers to alternative and extremist channel videos,
@@ -2615,125 +2006,65 @@ on_platform_referrers_by_channel %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:left;">
-
-youtube\_video\_referrers\_by\_channel\_type
-
+youtube_video_referrers_by_channel_type
 </th>
-
 <th style="text-align:right;">
-
 percentage
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:left;">
-
 Off-platform
-
 </td>
-
 <td style="text-align:right;">
-
 48.58
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:left;">
-
 Off-platform
-
 </td>
-
 <td style="text-align:right;">
-
 50.89
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 mainstream
-
 </td>
-
 <td style="text-align:left;">
-
 Off-platform
-
 </td>
-
 <td style="text-align:right;">
-
 40.46
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 other
-
 </td>
-
 <td style="text-align:left;">
-
 Off-platform
-
 </td>
-
 <td style="text-align:right;">
-
 43.86
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 …we observe homophily across the video types, with 18% of referrers to
@@ -2751,125 +2082,65 @@ on_platform_referrers_by_channel %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:left;">
-
-youtube\_video\_referrers\_by\_channel\_type
-
+youtube_video_referrers_by_channel_type
 </th>
-
 <th style="text-align:right;">
-
 percentage
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:right;">
-
 18.30
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:right;">
-
 13.90
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 mainstream
-
 </td>
-
 <td style="text-align:left;">
-
 mainstream
-
 </td>
-
 <td style="text-align:right;">
-
 25.88
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 other
-
 </td>
-
 <td style="text-align:left;">
-
 other
-
 </td>
-
 <td style="text-align:right;">
-
 35.93
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 Interestingly, we observe 5% of referrals to extreme videos coming from
@@ -2887,125 +2158,65 @@ on_platform_referrers_by_channel %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:left;">
-
-youtube\_video\_referrers\_by\_channel\_type
-
+youtube_video_referrers_by_channel_type
 </th>
-
 <th style="text-align:right;">
-
 percentage
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:right;">
-
 18.30
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:right;">
-
 0.72
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:right;">
-
 5.05
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:right;">
-
 13.90
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 Lastly, we observe that alternative, extreme, and mainstream media
@@ -3023,170 +2234,141 @@ on_platform_referrers_by_channel %>%
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-channel\_type
-
+channel_type
 </th>
-
 <th style="text-align:left;">
-
-youtube\_video\_referrers\_by\_channel\_type
-
+youtube_video_referrers_by_channel_type
 </th>
-
 <th style="text-align:right;">
-
 percentage
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:left;">
-
 other
-
 </td>
-
 <td style="text-align:right;">
-
 15.56
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 alternative
-
 </td>
-
 <td style="text-align:left;">
-
 Non-video on-platform
-
 </td>
-
 <td style="text-align:right;">
-
 16.24
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:left;">
-
 other
-
 </td>
-
 <td style="text-align:right;">
-
 12.72
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 extremist
-
 </td>
-
 <td style="text-align:left;">
-
 Non-video on-platform
-
 </td>
-
 <td style="text-align:right;">
-
 17.01
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 mainstream
-
 </td>
-
 <td style="text-align:left;">
-
 other
-
 </td>
-
 <td style="text-align:right;">
-
 13.66
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 mainstream
-
 </td>
-
 <td style="text-align:left;">
-
 Non-video on-platform
-
 </td>
-
 <td style="text-align:right;">
-
 19.42
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
+
+### Bootstrap difference between alternative/extremist off-platform referrers (49% and 51%) vs. other off-platform referrers (44%) (page 16). 95% bootstrapped CIs are in square parentheses.
+
+-   alternative v. other: 0.0472 \[0.0408, 0.0539\]
+-   extremist v. other: 0.0702 \[0.0550, 0.0865\]
+-   alternative v. mainstream: 0.0812 \[0.0738 , 0.0888\]
+-   extremist v. mainstream: 0.1043 \[0.0873 , 0.1196\]
+
+``` r
+alt_ext_oth <- youtube_referrers_data %>%
+  select(channel_type, youtube_video_referrers_by_channel_type)
+
+n_bs_samples <- 1000
+gen_bootstrp_samples <- function(channel_type1, channel_type2) {
+  ind <- sample(1:nrow(alt_ext_oth), replace = TRUE)
+  d <- alt_ext_oth[ind,]
+  ct1 <- d[d$channel_type ==channel_type1,]
+  ct2 <- d[d$channel_type ==channel_type2,]
+  p_ct1 <- prop.table(table(ct1$youtube_video_referrers_by_channel_type))['Off-platform']
+  p_ct2 <- prop.table(table(ct2$youtube_video_referrers_by_channel_type))['Off-platform']
+  d_p <- p_ct1 - p_ct2
+  #print(d_p)
+  return(d_p)
+}
+set.seed(20202021)
+alt_other_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'alternative',
+                              channel_type2 = 'other')
+)
+ext_other_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'extremist',
+                              channel_type2 = 'other')
+  )
+alt_msm_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'alternative',
+                              channel_type2 = 'mainstream')
+)
+ext_msm_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'extremist',
+                              channel_type2 = 'mainstream')
+)
+bs_CIs <- map(
+  list(alt_other_bs_samples, 
+       ext_other_bs_samples, 
+       alt_msm_bs_samples, 
+       ext_msm_bs_samples),
+  ~quantile(.x, c(0.025,0.975))
+)
+```
 
 ## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
 
@@ -3246,10 +2428,10 @@ referrers_channel_type_videos_on_platform <-
   scale_fill_manual(
     values = color_palette,
     labels = c(
-      "Alternative\nchannels",
-      "Extremist\nchannels",
-      "Mainstream\nmedia",
-      "Other\nchannels"
+      "Alternative channel\nvideos",
+      "Extremist channel\nvideos",
+      "Mainstream media channel\nvideos",
+      "Other channel\nvideos"
     ),
     name = "Domains leading to:"
   ) +
@@ -3317,10 +2499,10 @@ referrers_channel_type_videos_off_platform <-
   scale_fill_manual(
     values = color_palette,
     labels = c(
-      "Alternative\nchannel videos",
-      "Extremist\nchannel videos",
-      "Mainstream\nmedia videos",
-      "Other\nchannel videos"
+      "Alternative channel\nvideos",
+      "Extremist channel\nvideos",
+      "Mainstream media channel\nvideos",
+      "Other channel\nvideos"
     ),
     name = "Domains leading to:"
   ) +
@@ -3360,7 +2542,12 @@ plot_grid(
 )
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./main-text-figures_files/referrers_channel_type_videos.pdf',
+      dpi = 600, width = 12, height = 12)
+```
 
 ## Figure 8: Recommendation frequency by type of channel being watched
 
@@ -3421,7 +2608,7 @@ waffle_plot_fxn <- function(data,
       axis.text.x = element_blank(),
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
-      axis.ticks.y = element_blank(),
+      axis.ticks = element_blank(),
       axis.text.y = element_blank(),
       plot.title = ggtext::element_markdown(size = 15, hjust = .5),
       panel.background = element_blank(),
@@ -3534,18 +2721,18 @@ other_shown_table <- recs_prop_table_fxn(channel_type = "other",
 alternative_recs_shown <-
   waffle_plot_fxn(alternative_shown_table,
                   statistic = "shown",
-                  title = "Alternative channels")
+                  title = "Alternative channel\nvideos")
 extremist_recs_shown <-
   waffle_plot_fxn(extremist_shown_table,
                   statistic = "shown",
-                  title = "Extremist channels")
+                  title = "Extremist channel\nvideos")
 mainstream_recs_shown <-
   waffle_plot_fxn(mainstream_shown_table,
                   statistic = "shown",
-                  title = "Mainstream media")
+                  title = "Mainstream media\nchannel videos")
 other_recs_shown <-
   waffle_plot_fxn(other_shown_table, statistic = "shown",
-                  title = "Other channels")
+                  title = "Other channel\nvideos")
 
 # bar on top of waffles to show scale
 total_recs_shown_table <- recs_data %>%
@@ -3580,16 +2767,17 @@ dummy_plot_shown <- alternative_shown_table %>%
       'other' = '#E3E6E6'
     ),
     labels = c(
-      'Alternative channels' ,
-      'Extremist channels',
-      'Mainstream media',
-      'Other channels'
+      'Alternative channel\nvideos' ,
+      'Extremist channel\nvideos',
+      'Mainstream media\nchannel videos',
+      'Other channel\nvideos'
     ),
     name = "Recommendations shown to:"
   ) +
   theme(
     plot.title = ggtext::element_markdown(size = 12, hjust = .5),
     legend.position = 'bottom'
+    
   )
 
 # same legend
@@ -3630,6 +2818,11 @@ recs_shown_grid
 
 <img src="main-text-figures_files/figure-gfm/recommedations show plot-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./main-text-figures_files/waffle_recs_shown.pdf',
+      dpi = 600, width = 14, height = 8)
+```
+
 ## Figure 9: Recommendation follows by video channel type
 
 ``` r
@@ -3658,17 +2851,17 @@ other_followed_table <-
 #outputs to waffle_plot_fxn
 alternative_recs_followed <-
   waffle_plot_fxn(alternative_followed_table, statistic = "followed",
-                  title = "Alternative\nchannels")
+                  title = "Alternative channel\nvideos")
 extremist_recs_followed <-
   waffle_plot_fxn(extremist_followed_table, statistic = "followed",
-                  title = "Extremist\nchannels")
+                  title = "Extremist channel\nvideos")
 mainstream_recs_followed <-
   waffle_plot_fxn(mainstream_followed_table_rounded, statistic = "followed",
                   make_proportional = F,
-                  title = "Mainstream\nmedia")
+                  title = "Mainstream media\nchannel videoes")
 other_recs_followed <-
   waffle_plot_fxn(other_followed_table, statistic = "followed",
-                  title = "Other\nchannels")
+                  title = "Other channel\nvideos")
 
 
 # bar on top of waffles to show scale
@@ -3709,10 +2902,10 @@ dummy_plot_followed <- alternative_shown_table %>%
       'other' = '#E3E6E6'
     ),
     labels = c(
-      'Alternative channels' ,
-      'Extremist channels',
-      'Mainstream media',
-      'Other channels'
+      'Alternative channel\nvideos' ,
+      'Extremist channel\nvideos',
+      'Mainstream media\nchannel videos',
+      'Other channel\nvideos'
     ),
     name = "Recommendations followed to:"
   ) +
@@ -3755,6 +2948,11 @@ recs_followed_grid
 ```
 
 <img src="main-text-figures_files/figure-gfm/recommendations followed plot-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./main-text-figures_files/waffle_recs_followed.pdf',
+      dpi = 600, width = 14, height = 8)
+```
 
 ## Figure 10: YouTube recommendations by subscription status and channel type
 
@@ -3887,10 +3085,10 @@ combined <-
                  "Recommendations followed")
     ),
     channel_type_label = case_when(
-      channel_type == "alternative" ~ "Alternative channels\n(2.7%)",
-      channel_type == "extremist" ~ "Extremist channels\n(0.4%)",
-      channel_type == "mainstream" ~ "Mainstream media\n(4.6%)",
-      channel_type == "other" ~ "Other channels\n(92.3%)"
+      channel_type == "alternative" ~ "Alternative channel videos\n(2.7%)",
+      channel_type == "extremist" ~ "Extremist channel videos\n(0.4%)",
+      channel_type == "mainstream" ~ "Mainstream media channel videos\n(4.6%)",
+      channel_type == "other" ~ "Other channel videos\n(92.3%)"
     ),
     total_label = scales::comma(total)
   ) %>%
@@ -3924,16 +3122,16 @@ combined %>%
                      labels = paste0(seq(0, 100, by = 20),"%") )+
   scale_fill_manual(values = color_palette,
                     name = "",
-                    labels = c("Alternative channel",
-                               "Extremist channel",
-                               "Mainstream media channel",
-                               "Other channel")) +
+                    labels = c("Alternative channel\nvideos",
+                               "Extremist channel\nvideos",
+                               "Mainstream media\nchannel videos",
+                               "Other channel\nvideos")) +
   scale_color_manual(values = color_palette,
                     name = "",
-                    labels = c("Alternative channel",
-                               "Extremist channel",
-                               "Mainstream media channel",
-                               "Other channel")) +
+                    labels = c("Alternative channel\nvideos",
+                               "Extremist channel\nvideos",
+                               "Mainstream media\nchannel videos",
+                               "Other channel\nvideos")) +
   scale_pattern_manual(name = "",
                        labels = c("Recommendations\nshown",
                                   "Recommendations\nfollowed"),
@@ -3952,6 +3150,11 @@ combined %>%
 
 <img src="main-text-figures_files/figure-gfm/recs by sub-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./main-text-figures_files/subscriptions_bars.pdf',
+      dpi = 600,width = 11, height = 5.5)
+```
+
 ## Methods
 
 ### Study participants stats (page 19)
@@ -3960,7 +3163,7 @@ combined %>%
 
 Racial resentment and hostile sexism measures were also included in our
 2020 survey; responses showed a high degree of persistence over time
-(\(r=.92\) for racial resentment, \(r =.79\) for hostile sexism).
+(*r* = .92 for racial resentment, *r* = .79 for hostile sexism).
 
 ``` r
 #persistence racial resentment

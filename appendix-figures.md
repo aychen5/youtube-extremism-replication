@@ -1,48 +1,82 @@
 Appendix Tables and Figures
 ================
 
-  - [Table A1: Demographic statistics by
-    sample](#table-a1-demographic-statistics-by-sample)
-  - [Figure A1: Total participants with browser activity data over
-    time](#figure-a1-total-participants-with-browser-activity-data-over-time)
-  - [Figure A2: Coonsumption levels over time by channel
-    type](#figure-a2-coonsumption-levels-over-time-by-channel-type)
-  - [Figure A3 and A4: YouTube video diets of individuals who viewed any
-    alternative/extremist channel
-    video](#figure-a3-and-a4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video)
-  - [Figure A7 and A8:](#figure-a7-and-a8)
-      - [Figure A7: Correlates of YouTube video exposure by channel type
-        (with party
-        controls)](#figure-a7-correlates-of-youtube-video-exposure-by-channel-type-with-party-controls)
-      - [Table A7: Hostile sexism and Racial resentment
-        specifications](#table-a7-hostile-sexism-and-racial-resentment-specifications)
-      - [Figure A8: Correlates of exposure to YouTube videos by channel
-        type (alternate racial attitude
-        measure)](#figure-a8-correlates-of-exposure-to-youtube-videos-by-channel-type-alternate-racial-attitude-measure)
-  - [Figure A5: Zero-inflated models on correlates of time on YouTube
-    video by channel
-    type](#figure-a5-zero-inflated-models-on-correlates-of-time-on-youtube-video-by-channel-type)
-  - [Figure A6: Correlates of YouTube video views by channel
-    type](#figure-a6-correlates-of-youtube-video-views-by-channel-type)
-  - [Figure A9: Correlation between browser history and
-    activity](#figure-a9-correlation-between-browser-history-and-activity)
-  - [Table A8: Predictors of proportion of time spent on
-    alternative/extremist videos by
-    day](#table-a8-predictors-of-proportion-of-time-spent-on-alternativeextremist-videos-by-day)
-  - [Figure A10: Differences in perceptions of YouTube between full
-    sample and extension
-    sample](#figure-a10-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample)
-  - [Figure A11: Percentage of views to each channel type by video
-    number within
-    session](#figure-a11-percentage-of-views-to-each-channel-type-by-video-number-within-session)
-  - [Figure A12: Percentage of views to each channel type by total
-    session
-    length](#figure-a12-percentage-of-views-to-each-channel-type-by-total-session-length)
-  - [Table A9: External referrers to alternative and extremist channel
-    videos](#table-a9-external-referrers-to-alternative-and-extremist-channel-videos)
-  - [Figure A13: Concentration of exposure to alternative and extremist
-    channels (view
-    counts)](#figure-a13-concentration-of-exposure-to-alternative-and-extremist-channels-view-counts)
+-   <a href="#table-a1-demographic-statistics-by-sample"
+    id="toc-table-a1-demographic-statistics-by-sample">Table A1: Demographic
+    statistics by sample</a>
+-   <a
+    href="#figure-a1-total-participants-with-browser-activity-data-over-time"
+    id="toc-figure-a1-total-participants-with-browser-activity-data-over-time">Figure
+    A1: Total participants with browser activity data over time</a>
+-   <a href="#figure-a2-coonsumption-levels-over-time-by-channel-type"
+    id="toc-figure-a2-coonsumption-levels-over-time-by-channel-type">Figure
+    A2: Coonsumption levels over time by channel type</a>
+-   <a
+    href="#figure-a3-and-a4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video"
+    id="toc-figure-a3-and-a4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video">Figure
+    A3 and A4: YouTube video diets of individuals who viewed any
+    alternative/extremist channel video</a>
+-   <a href="#figure-a7-and-a8" id="toc-figure-a7-and-a8">Figure A7 and
+    A8:</a>
+    -   <a
+        href="#figure-a7-correlates-of-youtube-video-exposure-by-channel-type-with-party-controls"
+        id="toc-figure-a7-correlates-of-youtube-video-exposure-by-channel-type-with-party-controls">Figure
+        A7: Correlates of YouTube video exposure by channel type (with party
+        controls)</a>
+    -   <a href="#table-a7-hostile-sexism-and-racial-resentment-specifications"
+        id="toc-table-a7-hostile-sexism-and-racial-resentment-specifications">Table
+        A7: Hostile sexism and Racial resentment specifications</a>
+    -   <a
+        href="#figure-a8-correlates-of-exposure-to-youtube-videos-by-channel-type-alternate-racial-attitude-measure"
+        id="toc-figure-a8-correlates-of-exposure-to-youtube-videos-by-channel-type-alternate-racial-attitude-measure">Figure
+        A8: Correlates of exposure to YouTube videos by channel type (alternate
+        racial attitude measure)</a>
+    -   <a href="#factor-loadings" id="toc-factor-loadings">Factor loadings</a>
+    -   <a href="#correlation-between-racial-and-gender-resentment"
+        id="toc-correlation-between-racial-and-gender-resentment">Correlation
+        between racial and gender resentment</a>
+    -   <a href="#model-with-combined-score"
+        id="toc-model-with-combined-score">Model with combined score</a>
+-   <a
+    href="#figure-a5-zero-inflated-models-on-correlates-of-time-on-youtube-video-by-channel-type"
+    id="toc-figure-a5-zero-inflated-models-on-correlates-of-time-on-youtube-video-by-channel-type">Figure
+    A5: Zero-inflated models on correlates of time on YouTube video by
+    channel type</a>
+-   <a href="#figure-a6-correlates-of-youtube-video-views-by-channel-type"
+    id="toc-figure-a6-correlates-of-youtube-video-views-by-channel-type">Figure
+    A6: Correlates of YouTube video views by channel type</a>
+-   <a href="#figure-a9-correlation-between-browser-history-and-activity"
+    id="toc-figure-a9-correlation-between-browser-history-and-activity">Figure
+    A9: Correlation between browser history and activity</a>
+-   <a
+    href="#table-a8-predictors-of-proportion-of-time-spent-on-alternativeextremist-videos-by-day"
+    id="toc-table-a8-predictors-of-proportion-of-time-spent-on-alternativeextremist-videos-by-day">Table
+    A8: Predictors of proportion of time spent on alternative/extremist
+    videos by day</a>
+-   <a
+    href="#figure-a10-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample"
+    id="toc-figure-a10-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample">Figure
+    A10: Differences in perceptions of YouTube between full sample and
+    extension sample</a>
+-   <a
+    href="#figure-a11-percentage-of-views-to-each-channel-type-by-video-number-within-session"
+    id="toc-figure-a11-percentage-of-views-to-each-channel-type-by-video-number-within-session">Figure
+    A11: Percentage of views to each channel type by video number within
+    session</a>
+-   <a
+    href="#figure-a12-percentage-of-views-to-each-channel-type-by-total-session-length"
+    id="toc-figure-a12-percentage-of-views-to-each-channel-type-by-total-session-length">Figure
+    A12: Percentage of views to each channel type by total session
+    length</a>
+-   <a
+    href="#table-a9-external-referrers-to-alternative-and-extremist-channel-videos"
+    id="toc-table-a9-external-referrers-to-alternative-and-extremist-channel-videos">Table
+    A9: External referrers to alternative and extremist channel videos</a>
+-   <a
+    href="#figure-a13-concentration-of-exposure-to-alternative-and-extremist-channels-view-counts"
+    id="toc-figure-a13-concentration-of-exposure-to-alternative-and-extremist-channels-view-counts">Figure
+    A13: Concentration of exposure to alternative and extremist channels
+    (view counts)</a>
 
 ``` r
 ### ----------- data
@@ -50,9 +84,14 @@ Appendix Tables and Figures
 merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 # activity data
 activity_data <- read_rds("data/activity_yg_cces.rds") 
+# browser history data
+browser_history_data <-read_rds("data/browser_history_yg_cces.rds")
 # over time data for consumption over time
 at_over_time <- read_rds("data/activity_time_user_by_date.rds")
 at_over_views <- read_rds("data/activity_count_user_by_date.rds")
+
+# data on server...
+#referrers_data <- read_delim(paste0(data_dir, "activity/referrers.tsv"), delim = "\t")
 
 # color palette 
 color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
@@ -304,2199 +343,1102 @@ custom_kable_weighted(combined_table,
 ```
 
 <table class="table" style="font-size: 10px; margin-left: auto; margin-right: auto;">
-
 <caption style="font-size: initial !important;">
-
 Full and extension sample demographics
-
 </caption>
-
 <thead>
-
 <tr>
-
 <th style="text-align:center;">
-
 </th>
-
 <th style="text-align:center;">
-
 Full weighted
-
 </th>
-
 <th style="text-align:center;">
-
 Full unweighted
-
 </th>
-
 <th style="text-align:center;">
-
 Extension weighted
-
 </th>
-
 <th style="text-align:center;">
-
 Extension unweighted
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr grouplength="4">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Gender</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Female
-
 </td>
-
 <td style="text-align:center;">
-
 0.48
-
 </td>
-
 <td style="text-align:center;">
-
 0.46
-
 </td>
-
 <td style="text-align:center;">
-
 0.49
-
 </td>
-
 <td style="text-align:center;">
-
 0.49
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Male
-
 </td>
-
 <td style="text-align:center;">
-
 0.52
-
 </td>
-
 <td style="text-align:center;">
-
 0.54
-
 </td>
-
 <td style="text-align:center;">
-
 0.51
-
 </td>
-
 <td style="text-align:center;">
-
 0.51
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="4">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Race</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 White
-
 </td>
-
 <td style="text-align:center;">
-
 0.68
-
 </td>
-
 <td style="text-align:center;">
-
 0.76
-
 </td>
-
 <td style="text-align:center;">
-
 0.69
-
 </td>
-
 <td style="text-align:center;">
-
 0.75
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Non-white
-
 </td>
-
 <td style="text-align:center;">
-
 0.32
-
 </td>
-
 <td style="text-align:center;">
-
 0.24
-
 </td>
-
 <td style="text-align:center;">
-
 0.31
-
 </td>
-
 <td style="text-align:center;">
-
 0.25
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="4">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>2016 presidential vote</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Donald Trump
-
 </td>
-
 <td style="text-align:center;">
-
 0.33
-
 </td>
-
 <td style="text-align:center;">
-
 0.40
-
 </td>
-
 <td style="text-align:center;">
-
 0.19
-
 </td>
-
 <td style="text-align:center;">
-
 0.20
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Hillary Clinton
-
 </td>
-
 <td style="text-align:center;">
-
 0.28
-
 </td>
-
 <td style="text-align:center;">
-
 0.31
-
 </td>
-
 <td style="text-align:center;">
-
 0.40
-
 </td>
-
 <td style="text-align:center;">
-
 0.49
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="4">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Employment status</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Employed
-
 </td>
-
 <td style="text-align:center;">
-
 0.46
-
 </td>
-
 <td style="text-align:center;">
-
 0.49
-
 </td>
-
 <td style="text-align:center;">
-
 0.48
-
 </td>
-
 <td style="text-align:center;">
-
 0.51
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Unemployed
-
 </td>
-
 <td style="text-align:center;">
-
 0.12
-
 </td>
-
 <td style="text-align:center;">
-
 0.10
-
 </td>
-
 <td style="text-align:center;">
-
 0.12
-
 </td>
-
 <td style="text-align:center;">
-
 0.10
-
 </td>
-
 </tr>
-
 <tr grouplength="9">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Education</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="2">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.00)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 High school graduate
-
 </td>
-
 <td style="text-align:center;">
-
 0.35
-
 </td>
-
 <td style="text-align:center;">
-
 0.19
-
 </td>
-
 <td style="text-align:center;">
-
 0.26
-
 </td>
-
 <td style="text-align:center;">
-
 0.14
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Some college
-
 </td>
-
 <td style="text-align:center;">
-
 0.35
-
 </td>
-
 <td style="text-align:center;">
-
 0.37
-
 </td>
-
 <td style="text-align:center;">
-
 0.37
-
 </td>
-
 <td style="text-align:center;">
-
 0.35
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 4-year
-
 </td>
-
 <td style="text-align:center;">
-
 0.19
-
 </td>
-
 <td style="text-align:center;">
-
 0.26
-
 </td>
-
 <td style="text-align:center;">
-
 0.24
-
 </td>
-
 <td style="text-align:center;">
-
 0.28
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Post-grad
-
 </td>
-
 <td style="text-align:center;">
-
 0.11
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 <td style="text-align:center;">
-
 0.13
-
 </td>
-
 <td style="text-align:center;">
-
 0.23
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="6">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Religion</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Atheist/Agnostic
-
 </td>
-
 <td style="text-align:center;">
-
 0.37
-
 </td>
-
 <td style="text-align:center;">
-
 0.35
-
 </td>
-
 <td style="text-align:center;">
-
 0.47
-
 </td>
-
 <td style="text-align:center;">
-
 0.46
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Protestant
-
 </td>
-
 <td style="text-align:center;">
-
 0.32
-
 </td>
-
 <td style="text-align:center;">
-
 0.34
-
 </td>
-
 <td style="text-align:center;">
-
 0.26
-
 </td>
-
 <td style="text-align:center;">
-
 0.27
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Roman Catholic
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 <td style="text-align:center;">
-
 0.15
-
 </td>
-
 <td style="text-align:center;">
-
 0.14
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="6">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Marital status</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Divorced
-
 </td>
-
 <td style="text-align:center;">
-
 0.11
-
 </td>
-
 <td style="text-align:center;">
-
 0.12
-
 </td>
-
 <td style="text-align:center;">
-
 0.10
-
 </td>
-
 <td style="text-align:center;">
-
 0.12
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Married
-
 </td>
-
 <td style="text-align:center;">
-
 0.43
-
 </td>
-
 <td style="text-align:center;">
-
 0.53
-
 </td>
-
 <td style="text-align:center;">
-
 0.39
-
 </td>
-
 <td style="text-align:center;">
-
 0.48
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Never married
-
 </td>
-
 <td style="text-align:center;">
-
 0.35
-
 </td>
-
 <td style="text-align:center;">
-
 0.26
-
 </td>
-
 <td style="text-align:center;">
-
 0.39
-
 </td>
-
 <td style="text-align:center;">
-
 0.30
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="10">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Family income</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 \< $10,000
-
 </td>
-
 <td style="text-align:center;">
-
 0.07
-
 </td>
-
 <td style="text-align:center;">
-
 0.05
-
 </td>
-
 <td style="text-align:center;">
-
 0.08
-
 </td>
-
 <td style="text-align:center;">
-
 0.05
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.00)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 $10,000 - $29,999
-
 </td>
-
 <td style="text-align:center;">
-
 0.21
-
 </td>
-
 <td style="text-align:center;">
-
 0.16
-
 </td>
-
 <td style="text-align:center;">
-
 0.22
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 $30,000 - $69,999
-
 </td>
-
 <td style="text-align:center;">
-
 0.36
-
 </td>
-
 <td style="text-align:center;">
-
 0.36
-
 </td>
-
 <td style="text-align:center;">
-
 0.36
-
 </td>
-
 <td style="text-align:center;">
-
 0.35
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 $70,000 - $119,999
-
 </td>
-
 <td style="text-align:center;">
-
 0.24
-
 </td>
-
 <td style="text-align:center;">
-
 0.27
-
 </td>
-
 <td style="text-align:center;">
-
 0.23
-
 </td>
-
 <td style="text-align:center;">
-
 0.26
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 \> $120,000
-
 </td>
-
 <td style="text-align:center;">
-
 0.11
-
 </td>
-
 <td style="text-align:center;">
-
 0.17
-
 </td>
-
 <td style="text-align:center;">
-
 0.12
-
 </td>
-
 <td style="text-align:center;">
-
 0.16
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="6">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Party identification</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Democrat
-
 </td>
-
 <td style="text-align:center;">
-
 0.37
-
 </td>
-
 <td style="text-align:center;">
-
 0.35
-
 </td>
-
 <td style="text-align:center;">
-
 0.51
-
 </td>
-
 <td style="text-align:center;">
-
 0.54
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Independent
-
 </td>
-
 <td style="text-align:center;">
-
 0.32
-
 </td>
-
 <td style="text-align:center;">
-
 0.32
-
 </td>
-
 <td style="text-align:center;">
-
 0.29
-
 </td>
-
 <td style="text-align:center;">
-
 0.28
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 Republican
-
 </td>
-
 <td style="text-align:center;">
-
 0.31
-
 </td>
-
 <td style="text-align:center;">
-
 0.33
-
 </td>
-
 <td style="text-align:center;">
-
 0.20
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr grouplength="8">
-
 <td colspan="5" style="border-bottom: 1px solid;background-color: gray!6 !important;">
-
 <strong>Age</strong>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 18-34
-
 </td>
-
 <td style="text-align:center;">
-
 0.27
-
 </td>
-
 <td style="text-align:center;">
-
 0.16
-
 </td>
-
 <td style="text-align:center;">
-
 0.33
-
 </td>
-
 <td style="text-align:center;">
-
 0.21
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 35-54
-
 </td>
-
 <td style="text-align:center;">
-
 0.33
-
 </td>
-
 <td style="text-align:center;">
-
 0.34
-
 </td>
-
 <td style="text-align:center;">
-
 0.31
-
 </td>
-
 <td style="text-align:center;">
-
 0.37
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 55-64
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 <td style="text-align:center;">
-
 0.23
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 <td style="text-align:center;">
-
 0.24
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 65+
-
 </td>
-
 <td style="text-align:center;">
-
 0.21
-
 </td>
-
 <td style="text-align:center;">
-
 0.27
-
 </td>
-
 <td style="text-align:center;">
-
 0.18
-
 </td>
-
 <td style="text-align:center;">
-
 0.19
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center; padding-left:  2em;" indentlevel="1">
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.02)
-
 </td>
-
 <td style="text-align:center;">
-
 (0.01)
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:center;">
-
 </td>
-
 <td style="text-align:center;">
-
 n = 4000
-
 </td>
-
 <td style="text-align:center;">
-
 n = 4000
-
 </td>
-
 <td style="text-align:center;">
-
 n = 1236
-
 </td>
-
 <td style="text-align:center;">
-
 n = 1236
-
 </td>
-
 </tr>
-
 </tbody>
-
 <tfoot>
-
 <tr>
-
 <td style="padding: 0; border: 0;" colspan="100%">
-
 <span style="font-style: italic;">Note: </span>
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="padding: 0; border: 0;" colspan="100%">
-
 <sup></sup> Weighted estimates use YouGov survey weights.
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="padding: 0; border: 0;" colspan="100%">
-
 <sup></sup> Standard errors are in parentheses.
-
 </td>
-
 </tr>
-
 </tfoot>
-
 </table>
 
 ## Figure A1: Total participants with browser activity data over time
@@ -3173,29 +2115,54 @@ texreg(c(QP_visit_pid_fit_nonrob, QP_time_pid_fit_nonrob),
 # without hostile sexism
 f_time_pid_alternative_rr <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_extremist_rr <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_mainstream_rr <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_cts + jw_cts + age + gender + educ2 + race 
   )
+f_visit_pid_alternative_rr <-
+  formula(
+    activity_yt_n_video_alternative_all ~  rr_cts + jw_cts  + age + gender + educ2 + race
+  )
+f_visit_pid_extremist_rr <-
+  formula(activity_yt_n_video_extremist_all ~  rr_cts + jw_cts  + age + gender + educ2 + race)
+
+f_visit_pid_mainstream_rr <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  rr_cts + jw_cts + age + gender + educ2 + race
+  )
+
 
 # without racial resentment
 f_time_pid_alternative_hs <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_alternative_all ~  fem_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  fem_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_extremist_hs <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  fem_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_mainstream_hs <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  fem_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+
+f_visit_pid_alternative_hs <-
+  formula(
+    activity_yt_n_video_alternative_all ~  fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_visit_pid_extremist_hs <-
+  formula(
+    activity_yt_n_video_extremist_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_visit_pid_mainstream_hs <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
   )
 
 
@@ -3204,20 +2171,36 @@ time_rr_fs <- list(
   f_time_pid_extremist_rr,
   f_time_pid_mainstream_rr
 )
+visit_rr_fs <- list(
+  f_visit_pid_alternative_rr,
+  f_visit_pid_extremist_rr,
+  f_visit_pid_mainstream_rr
+)
 time_hs_fs <- list(
   f_time_pid_alternative_hs,
   f_time_pid_extremist_hs,
   f_time_pid_mainstream_hs
 )
+visit_hs_fs <- list(
+  f_visit_pid_alternative_hs,
+  f_visit_pid_extremist_hs,
+  f_visit_pid_mainstream_hs
+)
 
 
 QP_time_rr_fit <- list()
 QP_time_hs_fit <- list()
+QP_visit_rr_fit <- list()
+QP_visit_hs_fit <- list()
 
 for (i in 1:length(time_rr_fs)) {
   QP_time_rr_fit[[i]] <-
     robust_weighted_quasipoisson(formula = time_rr_fs[[i]])
   QP_time_hs_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_hs_fs[[i]])
+  QP_visit_rr_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_rr_fs[[i]])
+  QP_visit_hs_fit[[i]] <-
     robust_weighted_quasipoisson(formula = time_hs_fs[[i]])
 }
 
@@ -3229,16 +2212,31 @@ names(QP_time_hs_fit) <-
   c("time_hs_alternative_full",
     "time_hs_extremist_full",
     "time_hs_mainstream_full")
+names(QP_visit_rr_fit) <-
+  c("visit_rr_alternative_full",
+    "visit_rr_extremist_full",
+    "visit_rr_mainstream_full")
+names(QP_visit_hs_fit) <-
+  c("visit_hs_alternative_full",
+    "visit_hs_extremist_full",
+    "visit_hs_mainstream_full")
 ```
 
 ``` r
 QP_time_hs_fit_nonrob <- QP_time_rr_fit_nonrob <- list()
+QP_visit_hs_fit_nonrob <- QP_visit_rr_fit_nonrob <- list()
 for (i in 1:length(time_hs_fs)) {
   QP_time_hs_fit_nonrob[[i]] <-
     robust_weighted_quasipoisson(formula = time_hs_fs[[i]],
                                  robust_output = F)
   QP_time_rr_fit_nonrob[[i]] <-
     robust_weighted_quasipoisson(formula = time_rr_fs[[i]],
+                                 robust_output = F)
+  QP_visit_hs_fit_nonrob[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_hs_fs[[i]],
+                                 robust_output = F)
+  QP_visit_rr_fit_nonrob[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_rr_fs[[i]],
                                  robust_output = F)
 }
 
@@ -3263,21 +2261,21 @@ texreg(
   ),
        digits = 2,
        booktabs = TRUE, 
-       label = "tab:tablea7",
+       label = "tab:tablea7.1",
        caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
        # texreg reads models as separate lists
-       override.pvalues = list(robust_pvals[1:11],
-                    robust_pvals[12:22],
-                    robust_pvals[23:33],
-                    robust_pvals[34:44],
-                    robust_pvals[45:55],
-                    robust_pvals[56:66]),
-       override.se = list(robust_SEs[1:11],
-                    robust_SEs[12:22],
-                    robust_SEs[23:33],
-                    robust_SEs[34:44],
-                    robust_SEs[45:55],
-                    robust_SEs[56:66]),
+       override.pvalues = list(robust_pvals[1:9],
+                    robust_pvals[10:18],
+                    robust_pvals[19:27],
+                    robust_pvals[28:36],
+                    robust_pvals[37:45],
+                    robust_pvals[46:54]),
+       override.se = list(robust_SEs[1:9],
+                    robust_SEs[10:18],
+                    robust_SEs[19:27],
+                    robust_SEs[28:36],
+                    robust_SEs[37:45],
+                    robust_SEs[46:54]),
        custom.model.names = rep(c("Alternative",
                                  "Extremist",
                                  "Mainstream"), each = 2),
@@ -3286,8 +2284,8 @@ texreg(
             "fem_cts" = "Hostile sexism",
             "rr_cts" = "Racial resentment",
             "jw_cts" = "Feeling Jews",
-            "pid_leanDemocrat" = "Democrat",
-            "pid_leanRepublican" = "Republican",
+            #"pid_leanDemocrat" = "Democrat",
+            #"pid_leanRepublican" = "Republican",
             "age" = "Age",
             "genderMale" =  "Male",
             "raceNon-white" = "Non-white",
@@ -3296,7 +2294,62 @@ texreg(
             "educ2Post-grad" = "Post-grad",
             "(Intercept)" = "Intercept"
          ),
-          file = "appendix-figures_files/additional_regressions_hs_rr.tex")
+          file = "appendix-figures_files/additional_regressions_hs_rr_time.tex")
+
+
+visit_rr_hs_models <- bind_rows(QP_visit_hs_fit[[1]],
+                               QP_visit_rr_fit[[1]],
+                               QP_visit_hs_fit[[2]],
+                               QP_visit_rr_fit[[2]],
+                               QP_visit_hs_fit[[3]],
+                               QP_visit_rr_fit[[3]])
+robust_SEs <- visit_rr_hs_models$robust_se
+robust_pvals<- visit_rr_hs_models$p_val
+
+# output tex table
+texreg(
+  list(
+    QP_visit_hs_fit_nonrob[[1]],
+    QP_visit_rr_fit_nonrob[[1]],
+    QP_visit_hs_fit_nonrob[[2]],
+    QP_visit_rr_fit_nonrob[[2]],
+    QP_visit_hs_fit_nonrob[[3]],
+    QP_visit_rr_fit_nonrob[[3]]
+  ),
+       digits = 2,
+       booktabs = TRUE, 
+       label = "tab:tablea7.2",
+       caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
+       # texreg reads models as separate lists
+       override.pvalues = list(robust_pvals[1:9],
+                    robust_pvals[10:18],
+                    robust_pvals[19:27],
+                    robust_pvals[28:36],
+                    robust_pvals[37:45],
+                    robust_pvals[46:54]),
+       override.se = list(robust_SEs[1:9],
+                    robust_SEs[10:18],
+                    robust_SEs[19:27],
+                    robust_SEs[28:36],
+                    robust_SEs[37:45],
+                    robust_SEs[46:54]),
+       custom.model.names = rep(c("Alternative",
+                                 "Extremist",
+                                 "Mainstream"), each = 2),
+       custom.coef.map =
+         list(
+            "fem_cts" = "Hostile sexism",
+            "rr_cts" = "Racial resentment",
+            "jw_cts" = "Feeling Jews",
+            "age" = "Age",
+            "genderMale" =  "Male",
+            "raceNon-white" = "Non-white",
+            "educ2Some college" = "Some college",
+            "educ24-year" = "Bachelor's degree",
+            "educ2Post-grad" = "Post-grad",
+            "(Intercept)" = "Intercept"
+         ),
+          file = "appendix-figures_files/additional_regressions_hs_rr_views.tex")
 ```
 
 ### Figure A8: Correlates of exposure to YouTube videos by channel type (alternate racial attitude measure)
@@ -3367,6 +2420,262 @@ texreg(c(QP_visit_fire_fit_nonrob, QP_time_fire_fit_nonrob),
             "(Intercept)" = "Intercept"
          ),
           file = "appendix-figures_files/figureA8.tex")
+```
+
+### Factor loadings
+
+``` r
+rr_cces_vars <- activity_data %>%
+  select(all_of(c("CC18_422e", "CC18_422f", "CC18_422g", "CC18_422h"))) #classical RR
+fire_cces_vars <- activity_data %>%
+  select(all_of(c("CC18_422e", "CC18_422f", "CC18_422g", "CC18_422h")),
+         all_of(c("CC18_422a", "CC18_422b"))) # overstate 
+fem_cces_vars <- activity_data %>%
+  select(all_of(c("CC18_422c", "CC18_422d"))) #fem
+all_cces_vars <- activity_data  %>%
+  select(starts_with(c("CC18_422")))
+
+# pca with varimax rotation
+rr_pca_rot <- psych::principal(rr_cces_vars,
+                 nfactors = 1, 
+                 rotate = 'varimax')
+rr_pca_rot
+```
+
+    ## Principal Components Analysis
+    ## Call: psych::principal(r = rr_cces_vars, nfactors = 1, rotate = "varimax")
+    ## Standardized loadings (pattern matrix) based upon correlation matrix
+    ##            PC1   h2   u2 com
+    ## CC18_422e 0.95 0.90 0.10   1
+    ## CC18_422f 0.94 0.88 0.12   1
+    ## CC18_422g 0.94 0.88 0.12   1
+    ## CC18_422h 0.94 0.89 0.11   1
+    ## 
+    ##                 PC1
+    ## SS loadings    3.55
+    ## Proportion Var 0.89
+    ## 
+    ## Mean item complexity =  1
+    ## Test of the hypothesis that 1 component is sufficient.
+    ## 
+    ## The root mean square of the residuals (RMSR) is  0.04 
+    ##  with the empirical chi square  24.12  with prob <  5.8e-06 
+    ## 
+    ## Fit based upon off diagonal values = 1
+
+``` r
+fire_pca_rot <- psych::principal(fire_cces_vars,
+                 nfactors = 1, 
+                 rotate = 'varimax')
+fire_pca_rot
+```
+
+    ## Principal Components Analysis
+    ## Call: psych::principal(r = fire_cces_vars, nfactors = 1, rotate = "varimax")
+    ## Standardized loadings (pattern matrix) based upon correlation matrix
+    ##            PC1   h2   u2 com
+    ## CC18_422e 0.93 0.87 0.13   1
+    ## CC18_422f 0.93 0.87 0.13   1
+    ## CC18_422g 0.93 0.86 0.14   1
+    ## CC18_422h 0.93 0.87 0.13   1
+    ## CC18_422a 0.91 0.84 0.16   1
+    ## CC18_422b 0.83 0.69 0.31   1
+    ## 
+    ##                 PC1
+    ## SS loadings    5.00
+    ## Proportion Var 0.83
+    ## 
+    ## Mean item complexity =  1
+    ## Test of the hypothesis that 1 component is sufficient.
+    ## 
+    ## The root mean square of the residuals (RMSR) is  0.04 
+    ##  with the empirical chi square  57.03  with prob <  5e-09 
+    ## 
+    ## Fit based upon off diagonal values = 1
+
+``` r
+fem_pca_rot <- psych::principal(fem_cces_vars,
+                 nfactors = 1, 
+                 rotate = 'varimax')
+fem_pca_rot
+```
+
+    ## Principal Components Analysis
+    ## Call: psych::principal(r = fem_cces_vars, nfactors = 1, rotate = "varimax")
+    ## Standardized loadings (pattern matrix) based upon correlation matrix
+    ##            PC1   h2   u2 com
+    ## CC18_422c 0.92 0.85 0.15   1
+    ## CC18_422d 0.92 0.85 0.15   1
+    ## 
+    ##                 PC1
+    ## SS loadings    1.70
+    ## Proportion Var 0.85
+    ## 
+    ## Mean item complexity =  1
+    ## Test of the hypothesis that 1 component is sufficient.
+    ## 
+    ## The root mean square of the residuals (RMSR) is  0.15 
+    ##  with the empirical chi square  54.39  with prob <  NA 
+    ## 
+    ## Fit based upon off diagonal values = 0.95
+
+``` r
+all_pca_rot <- psych::principal(all_cces_vars,
+                 nfactors = 2, 
+                 rotate = 'varimax')
+all_pca_rot
+```
+
+    ## Principal Components Analysis
+    ## Call: psych::principal(r = all_cces_vars, nfactors = 2, rotate = "varimax")
+    ## Standardized loadings (pattern matrix) based upon correlation matrix
+    ##            RC1  RC2   h2   u2 com
+    ## CC18_422a 0.81 0.43 0.84 0.16 1.5
+    ## CC18_422b 0.77 0.35 0.72 0.28 1.4
+    ## CC18_422c 0.40 0.84 0.86 0.14 1.4
+    ## CC18_422d 0.44 0.79 0.82 0.18 1.6
+    ## CC18_422e 0.73 0.58 0.87 0.13 1.9
+    ## CC18_422f 0.83 0.43 0.87 0.13 1.5
+    ## CC18_422g 0.79 0.49 0.86 0.14 1.7
+    ## CC18_422h 0.77 0.52 0.86 0.14 1.8
+    ## 
+    ##                        RC1  RC2
+    ## SS loadings           4.04 2.67
+    ## Proportion Var        0.50 0.33
+    ## Cumulative Var        0.50 0.84
+    ## Proportion Explained  0.60 0.40
+    ## Cumulative Proportion 0.60 1.00
+    ## 
+    ## Mean item complexity =  1.6
+    ## Test of the hypothesis that 2 components are sufficient.
+    ## 
+    ## The root mean square of the residuals (RMSR) is  0.04 
+    ##  with the empirical chi square  122.33  with prob <  7e-20 
+    ## 
+    ## Fit based upon off diagonal values = 1
+
+``` r
+# psych::fa.parallel(all_cces_vars,  fa="pc", n.iter=100,
+#             show.legend=FALSE, main="Scree plot with parallel analysis")
+
+#plot all PCs
+AMR::ggplot_pca(prcomp(all_cces_vars[complete.cases(all_cces_vars),]))
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+
+### Correlation between racial and gender resentment
+
+``` r
+# n is 875
+cor(activity_data$fem_cts, activity_data$rr_cts, 
+    use = "complete.obs",
+    method = "pearson")
+```
+
+    ## [1] 0.8356406
+
+### Model with combined score
+
+``` r
+# combine racial+gender resentment variable
+activity_data <- activity_data %>%
+  rowwise() %>%
+  mutate(rr_fem_cts = mean(c(rr_cts,fem_cts),na.rm=T ) ) %>%
+  ungroup()
+
+
+f_time_rrfem_alternative <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_fem_cts + jw_cts + age + gender + educ2 + race
+  )
+f_time_rrfem_extremist <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_time_rrfem_mainstream <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+
+f_visit_rrfem_alternative <-
+  formula(
+    activity_yt_n_video_alternative_all ~  rr_fem_cts + jw_cts + age + gender + educ2 + race
+  )
+f_visit_rrfem_extremist <-
+  formula(
+    activity_yt_n_video_extremist_all ~  rr_fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_visit_rrfem_mainstream <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  rr_fem_cts + jw_cts + age + gender + educ2 + race  
+  )
+
+time_rrfem_fs <- list(
+  f_time_rrfem_alternative,
+  f_time_rrfem_extremist,
+  f_time_rrfem_mainstream
+)
+visit_rrfem_fs <- list(
+  f_visit_rrfem_alternative,
+  f_visit_rrfem_extremist,
+  f_visit_rrfem_mainstream
+)
+
+# estimate with and without robust SEs
+QP_time_rrfem_fit <- QP_visit_rrfem_fit <- list()
+QP_time_rrfem_fit_norob <- QP_visit_rrfem_fit_norob <- list()
+for (i in 1:length(time_rrfem_fs)) {
+  QP_time_rrfem_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_rrfem_fs[[i]])
+  QP_time_rrfem_fit_norob[[i]] <-
+    robust_weighted_quasipoisson(formula = time_rrfem_fs[[i]],
+                                 robust_output = F)
+  QP_visit_rrfem_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_rrfem_fs[[i]])
+  QP_visit_rrfem_fit_norob[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_rrfem_fs[[i]],
+                                 robust_output = F)
+}
+robust_SEs <- bind_rows(c(QP_visit_rrfem_fit, QP_time_rrfem_fit) )$robust_se
+robust_pvals <- bind_rows(c(QP_visit_rrfem_fit, QP_time_rrfem_fit) )$p_val
+
+texreg(c(QP_visit_rrfem_fit_norob, QP_time_rrfem_fit_norob),
+       digits = 2,
+       booktabs = TRUE, 
+       label = "tab:figaxtable",
+       caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
+       # texreg reads models as separate lists
+       override.pvalues =  list(robust_pvals[1:9],
+                    robust_pvals[10:18],
+                    robust_pvals[19:27],
+                    robust_pvals[28:36],
+                    robust_pvals[37:45],
+                    robust_pvals[46:54]),
+       override.se =  list(robust_SEs[1:9],
+                    robust_SEs[10:18],
+                    robust_SEs[19:27],
+                    robust_SEs[28:36],
+                    robust_SEs[37:45],
+                    robust_SEs[46:54]),
+       custom.model.names = rep(c("Alternative",
+                                 "Extremist",
+                                 "Mainstream"),2),
+       custom.coef.map =
+         list(
+            "rr_fem_cts" = "Combined racial resentment and hosile sexism",
+            "jw_cts" = "Feeling Jews",
+            "age" = "Age",
+            "genderMale" =  "Male",
+            "raceNon-white" = "Non-white",
+            "educ2Some college" = "Some college",
+            "educ24-year" = "Bachelor's degree",
+            "educ2Post-grad" = "Post-grad",
+            "pid_leanDemocrat" = "Democrat",
+            "pid_leanRepublican" = "Republican",
+            "(Intercept)" = "Intercept"
+         ),
+          file = "appendix-figures_files/additional_regressions_combined_hs_rr.tex")
 ```
 
 ## Figure A5: Zero-inflated models on correlates of time on YouTube video by channel type
@@ -3719,15 +3028,594 @@ texreg(QP_visit_fit_nonrob,
 
 ## Figure A9: Correlation between browser history and activity
 
+``` r
+### --------- specify a bunch of variables we want to look at
+channel_types <- c("alternative",
+                   "extremist",
+                   "mainstream",
+                   "other")
+
+# proportion that watched any alt/ext/msm videos
+bh_dummy <- c("bh_alternative_any",
+              "bh_extremist_any",
+              "bh_mainstream_any",
+              "bh_other_any")
+at_dummy <- c("at_alternative_any",
+              "at_extremist_any",
+              "at_mainstream_any",
+              "at_other_any")
+bh_counts <- paste0("browser_history_yt_n_video_",
+                    channel_types,
+                    "_all")
+bh_time <-
+  paste0("browser_history_yt_video_time_elapsed_capped_total_",
+         channel_types,
+         "_all")
+at_counts <- paste0("activity_yt_n_video_",
+                    channel_types,
+                    "_all")
+at_time <- paste0("activity_yt_video_time_elapsed_capped_total_",
+                  channel_types,
+                  "_all")
+
+# number subscribed to alternative
+bh_subscribed_counts <- paste0("browser_history_yt_n_video_",
+                               channel_types,
+                               "_subscribed")
+at_subscribed_counts  <-  paste0("activity_yt_n_video_",
+                                 channel_types,
+                                 "_subscribed")
+# time on subscribed to alternative
+bh_subscribed_time <- paste0("browser_history_yt_video_time_elapsed_capped_total_",
+                               channel_types,
+                               "_subscribed")
+at_subscribed_time  <-  paste0("activity_yt_video_time_elapsed_capped_total_",
+                                 channel_types,
+                                 "_subscribed")
+
+
+# put activity and browser history together
+select_activity_data_data <- activity_data %>%
+  select(caseid, at_alt, at_ext, at_msm, at_other, activity_n_total,
+         all_of(at_counts),
+         all_of(at_time),
+         all_of(at_subscribed_counts),
+         all_of(at_subscribed_time))
+select_browser_history_data <- browser_history_data %>%
+  select(caseid, bh_alt, bh_ext, bh_msm, bh_other, browser_history_n_total,
+         all_of(bh_counts),
+         all_of(bh_time),
+         all_of(bh_subscribed_counts),
+         all_of(bh_subscribed_time))
+bh_at_data <-
+  full_join(select_activity_data_data, select_browser_history_data, 
+            by = "caseid") %>%
+  rename( bh_alternative_any = bh_alt, 
+         bh_extremist_any = bh_ext,
+         bh_mainstream_any = bh_msm,
+         bh_other_any = bh_other,
+         at_alternative_any = at_alt,
+         at_extremist_any = at_ext,
+         at_mainstream_any = at_msm,
+         at_other_any = at_other)
+
+correlation_fxn <- function(bh_var, at_var, data = bh_at_data) {
+  r = cor(x = data[[bh_var]], 
+          y = data[[at_var]], 
+          use = "complete.obs", method = "pearson")
+  out <- tibble(corr = r,
+                channel_type = str_extract(at_var, 
+                                           paste0(channel_types, collapse = "|") ),
+                metric = case_when(
+                  # youtube general
+                  str_detect(at_var, "_yt_n_total") ~ "total yt",
+                  # youtube channel type
+                  str_detect(at_var, "any") ~ "binary",
+                  str_detect(at_var, "subscribed") &
+                    str_detect(at_var, "yt_n_video") ~ "sub count",
+                  str_detect(at_var, "subscribed") &
+                    str_detect(at_var, "time") ~ "sub time",
+                  str_detect(at_var, "yt_n_video") ~ "count",
+                  str_detect(at_var, "time") ~ "time"
+                ))
+  return(out)
+}
+
+correlation_plot <- function(bh_var, at_var, data = merged_data) {
+  r = cor(x = data[[bh_var]],
+          y = data[[at_var]],
+          use = "complete.obs", method = "pearson")
+  out <- ggplot(aes(x = data[[bh_var]],
+                    y = data[[at_var]]),
+                data = data) +
+    geom_point() +
+    geom_abline()
+  return(out)
+}
+```
+
+``` r
+# any visits to channel type
+corr_binary <- map2(.x = bh_dummy, .y = at_dummy,
+     correlation_fxn) %>% 
+  bind_rows()
+# number of videos
+corr_counts <- map2(.x = bh_counts, .y = at_counts,
+     correlation_fxn) %>% 
+  bind_rows()
+# capped time on videos
+corr_time <- map2(.x = bh_time, .y = at_time,
+     correlation_fxn) %>% 
+  bind_rows()
+
+# number channel visit
+# corr_channel <- map2(.x = bh_subscribed_counts, .y = at_subscribed_counts,
+#      correlation_fxn) %>% 
+#   bind_rows()
+# number subscribed
+corr_subs_count <- map2(.x = bh_subscribed_counts, .y = at_subscribed_counts,
+     correlation_fxn) %>% 
+  bind_rows()
+# time subscribed
+corr_subs_time <- map2(.x = bh_subscribed_time, .y = at_subscribed_time,
+     correlation_fxn) %>% 
+  bind_rows()
+
+# youtube correlations
+youtube_corr_df <- corr_binary %>% 
+  bind_rows(corr_counts) %>% 
+  bind_rows(corr_time) %>% 
+  bind_rows(corr_subs_count) %>% 
+  bind_rows(corr_subs_time) %>% 
+  mutate(channel_type = recode_channel_type_fxn(channel_type),
+         metric = factor(metric, levels = c(
+           "binary",
+           "count", "sub count",
+           "time", "sub time"
+         )))
+
+
+youtube_channel_type <- youtube_corr_df %>% 
+  ggplot(aes(x = channel_type, 
+             y = 1,
+             fill = corr)) +
+  geom_tile(color = "black") + 
+  geom_text(aes(label = format(round(corr, 2), nsmall = 2)),
+            color = "white", size = 6) +
+  scale_fill_gradient2(low = "#FFFFFF", 
+                       mid = "#6F9EBE", 
+                       high = "#032146",
+                       midpoint = .5,
+                      limits = c(0, 1),
+                      breaks = seq(0, 1, .2)) +
+  coord_fixed(ratio = 1/2) +
+  facet_wrap(~metric, nrow = 5,
+             labeller = labeller(
+               metric = c("binary" = "Any views of YouTube videos from channel",
+                          "count" = "Total number of views of YouTube videos from channel",
+                          "time" = "Seconds elapsed on YouTube videos from channel (capped)",
+                          "sub count" = "Total number of views of subscribed channel",
+                          "sub time" = "Seconds elapsed on videos from subscribed channel (capped)")
+             )) +
+  labs(x = "", y = "") +
+  theme(axis.text.y = element_blank(),
+        panel.grid = element_blank(),
+        legend.position = 'bottom',
+        strip.text.x = element_text(size = 12, hjust = 0))+
+  guides(fill = guide_colourbar(barwidth = 20,
+                                barheight = 1,
+                                title = ""))
+youtube_channel_type 
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave("appendix-figures_files/correlations_history_activity_youtube_channel_type.pdf",
+       height = 8, width = 9 )
+```
+
 ## Table A8: Predictors of proportion of time spent on alternative/extremist videos by day
 
 ## Figure A10: Differences in perceptions of YouTube between full sample and extension sample
 
+``` r
+### ====== survey measures for those who did and did not install the extension
+yg_youtube <-  merged_data %>% 
+  select(user_id, weight_cmd, browser_sample,
+         starts_with("youtube"),
+         -youtube_vid_quality,
+         -youtube_freq_use_3,
+         -youtube_freq_use)
+
+youtube_vars <- yg_youtube %>% 
+  select(starts_with("youtube")) %>% 
+  names()
+
+yg_youtube_factor <- yg_youtube %>% 
+  mutate(youtube_vid_trust = case_when(youtube_vid_trust == 1 ~ "A great deal",
+                                       youtube_vid_trust == 2 ~ "A moderate amount",
+                                       youtube_vid_trust == 3 ~ "Not much",
+                                       youtube_vid_trust == 4 ~ "Not at all"),
+         youtube_info_accurate = case_when(youtube_info_accurate == 1 ~ "All or almost all",
+                                           youtube_info_accurate == 2 ~ "Most",
+                                           youtube_info_accurate == 3 ~ "Some",
+                                           youtube_info_accurate == 4 ~ "Very little",
+                                           youtube_info_accurate == 5 ~ "None at all"),
+         youtube_vid_bias = case_when(youtube_vid_bias == 1 ~ "Favor liberals",
+                                      youtube_vid_bias == 2 ~ "Favor conservatives",
+                                      youtube_vid_bias == 3 ~ "Neither",
+                                      youtube_vid_bias == 4 ~ "Other"),
+         youtube_personalize = case_when(youtube_personalize == 1 ~ "Very accurate",
+                                         youtube_personalize == 2 ~ "Somewhat accurate",
+                                         youtube_personalize == 3 ~ "Not very accurate",
+                                         youtube_personalize == 4 ~ "Not at all accurate"),
+         youtube_vid_trust = factor(youtube_vid_trust, levels = c("A great deal", "A moderate amount", "Not much", "Not at all")),
+         youtube_info_accurate = factor(youtube_info_accurate, levels = c("All or almost all", "Most", "Some", "Very little", "None at all")),
+         youtube_vid_bias = factor(youtube_vid_bias, levels = c("Favor liberals", "Favor conservatives", "Neither", "Other")),
+         youtube_personalize = factor(youtube_personalize, levels = c("Very accurate", "Somewhat accurate", "Not very accurate", "Not at all accurate"))) %>% 
+  dummy_cols(select_columns = youtube_vars)
+
+
+
+
+svy_object <- svydesign(ids = ~ 1,
+                        weights = ~ weight_cmd,
+                        data = yg_youtube_factor)
+
+estimates_df <- map_dfr(youtube_vars,
+                        function (x) {
+                          svyresults <- svyby(
+                            ~ get(x),
+                            by = ~ browser_sample,
+                            design = svy_object,
+                            svymean,
+                            na.rm = TRUE
+                          )
+                          remove_str <- c(paste0("browser:", "get(x)"),
+                                          paste0("full:", "get(x)"))
+                          # technically, devrais utiliser svyciprop, mais la difference est négligeable ici
+                          CIs <- confint(svyresults) 
+                          ci_df <- CIs %>% 
+                            as_tibble() %>% 
+                            mutate(name = rownames(CIs)) %>% 
+                            mutate(browser_sample = if_else(str_detect(name, "browser\\:"),
+                                                            "browser", "full"),
+                                   varlevel = stringr::str_replace_all(name,
+                                                                   fixed(remove_str[1]),
+                                                                   ""),
+                                   varlevel = stringr::str_replace_all(varlevel,
+                                                                   fixed(remove_str[2]),
+                                                                   "")) %>% 
+                            mutate(join_name = paste0(browser_sample,varlevel))%>% 
+                            rename(ci_lwr = `2.5 %`,
+                                   ci_upr = `97.5 %`) %>% 
+                            select(join_name, ci_lwr, ci_upr) 
+                          
+                          df <- as_tibble(svyresults) %>% 
+                            pivot_longer(-browser_sample) %>%
+                            mutate(stat = if_else(str_detect(name, "se\\."), "std_err", "prop"),
+                                   name = stringr::str_replace_all(name, 
+                                                                   fixed("get(x)"), 
+                                                      ""),
+                                   name = stringr::str_replace_all(name, 
+                                                                   fixed("se."), 
+                                                                   "")) %>%  
+                            pivot_wider(names_from = stat) %>%
+                            rename(varlevel = name) %>% 
+                            mutate(join_name = paste0(browser_sample,varlevel)) %>% 
+                            left_join(ci_df, 
+                                      by = "join_name")  %>% 
+                            mutate(variable = x)
+                          return(df)
+                        }) %>% 
+  #rename(var_level = name) %>%
+  mutate(
+    percentage = 100 * prop,
+    ci_lwr = 100 * ci_lwr,
+    ci_upr = 100 * ci_upr
+  )
+
+
+youtube_attitudes_plot <- function(youtube_var) {
+  facet_labs <- c(
+    "youtube_info_accurate" = "Accuracy of information on YouTube",
+    "youtube_personalize" = "Belief YouTube personalizes",
+    "youtube_vid_trust" = "Trust in YouTube videos",
+    "youtube_vid_bias" = "Perception of YouTube bias"
+  )
+  
+  filtered_estimates_df <- estimates_df %>% 
+    filter(variable == youtube_var) %>% 
+    mutate(varlevel = str_wrap_factor(factor(varlevel,
+                            levels = levels(yg_youtube_factor[[youtube_var]])),
+           width = 6),
+           browser_sample = factor(browser_sample, levels = c("full", "browser")))
+  
+  filtered_estimates_df %>% 
+    ggplot(aes(x = varlevel, y = percentage,
+               ymin = ci_lwr, ymax = ci_upr,
+               color = browser_sample)) +
+    geom_point(size = 2,
+               position = position_dodge(width = .3)) +
+    geom_errorbar(position = position_dodge(width = .3),
+                  width = 0) + 
+    labs(x = "", y = "") +
+    scale_y_continuous(limits = c(0, 80), 
+                       labels = paste0(seq(0, 80, 20), "%"),
+                       breaks = seq(0, 80, 20)) +
+    facet_wrap( ~ variable,
+                scales = "free_x",
+                labeller = labeller(
+                  variable = facet_labs
+                )) +
+    scale_color_manual(labels = c("browser" = "Extension sample",
+                                  "full" = "Full sample"),
+                       values = c("#F74846",
+                                  "#28B0C4"),
+                       name = "") +
+    ggthemes::theme_gdocs() +
+    theme(legend.position = 'bottom',
+          legend.direction = 'horizontal',
+          strip.text = element_text(size = 14, hjust = 1),
+          strip.background =element_rect(fill="grey", color = "grey"),
+          panel.grid.major.y = element_line(color = "grey95"),
+          panel.grid.major.x = element_blank(),
+          axis.text.x = element_text(size = 12),
+          plot.background = element_rect(color = "white"))
+}
+
+youtube_attitudes_plots <- map(
+  1:4, ~youtube_attitudes_plot(youtube_vars[[.x]])  +
+    theme(legend.position = 'none')
+)
+common_legend <- get_legend(youtube_attitudes_plot(youtube_vars[[1]]) )
+
+plot_grid(
+  plot_grid(
+    youtube_attitudes_plots[[1]],
+    youtube_attitudes_plots[[2]],
+    youtube_attitudes_plots[[3]],
+    youtube_attitudes_plots[[4]],
+    nrow = 2
+  ),
+  common_legend,
+  ncol = 1,
+  rel_heights = c(1, .1)
+)
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
+
 ## Figure A11: Percentage of views to each channel type by video number within session
+
+This repository does not contain session-level data (merged.tsv)
+(withheld for participant privacy), but code that reproduces session
+level figures are presented.
 
 ## Figure A12: Percentage of views to each channel type by total session length
 
+(See above caveat for session-level data.)
+
+``` r
+# need data where each observation is a youtube action
+activity_youtube = read_delim(paste0(data_dir, "youtube/merged.tsv"),
+                              delim = "\t")
+# only sessions with videos in them
+activity_youtube_video <- activity_youtube %>% 
+  filter(!is.na(video_id))
+
+# remove users not matched to surveys
+final_sample_ids <- merged_data %>% 
+  pull(user_id)
+
+restricted_sample <- activity_youtube_video %>% 
+  filter(user_id %in% final_sample_ids)
+
+#within each session
+within_session_raw <- restricted_sample %>% 
+  group_by(user_id, yt_session) %>% 
+  mutate(yt_n_video_in_session = n(),
+         video_index = row_number(yt_session)) %>% 
+  ungroup() %>% 
+  group_by(video_index) %>%
+  mutate(
+    # on besoin aussi combien d'obs ont-t-il pour video index 1, 2, 3,...
+    total_video_index = n(),
+    fraction_alternative = sum(alternative_match) / total_video_index,
+    fraction_extremist = sum(extremist_match) / total_video_index,
+    fraction_mainstream = sum(mainstream_match) / total_video_index,
+    fraction_other = sum(other_match) / total_video_index
+  ) %>% 
+  select(video_index, total_video_index, starts_with("fraction_")) %>% 
+  pivot_longer(-c("video_index", "total_video_index"),
+               names_to = "channel_type", 
+               values_to = "proportion") %>% 
+  distinct()
+
+video_index_rug <- restricted_sample %>% 
+  group_by(user_id, yt_session) %>% 
+  mutate(yt_n_video_in_session = n(),
+         video_index = row_number(yt_session)) %>% 
+  select(video_index)
+
+
+within_session_raw %>%
+  filter(channel_type != "fraction_other") %>% 
+  filter(video_index %in% 1:319) %>% # 99%
+  ggplot(aes(x = video_index, 
+             y = proportion,
+             weight = total_video_index,
+             #size = weight_video_index,
+             color = channel_type) ) +
+  geom_point(alpha = .2) +
+  geom_rug(data = video_index_rug %>% filter(video_index %in% 1:319),
+           aes(x = video_index, y = 0),
+           alpha = .005,
+           sides = "b",
+           position = position_jitter(width = .15),
+           inherit.aes = F) +
+  geom_smooth(method = 'loess',
+              formula = 'y~x',
+              span = .5, # using about a third of data points as window
+              # i.e. uses 30% closest points to a given observation for the fit
+              aes(fill = channel_type),
+              method.args = list(degree = 1),
+              alpha = .3) +
+  scale_y_continuous(limits = c(0, .1),
+                     labels = paste0(seq(0, 10, by = 2), "%"),
+                     breaks = seq(0, .1, by = .02)) +
+  scale_color_manual(values = c("#FFA500", "#CD5C5C", "#015CB9"),
+                     labels = c("Alternative\nchannels",
+                                "Extremist\nchannels",
+                                "Mainstream\nmedia"),
+                     name = "") +
+  scale_fill_manual(values = c("#FFA500", "#CD5C5C", "#015CB9"),
+                    labels = c("Alternative\nchannels",
+                               "Extremist\nchannels",
+                               "Mainstream\nmedia"),
+                    name = "") +
+  labs(x = "Video index within session", 
+       y = paste0("Estimated percentage of channel type") ) +
+  theme_minimal() +
+  theme(legend.position = 'bottom',
+        axis.title.x = element_text(hjust = .95))
+```
+
 ## Table A9: External referrers to alternative and extremist channel videos
+
+(`referrers_data` is on server.)
+
+``` r
+# define referrer domains
+external_referrers <- list(
+  # other social 
+  main_social = c("facebook.com",
+                  "apps.facebook.com",
+                  "messenger.com",
+                  "twitter.com",
+                  "tweetdeck.twitter.com",
+                  "instagram.com",
+                  "linkedin.com",
+                  "discord.com",
+                  "tiktok.com",
+                  "tumblr.com",
+                  "tinder.com",
+                  "bumble.com",
+                  "pinterest.com",
+                  "twitch.tv",
+                  "reddit.com",
+                  "old.reddit.com"),
+  # alternative social
+  alternative_social = c("twitchy.com",
+                         "gab.com",
+                         "parler.com",
+                         "banned.video",
+                         "boards.4channel.org"
+                         "boards.4chan.org",
+                         "4chan.org"),
+  # search engine
+  search_engine = c("google.com",
+                    "bing.com",
+                    "yahoo.com", 
+                    "search.yahoo.com",
+                    "duckduckgo.com"),
+  # webmail
+  webmail = c("mail.google.com",
+              "mail.yahoo.com",
+              "mail.com",
+              "mail.aol.com",
+              "outlook.office365.com",
+              "outlook.office.com",
+              "outlook.live.com")
+)
+
+internal_referrers_other <- c(
+  "playlist",
+  "post",    
+  "custom",  
+  "other",   
+  "user",    
+  "redirect"
+)
+
+internal_referrers <- c(
+  "youtube homepage",
+  "youtube video",   
+  "youtube search",  
+  "youtube channel"
+)
+
+referrers_list <- list(
+  external_referrers = external_referrers,
+  internal_referrers_other = internal_referrers_other,
+  internal_referrers = internal_referrers
+)
+
+external_referrers <- referrers_list$external_referrers
+internal_referrers_other <- referrers_list$internal_referrers_other
+internal_referrers <- referrers_list$internal_referrers
+
+# get all users
+final_sample_ids <- merged_data %>% 
+  pull(user_id)
+
+# external referrers table
+total_external_referrers_by_channel_type <- referrers_data %>% 
+  mutate(is_external_referrer = if_else(!str_detect(predecessor_url, "youtube.com"), 1,0 )) %>% 
+  group_by(channel_type, is_external_referrer) %>% 
+  summarise(n = n()) %>% 
+  filter(is_external_referrer == 1 & channel_type %in% c("alternative", "extremist"))
+
+# calculate proportions
+external_referrers_by_domain <- referrers_data %>% 
+  mutate(external_referrer_group = case_when(predecessor_domain %in% external_referrers$main_social ~ "Mainstream social",
+                                             predecessor_domain %in% external_referrers$alternative_social ~ "Alternative social",
+                                             predecessor_domain %in% external_referrers$search_engine ~ "Search engine social",
+                                             predecessor_domain %in% external_referrers$webmail ~ "Webmail",
+                                             TRUE ~ NA_character_)) %>%
+  filter(!is.na(external_referrer_group) ) %>% 
+  group_by(predecessor_domain, channel_type) %>% 
+  summarise(n = n()) %>% 
+  filter(channel_type %in% c("alternative", "extremist")) %>% 
+  mutate(n_external_alternative = total_external_referrers_by_channel_type[total_external_referrers_by_channel_type$channel_type == "alternative", ]$n,
+         n_external_extremist = total_external_referrers_by_channel_type[total_external_referrers_by_channel_type$channel_type == "extremist", ]$n,
+         percent = if_else(channel_type == "alternative" ,
+                        100*(n/n_external_alternative),
+                        100*(n/n_external_extremist))) %>% 
+  pivot_wider(names_from = "channel_type",
+              values_from = c("percent", "n") ) %>% 
+  select(-starts_with("n_")) %>% 
+  mutate(across(c("percent_extremist", "percent_alternative"), ~ replace_na(., 0)))
+
+#clean up/format table
+external_referrers_by_domain_table <- external_referrers_by_domain %>% 
+  mutate(external_referrer_group = case_when(predecessor_domain %in% external_referrers$main_social ~ "Mainstream social",
+                                             predecessor_domain %in% external_referrers$alternative_social ~ "Alternative social",
+                                             predecessor_domain %in% external_referrers$search_engine ~ "Search engine social",
+                                             predecessor_domain %in% external_referrers$webmail ~ "Webmail",
+                                             TRUE ~ NA_character_)) %>% 
+  mutate(percent_extremist = round(percent_extremist, 2),
+         percent_alternative = round(percent_alternative, 2))
+  select(`Referrer type` = external_referrer_group,
+         `Preceding domain` = predecessor_domain,
+         `Percent to extremist channel` = percent_extremist,
+         `Percent to alternative channel` = percent_alternative) %>% 
+  arrange(`Referrer type`, `Percent to extremist channel`)
+
+# print out
+external_referrers_by_domain_table %>%
+  kbl(format = "html",
+      digits = 2,
+      booktabs = TRUE) 
+
+# save as TEX file
+external_referrers_by_domain_table %>%
+  kbl(format = "latex",
+      digits = 2,
+      booktabs = TRUE) %>% 
+  readr::write_lines(file = "./appendix-figures_files/external_referrers_by_channel_type.tex")
+```
 
 ## Figure A13: Concentration of exposure to alternative and extremist channels (view counts)
 

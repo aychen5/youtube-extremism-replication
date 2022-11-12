@@ -33,6 +33,7 @@ pacman::p_load(tidyverse,
                waffle,
                cowplot, 
                purrr,
+               texreg,
                ggimage,
                ggpattern,
                kableExtra,
@@ -231,7 +232,8 @@ weighted_mean_fxn <- function(x,
       design = svy_at,
       na.rm = T,
       ci = TRUE
-    )$quantiles[1]
+    )[[1]][1]
+  
   
   output <- tibble(
     channel_type = str_extract(x, paste0(channel_types, collapse = "|")),
@@ -336,6 +338,12 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
       "subscribed to another",
       "not subscribed"
     )
+  ),
+  channel_type = case_when(
+    str_detect(channel_type, "Mainstream") ~ str_replace(channel_type, 'Mainstream media', 'Mainstream media\nchannel videos'),
+    str_detect(channel_type, "Alternative") ~ str_replace(channel_type, 'Alternative channel', 'Alternative channel videos'),
+    str_detect(channel_type, "Extremist") ~ str_replace(channel_type, 'Extremist channel', 'Extremist channel videos'),
+    str_detect(channel_type, "Other") ~ str_replace(channel_type, 'Other channel', 'Other channel videos')
   )) %>%
   ggplot(aes(
     x = channel_type,
@@ -411,6 +419,8 @@ summarize_subscribe_plot <- summarize_subscribe_table %>%
     color = "none"
   )
 summarize_subscribe_plot
+ggsave('./main-text-figures_files/subscriptions_by_other_subscriptions.pdf',
+       dpi = 600, width = 11, height = 6)
 ```
 
 
@@ -436,7 +446,6 @@ summarize_subscribe_table %>%
 Among the participants who viewed at least one video from an alternative or extremist channel, the time spent watching them was relatively low: 26 minutes per week for alternative channel videos and 8 minutes for extremist channel videos. The comparison statistics are 12 minutes per week for mainstream media channel videos and 214 minutes per week for videos from other channels
 
 ```{r}
-
 map2_dfr(.x = minutes_activity_time_all_week,
          .y = viewed_any_channel_type,
          ~ weighted_mean_fxn(.x, .y)) %>%
@@ -469,18 +478,18 @@ subscriber_estimates <- map2_dfr(.x = minutes_activity_time_all_week,
                                  .y = subscribed_any_channel_type,
                                  ~ weighted_mean_fxn(.x, .y)) %>%
   mutate(subscription_status = paste0(channel_types,
-                                      " subscriber"))
+                                      " sub"))
 
 nonsubscriber_estimates <- map2_dfr(.x = minutes_activity_time_all_week,
                                     .y = notsubscribed_any_channel_type,
                                     ~ weighted_mean_fxn(.x, .y))  %>%
   mutate(subscription_status = paste0(channel_types,
-                                      " subscriber"))
+                                      " non-sub"))
 
 bind_rows(subscriber_estimates,
           nonsubscriber_estimates) %>% 
   kbl(format = "html",
-      digits = 2) %>% 
+      digits = 3) %>% 
   kable_styling()
 ```
 
@@ -533,10 +542,10 @@ time_cumsum_plot_inset <- concentration_time_user %>%
   scale_color_manual(
     name = "",
     labels = c(
-      "Alternative\nchannels",
-      "Extremist\nchannels",
-      "Mainstream media\nchannels",
-      "Other\nchannels"
+      "Alternative\nchannel videos",
+      "Extremist\nchannel videos",
+      "Mainstream media\nchannel videos",
+      "Other\nchannel videos"
     ),
     values = color_palette
   ) +
@@ -605,10 +614,10 @@ time_cumsum_plot_zoomout <- concentration_time_user %>%
   scale_color_manual(
     name = "",
     labels = c(
-      "Alternative\nchannels",
-      "Extremist\nchannels",
-      "Mainstream media\nchannels",
-      "Other\nchannels"
+      "Alternative\nchannel videos",
+      "Extremist\nchannel videos",
+      "Mainstream media\nchannel videos",
+      "Other\nchannel videos"
     ),
     values = color_palette
   ) +
@@ -630,6 +639,9 @@ time_cumsum_plot_zoomout +
                              guides(color = "none"), 
                            left = 0.3, bottom = 0.05, right = .95, top = .85,
                            on_top = TRUE)
+
+ggsave('./main-text-figures_files/cdf_users_time_exposure.pdf',
+      dpi = 600, width = 8, height = 6)
 
 ```
 
@@ -721,7 +733,7 @@ top_time_all_weeks_most_ext <- activity_data_supers  %>%
 
 ### Exposure level estimates (page 6--7)
 
-Alternative channel superconsumers spend a weighted median of 29 hours (1715 minutes) each week watching YouTube.
+Alternative channel superconsumers spend a weighted median of 29 hours (1741 minutes) each week watching YouTube.
 
 ```{r}
 alternative_superconsumers <- activity_data_supers %>% 
@@ -733,7 +745,7 @@ weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
 ```
 
 
-Extremist channel superconsumers spend a median of 16 hours (979 minutes) each week watching YouTube.
+Extremist channel superconsumers spend a median of 16 hours (1009 minutes) each week watching YouTube.
 
 ```{r}
 extemist_superconsumers <- activity_data_supers %>% 
@@ -896,6 +908,8 @@ plot_grid(
   rel_heights = c(1, .1)
 )
 
+ggsave('./main-text-figures_files/superconsumers_time_elapsed_week.pdf',
+      dpi = 600, width = 10, height = 5)
 ```
 
 
@@ -1058,6 +1072,9 @@ time_models %>%
     strip.background = element_rect(fill = "grey", color = "grey"),
     axis.text.y = element_text(size = 12)
   )
+
+ggsave('./main-text-figures_files/qpois_coefficient_time.pdf',
+      dpi = 600, width = 12, height = 6)
 ```
 
 
@@ -1248,6 +1265,9 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
     strip.text = element_blank(),
     strip.background = element_blank()
   )
+
+ggsave('./main-text-figures_files/hostile_sexism_predicted.pdf',
+      dpi = 600, width = 12, height = 6)
 ```
 
 
@@ -1318,7 +1338,7 @@ on_platform_referrers_by_channel_plot <-
     channel_type = case_when(
       channel_type == "alternative" ~ "Alternative channel videos",
       channel_type == "extremist" ~ "Extremist channel videos",
-      channel_type == "mainstream" ~ "Mainstream media videos",
+      channel_type == "mainstream" ~ "Mainstream media channel videos",
       channel_type == "other" ~ "Other channel videos"
     )
   ) %>%
@@ -1356,10 +1376,10 @@ on_platform_referrers_by_channel_plot <-
       'Off-platform'
     ),
     labels = c(
-      'alternative' = "Alternative\nchannels",
-      'extremist' = "Extremist\nchannels",
-      'mainstream'  =  "Mainstream\nmedia",
-      'other' = "Other\nchannels",
+      'alternative' = "Alternative\nchannel videos",
+      'extremist' = "Extremist\nchannel videos",
+      'mainstream'  =  "Mainstream media\nchannel videos",
+      'other' = "Other\nchannel videos",
       'Non-video on-platform'  = "Non-video \non-platform",
       'Off-platform'  = "Off-platform"
     ),
@@ -1381,6 +1401,8 @@ on_platform_referrers_by_channel_plot <-
   )
 
 on_platform_referrers_by_channel_plot
+ggsave('./main-text-figures_files/on_platform_referrers_by_channel.pdf',
+      dpi = 600, width = 12, height = 6)
 ```
 
 
@@ -1434,6 +1456,62 @@ on_platform_referrers_by_channel %>%
       format = "html") %>% 
   kable_styling()
 ```
+
+
+### Bootstrap difference between alternative/extremist off-platform referrers (49% and 51%) vs. other off-platform referrers (44%) (page 16). 95% bootstrapped CIs are in square parentheses.
+
+- alternative v. other: 0.0472 [0.0408, 0.0539]
+- extremist v. other: 0.0702 [0.0550, 0.0865]
+- alternative v. mainstream: 0.0812 [0.0738 , 0.0888]
+- extremist v. mainstream: 0.1043 [0.0873 , 0.1196]
+
+```{r}
+alt_ext_oth <- youtube_referrers_data %>%
+  select(channel_type, youtube_video_referrers_by_channel_type)
+
+n_bs_samples <- 1000
+gen_bootstrp_samples <- function(channel_type1, channel_type2) {
+  ind <- sample(1:nrow(alt_ext_oth), replace = TRUE)
+  d <- alt_ext_oth[ind,]
+  ct1 <- d[d$channel_type ==channel_type1,]
+  ct2 <- d[d$channel_type ==channel_type2,]
+  p_ct1 <- prop.table(table(ct1$youtube_video_referrers_by_channel_type))['Off-platform']
+  p_ct2 <- prop.table(table(ct2$youtube_video_referrers_by_channel_type))['Off-platform']
+  d_p <- p_ct1 - p_ct2
+  #print(d_p)
+  return(d_p)
+}
+set.seed(20202021)
+alt_other_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'alternative',
+                              channel_type2 = 'other')
+)
+ext_other_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'extremist',
+                              channel_type2 = 'other')
+  )
+alt_msm_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'alternative',
+                              channel_type2 = 'mainstream')
+)
+ext_msm_bs_samples <- replicate(
+  n = n_bs_samples,
+  expr = gen_bootstrp_samples(channel_type1 = 'extremist',
+                              channel_type2 = 'mainstream')
+)
+bs_CIs <- map(
+  list(alt_other_bs_samples, 
+       ext_other_bs_samples, 
+       alt_msm_bs_samples, 
+       ext_msm_bs_samples),
+  ~quantile(.x, c(0.025,0.975))
+)
+
+```
+
 
 
 ## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
@@ -1495,10 +1573,10 @@ referrers_channel_type_videos_on_platform <-
   scale_fill_manual(
     values = color_palette,
     labels = c(
-      "Alternative\nchannels",
-      "Extremist\nchannels",
-      "Mainstream\nmedia",
-      "Other\nchannels"
+      "Alternative channel\nvideos",
+      "Extremist channel\nvideos",
+      "Mainstream media channel\nvideos",
+      "Other channel\nvideos"
     ),
     name = "Domains leading to:"
   ) +
@@ -1566,10 +1644,10 @@ referrers_channel_type_videos_off_platform <-
   scale_fill_manual(
     values = color_palette,
     labels = c(
-      "Alternative\nchannel videos",
-      "Extremist\nchannel videos",
-      "Mainstream\nmedia videos",
-      "Other\nchannel videos"
+      "Alternative channel\nvideos",
+      "Extremist channel\nvideos",
+      "Mainstream media channel\nvideos",
+      "Other channel\nvideos"
     ),
     name = "Domains leading to:"
   ) +
@@ -1607,6 +1685,9 @@ plot_grid(
   ncol = 1,
   rel_heights = c(1, .1)
 )
+
+ggsave('./main-text-figures_files/referrers_channel_type_videos.pdf',
+      dpi = 600, width = 12, height = 12)
 ```
 
 
@@ -1669,7 +1750,7 @@ waffle_plot_fxn <- function(data,
       axis.text.x = element_blank(),
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
-      axis.ticks.y = element_blank(),
+      axis.ticks = element_blank(),
       axis.text.y = element_blank(),
       plot.title = ggtext::element_markdown(size = 15, hjust = .5),
       panel.background = element_blank(),
@@ -1784,18 +1865,18 @@ other_shown_table <- recs_prop_table_fxn(channel_type = "other",
 alternative_recs_shown <-
   waffle_plot_fxn(alternative_shown_table,
                   statistic = "shown",
-                  title = "Alternative channels")
+                  title = "Alternative channel\nvideos")
 extremist_recs_shown <-
   waffle_plot_fxn(extremist_shown_table,
                   statistic = "shown",
-                  title = "Extremist channels")
+                  title = "Extremist channel\nvideos")
 mainstream_recs_shown <-
   waffle_plot_fxn(mainstream_shown_table,
                   statistic = "shown",
-                  title = "Mainstream media")
+                  title = "Mainstream media\nchannel videos")
 other_recs_shown <-
   waffle_plot_fxn(other_shown_table, statistic = "shown",
-                  title = "Other channels")
+                  title = "Other channel\nvideos")
 
 # bar on top of waffles to show scale
 total_recs_shown_table <- recs_data %>%
@@ -1830,16 +1911,17 @@ dummy_plot_shown <- alternative_shown_table %>%
       'other' = '#E3E6E6'
     ),
     labels = c(
-      'Alternative channels' ,
-      'Extremist channels',
-      'Mainstream media',
-      'Other channels'
+      'Alternative channel\nvideos' ,
+      'Extremist channel\nvideos',
+      'Mainstream media\nchannel videos',
+      'Other channel\nvideos'
     ),
     name = "Recommendations shown to:"
   ) +
   theme(
     plot.title = ggtext::element_markdown(size = 12, hjust = .5),
     legend.position = 'bottom'
+    
   )
 
 # same legend
@@ -1876,6 +1958,8 @@ recs_shown_grid <- plot_grid(
   rel_heights = c(1, .1)
 )
 recs_shown_grid
+ggsave('./main-text-figures_files/waffle_recs_shown.pdf',
+      dpi = 600, width = 14, height = 8)
 ```
 
 
@@ -1907,17 +1991,17 @@ other_followed_table <-
 #outputs to waffle_plot_fxn
 alternative_recs_followed <-
   waffle_plot_fxn(alternative_followed_table, statistic = "followed",
-                  title = "Alternative\nchannels")
+                  title = "Alternative channel\nvideos")
 extremist_recs_followed <-
   waffle_plot_fxn(extremist_followed_table, statistic = "followed",
-                  title = "Extremist\nchannels")
+                  title = "Extremist channel\nvideos")
 mainstream_recs_followed <-
   waffle_plot_fxn(mainstream_followed_table_rounded, statistic = "followed",
                   make_proportional = F,
-                  title = "Mainstream\nmedia")
+                  title = "Mainstream media\nchannel videoes")
 other_recs_followed <-
   waffle_plot_fxn(other_followed_table, statistic = "followed",
-                  title = "Other\nchannels")
+                  title = "Other channel\nvideos")
 
 
 # bar on top of waffles to show scale
@@ -1958,10 +2042,10 @@ dummy_plot_followed <- alternative_shown_table %>%
       'other' = '#E3E6E6'
     ),
     labels = c(
-      'Alternative channels' ,
-      'Extremist channels',
-      'Mainstream media',
-      'Other channels'
+      'Alternative channel\nvideos' ,
+      'Extremist channel\nvideos',
+      'Mainstream media\nchannel videos',
+      'Other channel\nvideos'
     ),
     name = "Recommendations followed to:"
   ) +
@@ -2002,6 +2086,9 @@ recs_followed_grid <- plot_grid(
   rel_heights = c(1, .1)
 )
 recs_followed_grid
+
+ggsave('./main-text-figures_files/waffle_recs_followed.pdf',
+      dpi = 600, width = 14, height = 8)
 ```
 
 
@@ -2136,10 +2223,10 @@ combined <-
                  "Recommendations followed")
     ),
     channel_type_label = case_when(
-      channel_type == "alternative" ~ "Alternative channels\n(2.7%)",
-      channel_type == "extremist" ~ "Extremist channels\n(0.4%)",
-      channel_type == "mainstream" ~ "Mainstream media\n(4.6%)",
-      channel_type == "other" ~ "Other channels\n(92.3%)"
+      channel_type == "alternative" ~ "Alternative channel videos\n(2.7%)",
+      channel_type == "extremist" ~ "Extremist channel videos\n(0.4%)",
+      channel_type == "mainstream" ~ "Mainstream media channel videos\n(4.6%)",
+      channel_type == "other" ~ "Other channel videos\n(92.3%)"
     ),
     total_label = scales::comma(total)
   ) %>%
@@ -2173,16 +2260,16 @@ combined %>%
                      labels = paste0(seq(0, 100, by = 20),"%") )+
   scale_fill_manual(values = color_palette,
                     name = "",
-                    labels = c("Alternative channel",
-                               "Extremist channel",
-                               "Mainstream media channel",
-                               "Other channel")) +
+                    labels = c("Alternative channel\nvideos",
+                               "Extremist channel\nvideos",
+                               "Mainstream media\nchannel videos",
+                               "Other channel\nvideos")) +
   scale_color_manual(values = color_palette,
                     name = "",
-                    labels = c("Alternative channel",
-                               "Extremist channel",
-                               "Mainstream media channel",
-                               "Other channel")) +
+                    labels = c("Alternative channel\nvideos",
+                               "Extremist channel\nvideos",
+                               "Mainstream media\nchannel videos",
+                               "Other channel\nvideos")) +
   scale_pattern_manual(name = "",
                        labels = c("Recommendations\nshown",
                                   "Recommendations\nfollowed"),
@@ -2197,6 +2284,9 @@ combined %>%
          pattern = guide_legend(override.aes = list(fill = "white", 
                                                     color = "black")),
          color = "none")
+
+ggsave('./main-text-figures_files/subscriptions_bars.pdf',
+      dpi = 600,width = 11, height = 5.5)
 ```
 
 

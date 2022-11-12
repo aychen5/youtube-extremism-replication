@@ -24,7 +24,9 @@ pacman::p_load(tidyverse,
                survey,
                sandwich,
                lmtest,
+               fastDummies,
                ggimage,
+               AMR,
                cowplot,
                zoo,
                pscl,
@@ -32,15 +34,21 @@ pacman::p_load(tidyverse,
                texreg)
 ```
 
+
 ```{r data}
 ### ----------- data
 # survey + extension data for individuals
 merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 # activity data
 activity_data <- read_rds("data/activity_yg_cces.rds") 
+# browser history data
+browser_history_data <-read_rds("data/browser_history_yg_cces.rds")
 # over time data for consumption over time
 at_over_time <- read_rds("data/activity_time_user_by_date.rds")
 at_over_views <- read_rds("data/activity_count_user_by_date.rds")
+
+# data on server...
+#referrers_data <- read_delim(paste0(data_dir, "activity/referrers.tsv"), delim = "\t")
 
 # color palette 
 color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
@@ -1050,33 +1058,58 @@ texreg(c(QP_visit_pid_fit_nonrob, QP_time_pid_fit_nonrob),
 
 ### Table A7: Hostile sexism and Racial resentment specifications
 
-```{r hs and rr}
+```{r hostile sexism} 
 # without hostile sexism
 f_time_pid_alternative_rr <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_extremist_rr <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_mainstream_rr <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_cts + jw_cts + age + gender + educ2 + race 
   )
+f_visit_pid_alternative_rr <-
+  formula(
+    activity_yt_n_video_alternative_all ~  rr_cts + jw_cts  + age + gender + educ2 + race
+  )
+f_visit_pid_extremist_rr <-
+  formula(activity_yt_n_video_extremist_all ~  rr_cts + jw_cts  + age + gender + educ2 + race)
+
+f_visit_pid_mainstream_rr <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  rr_cts + jw_cts + age + gender + educ2 + race
+  )
+
 
 # without racial resentment
 f_time_pid_alternative_hs <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_alternative_all ~  fem_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  fem_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_extremist_hs <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  fem_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
   )
 f_time_pid_mainstream_hs <-
   formula(
-    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  fem_cts + jw_cts + age + gender + educ2 + race + pid_lean
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+
+f_visit_pid_alternative_hs <-
+  formula(
+    activity_yt_n_video_alternative_all ~  fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_visit_pid_extremist_hs <-
+  formula(
+    activity_yt_n_video_extremist_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_visit_pid_mainstream_hs <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  fem_cts + jw_cts + age + gender + educ2 + race 
   )
 
 
@@ -1085,20 +1118,36 @@ time_rr_fs <- list(
   f_time_pid_extremist_rr,
   f_time_pid_mainstream_rr
 )
+visit_rr_fs <- list(
+  f_visit_pid_alternative_rr,
+  f_visit_pid_extremist_rr,
+  f_visit_pid_mainstream_rr
+)
 time_hs_fs <- list(
   f_time_pid_alternative_hs,
   f_time_pid_extremist_hs,
   f_time_pid_mainstream_hs
 )
+visit_hs_fs <- list(
+  f_visit_pid_alternative_hs,
+  f_visit_pid_extremist_hs,
+  f_visit_pid_mainstream_hs
+)
 
 
 QP_time_rr_fit <- list()
 QP_time_hs_fit <- list()
+QP_visit_rr_fit <- list()
+QP_visit_hs_fit <- list()
 
 for (i in 1:length(time_rr_fs)) {
   QP_time_rr_fit[[i]] <-
     robust_weighted_quasipoisson(formula = time_rr_fs[[i]])
   QP_time_hs_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_hs_fs[[i]])
+  QP_visit_rr_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_rr_fs[[i]])
+  QP_visit_hs_fit[[i]] <-
     robust_weighted_quasipoisson(formula = time_hs_fs[[i]])
 }
 
@@ -1110,16 +1159,31 @@ names(QP_time_hs_fit) <-
   c("time_hs_alternative_full",
     "time_hs_extremist_full",
     "time_hs_mainstream_full")
+names(QP_visit_rr_fit) <-
+  c("visit_rr_alternative_full",
+    "visit_rr_extremist_full",
+    "visit_rr_mainstream_full")
+names(QP_visit_hs_fit) <-
+  c("visit_hs_alternative_full",
+    "visit_hs_extremist_full",
+    "visit_hs_mainstream_full")
 ```
 
 ```{r hs rr tables}
 QP_time_hs_fit_nonrob <- QP_time_rr_fit_nonrob <- list()
+QP_visit_hs_fit_nonrob <- QP_visit_rr_fit_nonrob <- list()
 for (i in 1:length(time_hs_fs)) {
   QP_time_hs_fit_nonrob[[i]] <-
     robust_weighted_quasipoisson(formula = time_hs_fs[[i]],
                                  robust_output = F)
   QP_time_rr_fit_nonrob[[i]] <-
     robust_weighted_quasipoisson(formula = time_rr_fs[[i]],
+                                 robust_output = F)
+  QP_visit_hs_fit_nonrob[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_hs_fs[[i]],
+                                 robust_output = F)
+  QP_visit_rr_fit_nonrob[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_rr_fs[[i]],
                                  robust_output = F)
 }
 
@@ -1144,21 +1208,21 @@ texreg(
   ),
        digits = 2,
        booktabs = TRUE, 
-       label = "tab:tablea7",
+       label = "tab:tablea7.1",
        caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
        # texreg reads models as separate lists
-       override.pvalues = list(robust_pvals[1:11],
-                    robust_pvals[12:22],
-                    robust_pvals[23:33],
-                    robust_pvals[34:44],
-                    robust_pvals[45:55],
-                    robust_pvals[56:66]),
-       override.se = list(robust_SEs[1:11],
-                    robust_SEs[12:22],
-                    robust_SEs[23:33],
-                    robust_SEs[34:44],
-                    robust_SEs[45:55],
-                    robust_SEs[56:66]),
+       override.pvalues = list(robust_pvals[1:9],
+                    robust_pvals[10:18],
+                    robust_pvals[19:27],
+                    robust_pvals[28:36],
+                    robust_pvals[37:45],
+                    robust_pvals[46:54]),
+       override.se = list(robust_SEs[1:9],
+                    robust_SEs[10:18],
+                    robust_SEs[19:27],
+                    robust_SEs[28:36],
+                    robust_SEs[37:45],
+                    robust_SEs[46:54]),
        custom.model.names = rep(c("Alternative",
                                  "Extremist",
                                  "Mainstream"), each = 2),
@@ -1167,8 +1231,8 @@ texreg(
             "fem_cts" = "Hostile sexism",
             "rr_cts" = "Racial resentment",
             "jw_cts" = "Feeling Jews",
-            "pid_leanDemocrat" = "Democrat",
-            "pid_leanRepublican" = "Republican",
+            #"pid_leanDemocrat" = "Democrat",
+            #"pid_leanRepublican" = "Republican",
             "age" = "Age",
             "genderMale" =  "Male",
             "raceNon-white" = "Non-white",
@@ -1177,9 +1241,63 @@ texreg(
             "educ2Post-grad" = "Post-grad",
             "(Intercept)" = "Intercept"
          ),
-          file = "appendix-figures_files/additional_regressions_hs_rr.tex")
-```
+          file = "appendix-figures_files/additional_regressions_hs_rr_time.tex")
 
+
+visit_rr_hs_models <- bind_rows(QP_visit_hs_fit[[1]],
+                               QP_visit_rr_fit[[1]],
+                               QP_visit_hs_fit[[2]],
+                               QP_visit_rr_fit[[2]],
+                               QP_visit_hs_fit[[3]],
+                               QP_visit_rr_fit[[3]])
+robust_SEs <- visit_rr_hs_models$robust_se
+robust_pvals<- visit_rr_hs_models$p_val
+
+# output tex table
+texreg(
+  list(
+    QP_visit_hs_fit_nonrob[[1]],
+    QP_visit_rr_fit_nonrob[[1]],
+    QP_visit_hs_fit_nonrob[[2]],
+    QP_visit_rr_fit_nonrob[[2]],
+    QP_visit_hs_fit_nonrob[[3]],
+    QP_visit_rr_fit_nonrob[[3]]
+  ),
+       digits = 2,
+       booktabs = TRUE, 
+       label = "tab:tablea7.2",
+       caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
+       # texreg reads models as separate lists
+       override.pvalues = list(robust_pvals[1:9],
+                    robust_pvals[10:18],
+                    robust_pvals[19:27],
+                    robust_pvals[28:36],
+                    robust_pvals[37:45],
+                    robust_pvals[46:54]),
+       override.se = list(robust_SEs[1:9],
+                    robust_SEs[10:18],
+                    robust_SEs[19:27],
+                    robust_SEs[28:36],
+                    robust_SEs[37:45],
+                    robust_SEs[46:54]),
+       custom.model.names = rep(c("Alternative",
+                                 "Extremist",
+                                 "Mainstream"), each = 2),
+       custom.coef.map =
+         list(
+            "fem_cts" = "Hostile sexism",
+            "rr_cts" = "Racial resentment",
+            "jw_cts" = "Feeling Jews",
+            "age" = "Age",
+            "genderMale" =  "Male",
+            "raceNon-white" = "Non-white",
+            "educ2Some college" = "Some college",
+            "educ24-year" = "Bachelor's degree",
+            "educ2Post-grad" = "Post-grad",
+            "(Intercept)" = "Intercept"
+         ),
+          file = "appendix-figures_files/additional_regressions_hs_rr_views.tex")
+```
 
 ### Figure A8: Correlates of exposure to YouTube videos by channel type (alternate racial attitude measure) 
 
@@ -1211,7 +1329,7 @@ plot_grid(
 )
 
 ggsave("appendix-figures_files/qpois_coefficient_FIRE.pdf",
-       height = 14, width = 11 )
+       height = 20, width = 11 )
 ```
 
 
@@ -1265,6 +1383,165 @@ texreg(c(QP_visit_fire_fit_nonrob, QP_time_fire_fit_nonrob),
           file = "appendix-figures_files/figureA8.tex")
 
 ```
+
+
+
+### Factor loadings
+
+```{r}
+rr_cces_vars <- activity_data %>%
+  select(all_of(c("CC18_422e", "CC18_422f", "CC18_422g", "CC18_422h"))) #classical RR
+fire_cces_vars <- activity_data %>%
+  select(all_of(c("CC18_422e", "CC18_422f", "CC18_422g", "CC18_422h")),
+         all_of(c("CC18_422a", "CC18_422b"))) # overstate 
+fem_cces_vars <- activity_data %>%
+  select(all_of(c("CC18_422c", "CC18_422d"))) #fem
+all_cces_vars <- activity_data  %>%
+  select(starts_with(c("CC18_422")))
+
+# pca with varimax rotation
+rr_pca_rot <- psych::principal(rr_cces_vars,
+                 nfactors = 1, 
+                 rotate = 'varimax')
+rr_pca_rot
+fire_pca_rot <- psych::principal(fire_cces_vars,
+                 nfactors = 1, 
+                 rotate = 'varimax')
+fire_pca_rot
+fem_pca_rot <- psych::principal(fem_cces_vars,
+                 nfactors = 1, 
+                 rotate = 'varimax')
+fem_pca_rot
+all_pca_rot <- psych::principal(all_cces_vars,
+                 nfactors = 2, 
+                 rotate = 'varimax')
+all_pca_rot
+
+# psych::fa.parallel(all_cces_vars,  fa="pc", n.iter=100,
+#             show.legend=FALSE, main="Scree plot with parallel analysis")
+
+#plot all PCs
+AMR::ggplot_pca(prcomp(all_cces_vars[complete.cases(all_cces_vars),]))
+```
+
+
+### Correlation between racial and gender resentment
+
+```{r}
+
+# n is 875
+cor(activity_data$fem_cts, activity_data$rr_cts, 
+    use = "complete.obs",
+    method = "pearson")
+
+```
+
+
+### Model with combined score
+
+```{r}
+# combine racial+gender resentment variable
+activity_data <- activity_data %>%
+  rowwise() %>%
+  mutate(rr_fem_cts = mean(c(rr_cts,fem_cts),na.rm=T ) ) %>%
+  ungroup()
+
+
+f_time_rrfem_alternative <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_alternative_all ~  rr_fem_cts + jw_cts + age + gender + educ2 + race
+  )
+f_time_rrfem_extremist <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_extremist_all  ~  rr_fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_time_rrfem_mainstream <-
+  formula(
+    activity_yt_video_time_elapsed_capped_total_mainstream_all  ~  rr_fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+
+f_visit_rrfem_alternative <-
+  formula(
+    activity_yt_n_video_alternative_all ~  rr_fem_cts + jw_cts + age + gender + educ2 + race
+  )
+f_visit_rrfem_extremist <-
+  formula(
+    activity_yt_n_video_extremist_all ~  rr_fem_cts + jw_cts + age + gender + educ2 + race 
+  )
+f_visit_rrfem_mainstream <-
+  formula(
+    activity_yt_n_video_mainstream_all  ~  rr_fem_cts + jw_cts + age + gender + educ2 + race  
+  )
+
+time_rrfem_fs <- list(
+  f_time_rrfem_alternative,
+  f_time_rrfem_extremist,
+  f_time_rrfem_mainstream
+)
+visit_rrfem_fs <- list(
+  f_visit_rrfem_alternative,
+  f_visit_rrfem_extremist,
+  f_visit_rrfem_mainstream
+)
+
+# estimate with and without robust SEs
+QP_time_rrfem_fit <- QP_visit_rrfem_fit <- list()
+QP_time_rrfem_fit_norob <- QP_visit_rrfem_fit_norob <- list()
+for (i in 1:length(time_rrfem_fs)) {
+  QP_time_rrfem_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = time_rrfem_fs[[i]])
+  QP_time_rrfem_fit_norob[[i]] <-
+    robust_weighted_quasipoisson(formula = time_rrfem_fs[[i]],
+                                 robust_output = F)
+  QP_visit_rrfem_fit[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_rrfem_fs[[i]])
+  QP_visit_rrfem_fit_norob[[i]] <-
+    robust_weighted_quasipoisson(formula = visit_rrfem_fs[[i]],
+                                 robust_output = F)
+}
+robust_SEs <- bind_rows(c(QP_visit_rrfem_fit, QP_time_rrfem_fit) )$robust_se
+robust_pvals <- bind_rows(c(QP_visit_rrfem_fit, QP_time_rrfem_fit) )$p_val
+
+texreg(c(QP_visit_rrfem_fit_norob, QP_time_rrfem_fit_norob),
+       digits = 2,
+       booktabs = TRUE, 
+       label = "tab:figaxtable",
+       caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
+       # texreg reads models as separate lists
+       override.pvalues =  list(robust_pvals[1:9],
+                    robust_pvals[10:18],
+                    robust_pvals[19:27],
+                    robust_pvals[28:36],
+                    robust_pvals[37:45],
+                    robust_pvals[46:54]),
+       override.se =  list(robust_SEs[1:9],
+                    robust_SEs[10:18],
+                    robust_SEs[19:27],
+                    robust_SEs[28:36],
+                    robust_SEs[37:45],
+                    robust_SEs[46:54]),
+       custom.model.names = rep(c("Alternative",
+                                 "Extremist",
+                                 "Mainstream"),2),
+       custom.coef.map =
+         list(
+            "rr_fem_cts" = "Combined racial resentment and hosile sexism",
+            "jw_cts" = "Feeling Jews",
+            "age" = "Age",
+            "genderMale" =  "Male",
+            "raceNon-white" = "Non-white",
+            "educ2Some college" = "Some college",
+            "educ24-year" = "Bachelor's degree",
+            "educ2Post-grad" = "Post-grad",
+            "pid_leanDemocrat" = "Democrat",
+            "pid_leanRepublican" = "Republican",
+            "(Intercept)" = "Intercept"
+         ),
+          file = "appendix-figures_files/additional_regressions_combined_hs_rr.tex")
+
+
+```
+
 
 
 ## Figure A5: Zero-inflated models on correlates of time on YouTube video by channel type
@@ -1621,6 +1898,189 @@ texreg(QP_visit_fit_nonrob,
 
 ## Figure A9: Correlation between browser history and activity
 
+```{r}
+### --------- specify a bunch of variables we want to look at
+channel_types <- c("alternative",
+                   "extremist",
+                   "mainstream",
+                   "other")
+
+# proportion that watched any alt/ext/msm videos
+bh_dummy <- c("bh_alternative_any",
+              "bh_extremist_any",
+              "bh_mainstream_any",
+              "bh_other_any")
+at_dummy <- c("at_alternative_any",
+              "at_extremist_any",
+              "at_mainstream_any",
+              "at_other_any")
+bh_counts <- paste0("browser_history_yt_n_video_",
+                    channel_types,
+                    "_all")
+bh_time <-
+  paste0("browser_history_yt_video_time_elapsed_capped_total_",
+         channel_types,
+         "_all")
+at_counts <- paste0("activity_yt_n_video_",
+                    channel_types,
+                    "_all")
+at_time <- paste0("activity_yt_video_time_elapsed_capped_total_",
+                  channel_types,
+                  "_all")
+
+# number subscribed to alternative
+bh_subscribed_counts <- paste0("browser_history_yt_n_video_",
+                               channel_types,
+                               "_subscribed")
+at_subscribed_counts  <-  paste0("activity_yt_n_video_",
+                                 channel_types,
+                                 "_subscribed")
+# time on subscribed to alternative
+bh_subscribed_time <- paste0("browser_history_yt_video_time_elapsed_capped_total_",
+                               channel_types,
+                               "_subscribed")
+at_subscribed_time  <-  paste0("activity_yt_video_time_elapsed_capped_total_",
+                                 channel_types,
+                                 "_subscribed")
+
+
+# put activity and browser history together
+select_activity_data_data <- activity_data %>%
+  select(caseid, at_alt, at_ext, at_msm, at_other, activity_n_total,
+         all_of(at_counts),
+         all_of(at_time),
+         all_of(at_subscribed_counts),
+         all_of(at_subscribed_time))
+select_browser_history_data <- browser_history_data %>%
+  select(caseid, bh_alt, bh_ext, bh_msm, bh_other, browser_history_n_total,
+         all_of(bh_counts),
+         all_of(bh_time),
+         all_of(bh_subscribed_counts),
+         all_of(bh_subscribed_time))
+bh_at_data <-
+  full_join(select_activity_data_data, select_browser_history_data, 
+            by = "caseid") %>%
+  rename( bh_alternative_any = bh_alt, 
+         bh_extremist_any = bh_ext,
+         bh_mainstream_any = bh_msm,
+         bh_other_any = bh_other,
+         at_alternative_any = at_alt,
+         at_extremist_any = at_ext,
+         at_mainstream_any = at_msm,
+         at_other_any = at_other)
+
+correlation_fxn <- function(bh_var, at_var, data = bh_at_data) {
+  r = cor(x = data[[bh_var]], 
+          y = data[[at_var]], 
+          use = "complete.obs", method = "pearson")
+  out <- tibble(corr = r,
+                channel_type = str_extract(at_var, 
+                                           paste0(channel_types, collapse = "|") ),
+                metric = case_when(
+                  # youtube general
+                  str_detect(at_var, "_yt_n_total") ~ "total yt",
+                  # youtube channel type
+                  str_detect(at_var, "any") ~ "binary",
+                  str_detect(at_var, "subscribed") &
+                    str_detect(at_var, "yt_n_video") ~ "sub count",
+                  str_detect(at_var, "subscribed") &
+                    str_detect(at_var, "time") ~ "sub time",
+                  str_detect(at_var, "yt_n_video") ~ "count",
+                  str_detect(at_var, "time") ~ "time"
+                ))
+  return(out)
+}
+
+correlation_plot <- function(bh_var, at_var, data = merged_data) {
+  r = cor(x = data[[bh_var]],
+          y = data[[at_var]],
+          use = "complete.obs", method = "pearson")
+  out <- ggplot(aes(x = data[[bh_var]],
+                    y = data[[at_var]]),
+                data = data) +
+    geom_point() +
+    geom_abline()
+  return(out)
+}
+```
+
+
+```{r}
+# any visits to channel type
+corr_binary <- map2(.x = bh_dummy, .y = at_dummy,
+     correlation_fxn) %>% 
+  bind_rows()
+# number of videos
+corr_counts <- map2(.x = bh_counts, .y = at_counts,
+     correlation_fxn) %>% 
+  bind_rows()
+# capped time on videos
+corr_time <- map2(.x = bh_time, .y = at_time,
+     correlation_fxn) %>% 
+  bind_rows()
+
+# number channel visit
+# corr_channel <- map2(.x = bh_subscribed_counts, .y = at_subscribed_counts,
+#      correlation_fxn) %>% 
+#   bind_rows()
+# number subscribed
+corr_subs_count <- map2(.x = bh_subscribed_counts, .y = at_subscribed_counts,
+     correlation_fxn) %>% 
+  bind_rows()
+# time subscribed
+corr_subs_time <- map2(.x = bh_subscribed_time, .y = at_subscribed_time,
+     correlation_fxn) %>% 
+  bind_rows()
+
+# youtube correlations
+youtube_corr_df <- corr_binary %>% 
+  bind_rows(corr_counts) %>% 
+  bind_rows(corr_time) %>% 
+  bind_rows(corr_subs_count) %>% 
+  bind_rows(corr_subs_time) %>% 
+  mutate(channel_type = recode_channel_type_fxn(channel_type),
+         metric = factor(metric, levels = c(
+           "binary",
+           "count", "sub count",
+           "time", "sub time"
+         )))
+
+
+youtube_channel_type <- youtube_corr_df %>% 
+  ggplot(aes(x = channel_type, 
+             y = 1,
+             fill = corr)) +
+  geom_tile(color = "black") + 
+  geom_text(aes(label = format(round(corr, 2), nsmall = 2)),
+            color = "white", size = 6) +
+  scale_fill_gradient2(low = "#FFFFFF", 
+                       mid = "#6F9EBE", 
+                       high = "#032146",
+                       midpoint = .5,
+                      limits = c(0, 1),
+                      breaks = seq(0, 1, .2)) +
+  coord_fixed(ratio = 1/2) +
+  facet_wrap(~metric, nrow = 5,
+             labeller = labeller(
+               metric = c("binary" = "Any views of YouTube videos from channel",
+                          "count" = "Total number of views of YouTube videos from channel",
+                          "time" = "Seconds elapsed on YouTube videos from channel (capped)",
+                          "sub count" = "Total number of views of subscribed channel",
+                          "sub time" = "Seconds elapsed on videos from subscribed channel (capped)")
+             )) +
+  labs(x = "", y = "") +
+  theme(axis.text.y = element_blank(),
+        panel.grid = element_blank(),
+        legend.position = 'bottom',
+        strip.text.x = element_text(size = 12, hjust = 0))+
+  guides(fill = guide_colourbar(barwidth = 20,
+                                barheight = 1,
+                                title = ""))
+youtube_channel_type 
+
+ggsave("appendix-figures_files/correlations_history_activity_youtube_channel_type.pdf",
+       height = 8, width = 9 )
+```
 
 
 
@@ -1629,12 +2089,405 @@ texreg(QP_visit_fit_nonrob,
 
 ## Figure A10: Differences in perceptions of YouTube between full sample and extension sample
 
+```{r}
+### ====== survey measures for those who did and did not install the extension
+yg_youtube <-  merged_data %>% 
+  select(user_id, weight_cmd, browser_sample,
+         starts_with("youtube"),
+         -youtube_vid_quality,
+         -youtube_freq_use_3,
+         -youtube_freq_use)
+
+youtube_vars <- yg_youtube %>% 
+  select(starts_with("youtube")) %>% 
+  names()
+
+yg_youtube_factor <- yg_youtube %>% 
+  mutate(youtube_vid_trust = case_when(youtube_vid_trust == 1 ~ "A great deal",
+                                       youtube_vid_trust == 2 ~ "A moderate amount",
+                                       youtube_vid_trust == 3 ~ "Not much",
+                                       youtube_vid_trust == 4 ~ "Not at all"),
+         youtube_info_accurate = case_when(youtube_info_accurate == 1 ~ "All or almost all",
+                                           youtube_info_accurate == 2 ~ "Most",
+                                           youtube_info_accurate == 3 ~ "Some",
+                                           youtube_info_accurate == 4 ~ "Very little",
+                                           youtube_info_accurate == 5 ~ "None at all"),
+         youtube_vid_bias = case_when(youtube_vid_bias == 1 ~ "Favor liberals",
+                                      youtube_vid_bias == 2 ~ "Favor conservatives",
+                                      youtube_vid_bias == 3 ~ "Neither",
+                                      youtube_vid_bias == 4 ~ "Other"),
+         youtube_personalize = case_when(youtube_personalize == 1 ~ "Very accurate",
+                                         youtube_personalize == 2 ~ "Somewhat accurate",
+                                         youtube_personalize == 3 ~ "Not very accurate",
+                                         youtube_personalize == 4 ~ "Not at all accurate"),
+         youtube_vid_trust = factor(youtube_vid_trust, levels = c("A great deal", "A moderate amount", "Not much", "Not at all")),
+         youtube_info_accurate = factor(youtube_info_accurate, levels = c("All or almost all", "Most", "Some", "Very little", "None at all")),
+         youtube_vid_bias = factor(youtube_vid_bias, levels = c("Favor liberals", "Favor conservatives", "Neither", "Other")),
+         youtube_personalize = factor(youtube_personalize, levels = c("Very accurate", "Somewhat accurate", "Not very accurate", "Not at all accurate"))) %>% 
+  dummy_cols(select_columns = youtube_vars)
+
+
+
+
+svy_object <- svydesign(ids = ~ 1,
+                        weights = ~ weight_cmd,
+                        data = yg_youtube_factor)
+
+estimates_df <- map_dfr(youtube_vars,
+                        function (x) {
+                          svyresults <- svyby(
+                            ~ get(x),
+                            by = ~ browser_sample,
+                            design = svy_object,
+                            svymean,
+                            na.rm = TRUE
+                          )
+                          remove_str <- c(paste0("browser:", "get(x)"),
+                                          paste0("full:", "get(x)"))
+                          # technically, devrais utiliser svyciprop, mais la difference est négligeable ici
+                          CIs <- confint(svyresults) 
+                          ci_df <- CIs %>% 
+                            as_tibble() %>% 
+                            mutate(name = rownames(CIs)) %>% 
+                            mutate(browser_sample = if_else(str_detect(name, "browser\\:"),
+                                                            "browser", "full"),
+                                   varlevel = stringr::str_replace_all(name,
+                                                                   fixed(remove_str[1]),
+                                                                   ""),
+                                   varlevel = stringr::str_replace_all(varlevel,
+                                                                   fixed(remove_str[2]),
+                                                                   "")) %>% 
+                            mutate(join_name = paste0(browser_sample,varlevel))%>% 
+                            rename(ci_lwr = `2.5 %`,
+                                   ci_upr = `97.5 %`) %>% 
+                            select(join_name, ci_lwr, ci_upr) 
+                          
+                          df <- as_tibble(svyresults) %>% 
+                            pivot_longer(-browser_sample) %>%
+                            mutate(stat = if_else(str_detect(name, "se\\."), "std_err", "prop"),
+                                   name = stringr::str_replace_all(name, 
+                                                                   fixed("get(x)"), 
+                                                      ""),
+                                   name = stringr::str_replace_all(name, 
+                                                                   fixed("se."), 
+                                                                   "")) %>%  
+                            pivot_wider(names_from = stat) %>%
+                            rename(varlevel = name) %>% 
+                            mutate(join_name = paste0(browser_sample,varlevel)) %>% 
+                            left_join(ci_df, 
+                                      by = "join_name")  %>% 
+                            mutate(variable = x)
+                          return(df)
+                        }) %>% 
+  #rename(var_level = name) %>%
+  mutate(
+    percentage = 100 * prop,
+    ci_lwr = 100 * ci_lwr,
+    ci_upr = 100 * ci_upr
+  )
+
+
+youtube_attitudes_plot <- function(youtube_var) {
+  facet_labs <- c(
+    "youtube_info_accurate" = "Accuracy of information on YouTube",
+    "youtube_personalize" = "Belief YouTube personalizes",
+    "youtube_vid_trust" = "Trust in YouTube videos",
+    "youtube_vid_bias" = "Perception of YouTube bias"
+  )
+  
+  filtered_estimates_df <- estimates_df %>% 
+    filter(variable == youtube_var) %>% 
+    mutate(varlevel = str_wrap_factor(factor(varlevel,
+                            levels = levels(yg_youtube_factor[[youtube_var]])),
+           width = 6),
+           browser_sample = factor(browser_sample, levels = c("full", "browser")))
+  
+  filtered_estimates_df %>% 
+    ggplot(aes(x = varlevel, y = percentage,
+               ymin = ci_lwr, ymax = ci_upr,
+               color = browser_sample)) +
+    geom_point(size = 2,
+               position = position_dodge(width = .3)) +
+    geom_errorbar(position = position_dodge(width = .3),
+                  width = 0) + 
+    labs(x = "", y = "") +
+    scale_y_continuous(limits = c(0, 80), 
+                       labels = paste0(seq(0, 80, 20), "%"),
+                       breaks = seq(0, 80, 20)) +
+    facet_wrap( ~ variable,
+                scales = "free_x",
+                labeller = labeller(
+                  variable = facet_labs
+                )) +
+    scale_color_manual(labels = c("browser" = "Extension sample",
+                                  "full" = "Full sample"),
+                       values = c("#F74846",
+                                  "#28B0C4"),
+                       name = "") +
+    ggthemes::theme_gdocs() +
+    theme(legend.position = 'bottom',
+          legend.direction = 'horizontal',
+          strip.text = element_text(size = 14, hjust = 1),
+          strip.background =element_rect(fill="grey", color = "grey"),
+          panel.grid.major.y = element_line(color = "grey95"),
+          panel.grid.major.x = element_blank(),
+          axis.text.x = element_text(size = 12),
+          plot.background = element_rect(color = "white"))
+}
+
+youtube_attitudes_plots <- map(
+  1:4, ~youtube_attitudes_plot(youtube_vars[[.x]])  +
+    theme(legend.position = 'none')
+)
+common_legend <- get_legend(youtube_attitudes_plot(youtube_vars[[1]]) )
+
+plot_grid(
+  plot_grid(
+    youtube_attitudes_plots[[1]],
+    youtube_attitudes_plots[[2]],
+    youtube_attitudes_plots[[3]],
+    youtube_attitudes_plots[[4]],
+    nrow = 2
+  ),
+  common_legend,
+  ncol = 1,
+  rel_heights = c(1, .1)
+)
+
+```
+
+
 
 ## Figure A11: Percentage of views to each channel type by video number within session
 
+This repository does not contain session-level data (merged.tsv) (withheld for participant privacy), but code that reproduces session level figures are presented.
+
 ## Figure A12: Percentage of views to each channel type by total session length
 
+(See above caveat for session-level data.)
+
+```{r eval=FALSE}
+# need data where each observation is a youtube action
+activity_youtube = read_delim(paste0(data_dir, "youtube/merged.tsv"),
+                              delim = "\t")
+# only sessions with videos in them
+activity_youtube_video <- activity_youtube %>% 
+  filter(!is.na(video_id))
+
+# remove users not matched to surveys
+final_sample_ids <- merged_data %>% 
+  pull(user_id)
+
+restricted_sample <- activity_youtube_video %>% 
+  filter(user_id %in% final_sample_ids)
+
+#within each session
+within_session_raw <- restricted_sample %>% 
+  group_by(user_id, yt_session) %>% 
+  mutate(yt_n_video_in_session = n(),
+         video_index = row_number(yt_session)) %>% 
+  ungroup() %>% 
+  group_by(video_index) %>%
+  mutate(
+    # on besoin aussi combien d'obs ont-t-il pour video index 1, 2, 3,...
+    total_video_index = n(),
+    fraction_alternative = sum(alternative_match) / total_video_index,
+    fraction_extremist = sum(extremist_match) / total_video_index,
+    fraction_mainstream = sum(mainstream_match) / total_video_index,
+    fraction_other = sum(other_match) / total_video_index
+  ) %>% 
+  select(video_index, total_video_index, starts_with("fraction_")) %>% 
+  pivot_longer(-c("video_index", "total_video_index"),
+               names_to = "channel_type", 
+               values_to = "proportion") %>% 
+  distinct()
+
+video_index_rug <- restricted_sample %>% 
+  group_by(user_id, yt_session) %>% 
+  mutate(yt_n_video_in_session = n(),
+         video_index = row_number(yt_session)) %>% 
+  select(video_index)
+
+
+within_session_raw %>%
+  filter(channel_type != "fraction_other") %>% 
+  filter(video_index %in% 1:319) %>% # 99%
+  ggplot(aes(x = video_index, 
+             y = proportion,
+             weight = total_video_index,
+             #size = weight_video_index,
+             color = channel_type) ) +
+  geom_point(alpha = .2) +
+  geom_rug(data = video_index_rug %>% filter(video_index %in% 1:319),
+           aes(x = video_index, y = 0),
+           alpha = .005,
+           sides = "b",
+           position = position_jitter(width = .15),
+           inherit.aes = F) +
+  geom_smooth(method = 'loess',
+              formula = 'y~x',
+              span = .5, # using about a third of data points as window
+              # i.e. uses 30% closest points to a given observation for the fit
+              aes(fill = channel_type),
+              method.args = list(degree = 1),
+              alpha = .3) +
+  scale_y_continuous(limits = c(0, .1),
+                     labels = paste0(seq(0, 10, by = 2), "%"),
+                     breaks = seq(0, .1, by = .02)) +
+  scale_color_manual(values = c("#FFA500", "#CD5C5C", "#015CB9"),
+                     labels = c("Alternative\nchannels",
+                                "Extremist\nchannels",
+                                "Mainstream\nmedia"),
+                     name = "") +
+  scale_fill_manual(values = c("#FFA500", "#CD5C5C", "#015CB9"),
+                    labels = c("Alternative\nchannels",
+                               "Extremist\nchannels",
+                               "Mainstream\nmedia"),
+                    name = "") +
+  labs(x = "Video index within session", 
+       y = paste0("Estimated percentage of channel type") ) +
+  theme_minimal() +
+  theme(legend.position = 'bottom',
+        axis.title.x = element_text(hjust = .95))
+
+```
+
+
 ## Table A9: External referrers to alternative and extremist channel videos
+
+(`referrers_data` is on server.)
+
+```{r eval=FALSE}
+# define referrer domains
+external_referrers <- list(
+  # other social 
+  main_social = c("facebook.com",
+                  "apps.facebook.com",
+                  "messenger.com",
+                  "twitter.com",
+                  "tweetdeck.twitter.com",
+                  "instagram.com",
+                  "linkedin.com",
+                  "discord.com",
+                  "tiktok.com",
+                  "tumblr.com",
+                  "tinder.com",
+                  "bumble.com",
+                  "pinterest.com",
+                  "twitch.tv",
+                  "reddit.com",
+                  "old.reddit.com"),
+  # alternative social
+  alternative_social = c("twitchy.com",
+                         "gab.com",
+                         "parler.com",
+                         "banned.video",
+                         "boards.4channel.org"
+                         "boards.4chan.org",
+                         "4chan.org"),
+  # search engine
+  search_engine = c("google.com",
+                    "bing.com",
+                    "yahoo.com", 
+                    "search.yahoo.com",
+                    "duckduckgo.com"),
+  # webmail
+  webmail = c("mail.google.com",
+              "mail.yahoo.com",
+              "mail.com",
+              "mail.aol.com",
+              "outlook.office365.com",
+              "outlook.office.com",
+              "outlook.live.com")
+)
+
+internal_referrers_other <- c(
+  "playlist",
+  "post",    
+  "custom",  
+  "other",   
+  "user",    
+  "redirect"
+)
+
+internal_referrers <- c(
+  "youtube homepage",
+  "youtube video",   
+  "youtube search",  
+  "youtube channel"
+)
+
+referrers_list <- list(
+  external_referrers = external_referrers,
+  internal_referrers_other = internal_referrers_other,
+  internal_referrers = internal_referrers
+)
+
+external_referrers <- referrers_list$external_referrers
+internal_referrers_other <- referrers_list$internal_referrers_other
+internal_referrers <- referrers_list$internal_referrers
+
+# get all users
+final_sample_ids <- merged_data %>% 
+  pull(user_id)
+
+# external referrers table
+total_external_referrers_by_channel_type <- referrers_data %>% 
+  mutate(is_external_referrer = if_else(!str_detect(predecessor_url, "youtube.com"), 1,0 )) %>% 
+  group_by(channel_type, is_external_referrer) %>% 
+  summarise(n = n()) %>% 
+  filter(is_external_referrer == 1 & channel_type %in% c("alternative", "extremist"))
+
+# calculate proportions
+external_referrers_by_domain <- referrers_data %>% 
+  mutate(external_referrer_group = case_when(predecessor_domain %in% external_referrers$main_social ~ "Mainstream social",
+                                             predecessor_domain %in% external_referrers$alternative_social ~ "Alternative social",
+                                             predecessor_domain %in% external_referrers$search_engine ~ "Search engine social",
+                                             predecessor_domain %in% external_referrers$webmail ~ "Webmail",
+                                             TRUE ~ NA_character_)) %>%
+  filter(!is.na(external_referrer_group) ) %>% 
+  group_by(predecessor_domain, channel_type) %>% 
+  summarise(n = n()) %>% 
+  filter(channel_type %in% c("alternative", "extremist")) %>% 
+  mutate(n_external_alternative = total_external_referrers_by_channel_type[total_external_referrers_by_channel_type$channel_type == "alternative", ]$n,
+         n_external_extremist = total_external_referrers_by_channel_type[total_external_referrers_by_channel_type$channel_type == "extremist", ]$n,
+         percent = if_else(channel_type == "alternative" ,
+                        100*(n/n_external_alternative),
+                        100*(n/n_external_extremist))) %>% 
+  pivot_wider(names_from = "channel_type",
+              values_from = c("percent", "n") ) %>% 
+  select(-starts_with("n_")) %>% 
+  mutate(across(c("percent_extremist", "percent_alternative"), ~ replace_na(., 0)))
+
+#clean up/format table
+external_referrers_by_domain_table <- external_referrers_by_domain %>% 
+  mutate(external_referrer_group = case_when(predecessor_domain %in% external_referrers$main_social ~ "Mainstream social",
+                                             predecessor_domain %in% external_referrers$alternative_social ~ "Alternative social",
+                                             predecessor_domain %in% external_referrers$search_engine ~ "Search engine social",
+                                             predecessor_domain %in% external_referrers$webmail ~ "Webmail",
+                                             TRUE ~ NA_character_)) %>% 
+  mutate(percent_extremist = round(percent_extremist, 2),
+         percent_alternative = round(percent_alternative, 2))
+  select(`Referrer type` = external_referrer_group,
+         `Preceding domain` = predecessor_domain,
+         `Percent to extremist channel` = percent_extremist,
+         `Percent to alternative channel` = percent_alternative) %>% 
+  arrange(`Referrer type`, `Percent to extremist channel`)
+
+# print out
+external_referrers_by_domain_table %>%
+  kbl(format = "html",
+      digits = 2,
+      booktabs = TRUE) 
+
+# save as TEX file
+external_referrers_by_domain_table %>%
+  kbl(format = "latex",
+      digits = 2,
+      booktabs = TRUE) %>% 
+  readr::write_lines(file = "./appendix-figures_files/external_referrers_by_channel_type.tex")
+```
+
 
 
 ## Figure A13: Concentration of exposure to alternative and extremist channels (view counts)
