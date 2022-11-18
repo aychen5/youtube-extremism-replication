@@ -12,11 +12,13 @@ activity_data <- read_rds("data/activity_yg_cces.rds")
 summarize_subscribe_table <-
   read_csv("data/summarize_subscribe_table.csv")
 
-# referrers data
-youtube_referrers_data <- 
-  read_csv("data/youtube_referrers.csv")
+# referrers data (see build.R for construction of these tables)
+on_platform_referrers_by_channel <- 
+  read_csv('data/on_platform_referrers_by_channel.csv')
+aggregated_referrers_by_channel <- 
+  read_csv('data/aggregated_referrers_by_channel.csv')
 
-# list of referrers
+# list of referrers (see appendix figs script for list of referrers)
 referrers_list <- read_rds('data/referrers_list.rds')
 external_referrers <- referrers_list$external_referrers
 internal_referrers_other <- referrers_list$internal_referrers_other
@@ -25,6 +27,10 @@ internal_referrers <- referrers_list$internal_referrers
 # recommendations data
 recs_data <- 
   read_delim("data/recommendation_pipeline.tsv", delim = '\t')
+```
+
+``` r
+source("helper_fxns.R") # these are mostly for plotting and presentation
 ```
 
 ``` r
@@ -140,7 +146,7 @@ weighted_prop_fxn <- function(x, data) {
 }
 ```
 
-### Exposure level estimates (page 4)
+### Exposure level estimates (page 11)
 
 Just 15% of the sample for whom we have browser activity data (n=1,181)
 viewed any video from an alternative channel and only 6% viewed any
@@ -518,11 +524,11 @@ summarize_subscribe_plot
 <img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/subscriptions_by_other_subscriptions.pdf',
+ggsave('./main-text-figures_files/subscriptions_by_other_subscriptions.png',
        dpi = 600, width = 11, height = 6)
 ```
 
-### Exposure level estimates (page 5)
+### Exposure level estimates (page 12)
 
 Among the participants who viewed at least one video from an alternative
 or extremist channel, the time spent watching them was relatively low:
@@ -1136,44 +1142,11 @@ time_cumsum_plot_zoomout +
 <img src="main-text-figures_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/cdf_users_time_exposure.pdf',
+ggsave('./main-text-figures_files/cdf_users_time_exposure.png',
       dpi = 600, width = 8, height = 6)
 ```
 
-### Exposure level estimates (page 5–6)
-
-1.5% of participants (17 people) account for 79% of total time spent on
-videos from alternative channels.
-
-``` r
-concentration_time_user %>% 
-  filter(source == "alternative" & cum_views <= .8) %>% 
-  pull(cum_user) %>% 
-  max()
-```
-
-    ## [1] 0.01561862
-
-This imbalance is even more severe for extremist channels, where 0.6% of
-participants (9 people) were responsible for 80% of total time spent on
-these videos.
-
-``` r
-concentration_time_user %>% 
-  filter(source == "extremist" & cum_views <= .8) %>% 
-  pull(cum_user) %>% 
-  max()
-```
-
-    ## [1] 0.006480922
-
-## Figure 3. YouTube video diets of alternative and extremist superconsumers
-
-Distribution of time spent per week on channels for alternative
-(extremist) superconsumers. Superconsumers are individuals who make up
-the top 80th percentile of watch time for the given channel type. Bars
-are in descending order of most to least time on alternative (extremist)
-channel videos.
+### Exposure level estimates (page 13)
 
 ``` r
 # join with rest of survey data
@@ -1194,7 +1167,6 @@ activity_data_supers <- activity_data %>%
     super_extremist = if_else(cumsum_extremist <= .8, 1, 0),
     super_mainstream = if_else(cumsum_mainstream <= .8, 1, 0)
   )
-
 
 # select the top alternative super consumers
 top_time_all_weeks_most_alt <- activity_data_supers  %>%
@@ -1235,10 +1207,35 @@ top_time_all_weeks_most_ext <- activity_data_supers  %>%
   )
 ```
 
-### Exposure level estimates (page 6–7)
+1.6% of participants (17 people) account for 79% of total time spent on
+videos from alternative channels.
+
+``` r
+concentration_time_user %>% 
+  filter(source == "alternative" & cum_views <= .8) %>% 
+  pull(cum_user) %>% 
+  max()
+```
+
+    ## [1] 0.01561862
+
+This imbalance is even more severe for extremist channels, where 0.6% of
+participants (9 people) were responsible for 80% of total time spent on
+these videos.
+
+``` r
+concentration_time_user %>% 
+  filter(source == "extremist" & cum_views <= .8) %>% 
+  pull(cum_user) %>% 
+  max()
+```
+
+    ## [1] 0.006480922
+
+### Exposure level estimates (Superconsumers in appendix)
 
 Alternative channel superconsumers spend a weighted median of 29 hours
-(1741 minutes) each week watching YouTube.
+(1715 minutes) each week watching YouTube.
 
 ``` r
 alternative_superconsumers <- activity_data_supers %>% 
@@ -1251,7 +1248,7 @@ weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
 
     ## [1] 1714.798
 
-Extremist channel superconsumers spend a median of 16 hours (1009
+Extremist channel superconsumers spend a median of 16 hours (979
 minutes) each week watching YouTube.
 
 ``` r
@@ -1295,140 +1292,7 @@ activity_data_supers %>%
 
     ## [1] 9
 
-``` r
-topuser_plot <- function (data,
-                          channel_type,
-                          title,
-                          ylabel,
-                          y_limit = 5e4,
-                          figure_size,
-                          figure_space) {
-  
-  nobs <- nrow(data %>% distinct(caseid))
-
-  
-  if (channel_type == 'Extremist') {
-    
-    p <- data %>%
-      mutate(channel_type = factor(
-        channel_type,
-        levels = c("extremist", "alternative", "mainstream", "other")
-      )) %>%
-      ggplot(., aes(x = rank,
-                    y = minutes_value,
-                    fill = channel_type)) +
-      geom_col(position = position_stack(reverse = TRUE)) +
-      geom_image(
-        data = . %>%
-          filter((super_alternative == 1) &
-                   channel_type == "other"),
-        aes(image = image,
-            y = figure_space),
-        size = figure_size,
-        show.legend = FALSE
-      )
-    
-  } else if (channel_type == 'Alternative') {
-    p <-  data %>% 
-      ggplot(., aes(x = rank, 
-                      y = minutes_value,
-                      fill = channel_type)) +
-      geom_col(position = position_stack(reverse = TRUE)) +
-      geom_image(
-        data = . %>%
-          filter((super_extremist == 1) &
-                   channel_type == "other"),
-        aes(image = image,
-            y = figure_space),
-        size = figure_size,
-        show.legend = FALSE
-      )
-  }
-  
-  p +
-    scale_fill_manual(
-      name = "",
-      values = c(
-        "alternative" = "#FFA500",
-        "extremist" = "#CD5C5C",
-        "mainstream" = "#015CB9",
-        "other" = "#E3E6E6"
-      ),
-      labels = c(
-        "alternative" = "Alternative \nchannels",
-        "extremist" = "Extremist \nchannels",
-        "mainstream" = "Mainstream \nmedia",
-        "other" = "Other \nchannels"
-      )
-    ) +
-    labs(x = "",
-         y = ylabel,
-         title = paste0(title, " (n = ", nobs, ")")) +
-    theme_minimal() +
-    theme(
-      legend.position = 'bottom',
-      panel.grid.minor.x = element_blank(),
-      panel.grid.major.x = element_blank(),
-      axis.text.x = element_blank(),
-      axis.title.x = element_text(hjust = .95)
-    ) +
-    coord_cartesian(ylim = c(-160, y_limit))
-}
-```
-
-``` r
-# alternative superconsumers
-alternative_superconsumers_weeks_plot <-
-  topuser_plot(
-    data = top_time_all_weeks_most_alt,
-    figure_space = -160,
-    figure_size = .075,
-    channel_type = "Alternative",
-    title = "Alternative channel superconsumers",
-    ylabel = "Minutes per week on YouTube videos",
-    y_limit = 3e3
-  )
-# extremist superconsumers
-extremist_superconsumers_weeks_plot <-
-  topuser_plot(
-    data = top_time_all_weeks_most_ext,
-    figure_space = -160,
-    figure_size = .075,
-    channel_type = "Extremist",
-    title = "Extremist channel superconsumers",
-    ylabel = "Minutes per week on YouTube videos",
-    y_limit = 3e3
-  )
-
-# same legend 
-common_legend_superconsumers <-
-  get_legend(alternative_superconsumers_weeks_plot)
-
-# put panels side by side
-plot_grid(
-  plot_grid(
-    alternative_superconsumers_weeks_plot +
-      theme(legend.position = 'none'),
-    extremist_superconsumers_weeks_plot +
-      theme(legend.position = 'none'),
-    labels = c("A", "B"),
-    label_size = 16,
-    nrow = 1
-  ),
-  common_legend_superconsumers,
-  ncol = 1,
-  rel_heights = c(1, .1)
-)
-```
-
-<img src="main-text-figures_files/figure-gfm/combined plots-1.png" style="display: block; margin: auto;" />
-
-``` r
-ggsave('./main-text-figures_files/superconsumers_time_elapsed_week.pdf',
-      dpi = 600, width = 10, height = 5)
-```
-
-## Figure 4. Predictors of watch time
+## Figure 3. Predictors of watch time
 
 ``` r
 # DV is time elapsed on channel video
@@ -1621,13 +1485,17 @@ time_models %>%
 <img src="main-text-figures_files/figure-gfm/coefficient plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/qpois_coefficient_time.pdf',
+ggsave('./main-text-figures_files/qpois_coefficient_time.png',
       dpi = 600, width = 12, height = 6)
 ```
 
-## Figure 5. Hostile sexism as predictor of alternative and extremist channel viewing
+## Figure 4. Hostile sexism as predictor of alternative and extremist channel viewing
 
 ``` r
+vars <- c("rr_tercile", "ft_jew_binned", "gender", "educ2", "race", "pid_lean")
+modes <- map(vars, function (i) mode_fxn(i))
+names(modes) <- vars
+
 get_predictions <- function (model_name,
                              data,
                              model) {
@@ -1780,11 +1648,11 @@ ggplot(predicted_data, aes(x = fem_cts, y = fit_response)) +
 <img src="main-text-figures_files/figure-gfm/predicted value plots-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/hostile_sexism_predicted.pdf',
+ggsave('./main-text-figures_files/hostile_sexism_predicted.png',
       dpi = 600, width = 12, height = 6)
 ```
 
-### Correlates of exposure (page 9)
+### Correlates of exposure (pages 15–16)
 
 When hostile sexism is at its minimum value of 1, expected levels are
 0.4 minutes per week spent watching alternative channel videos and 0.08
@@ -1877,119 +1745,7 @@ Predicted value
 </tbody>
 </table>
 
-## Figure 6: Pages viewed immediately prior to YouTube videos by channel type
-
-``` r
-on_platform_referrers_by_channel <- youtube_referrers_data %>%
-  group_by(channel_type) %>%
-  count(youtube_video_referrers_by_channel_type) %>%
-  filter(!is.na(youtube_video_referrers_by_channel_type)) %>%
-  mutate(
-    total = sum(n),
-    proportion = (n / sum(n)),
-    std_err = sqrt((proportion * (1 - proportion)) / total),
-    ci_lwr = 100 * (proportion - std_err * 1.96),
-    ci_upr = 100 * (proportion + std_err * 1.96),
-    percentage = 100 * proportion
-  ) %>%
-  ungroup() %>%
-  mutate(
-    channel_type_referrer = interaction(channel_type, youtube_video_referrers_by_channel_type),
-    youtube_video_referrers_by_channel_type = factor(
-      youtube_video_referrers_by_channel_type,
-      levels = c(
-        "alternative",
-        "extremist",
-        "mainstream",
-        'other',
-        'Non-video on-platform',
-        'Off-platform'
-      )
-    )
-  ) %>%
-  arrange(channel_type, youtube_video_referrers_by_channel_type) %>%
-  mutate(order_var = 1:nrow(.))
-
-
-on_platform_referrers_by_channel_plot <-
-  on_platform_referrers_by_channel %>%
-  mutate(
-    channel_type = case_when(
-      channel_type == "alternative" ~ "Alternative channel videos",
-      channel_type == "extremist" ~ "Extremist channel videos",
-      channel_type == "mainstream" ~ "Mainstream media channel videos",
-      channel_type == "other" ~ "Other channel videos"
-    )
-  ) %>%
-  ggplot(
-    data = .,
-    aes(
-      x = str_wrap_factor(reorder(channel_type, order_var), width = 17),
-      y = percentage,
-      fill = youtube_video_referrers_by_channel_type,
-      group = channel_type
-    )
-  ) +
-  geom_col(position = position_dodge2(padding = 0,
-                                      width = .95)) +
-  geom_linerange(aes(ymin = ci_lwr,
-                     ymax = ci_upr),
-                 size = .7,
-                 position = position_dodge2(width = .90)) +
-  labs(x = "", y = "Estimated percentage from preceding link") +
-  scale_fill_manual(
-    values = c(
-      'alternative' = "#FFA500",
-      'extremist'  = "#CD5C5C",
-      'mainstream'  =  "#015CB9",
-      'other' = "#E3E6E6",
-      'Non-video on-platform'  =  "#7f7f7f",
-      'Off-platform'  =  "#2D2E32"
-    ),
-    breaks  = c(
-      'alternative',
-      'other',
-      'extremist',
-      'Non-video on-platform',
-      'mainstream',
-      'Off-platform'
-    ),
-    labels = c(
-      'alternative' = "Alternative\nchannel videos",
-      'extremist' = "Extremist\nchannel videos",
-      'mainstream'  =  "Mainstream media\nchannel videos",
-      'other' = "Other\nchannel videos",
-      'Non-video on-platform'  = "Non-video \non-platform",
-      'Off-platform'  = "Off-platform"
-    ),
-    name = "Type of preceding link:"
-  ) +
-  scale_y_continuous(
-    limits = c(0, 60),
-    labels = paste0(seq(0, 60, 20), "%"),
-    breaks = seq(0, 60, 20)
-  ) +
-  ggthemes::theme_gdocs() +
-  theme(
-    legend.position = 'bottom',
-    legend.direction = 'horizontal',
-    panel.grid.major.y = element_line(color = "grey95"),
-    panel.grid.major.x = element_blank(),
-    axis.text.x = element_text(size = 12),
-    plot.background = element_rect(color = "white")
-  )
-
-on_platform_referrers_by_channel_plot
-```
-
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
-
-``` r
-ggsave('./main-text-figures_files/on_platform_referrers_by_channel.pdf',
-      dpi = 600, width = 12, height = 6)
-```
-
-### Internal and external referrers (page 10)
+### Internal and external referrers (page 20)
 
 49% and 51% of referrers to alternative and extremist channel videos,
 respectively, were off-platform sources compared to 41% and 44%,
@@ -2317,7 +2073,12 @@ Non-video on-platform
 </tbody>
 </table>
 
-### Bootstrap difference between alternative/extremist off-platform referrers (49% and 51%) vs. other off-platform referrers (44%) (page 16). 95% bootstrapped CIs are in square parentheses.
+Bootstrap difference between alternative/extremist off-platform
+referrers (49% and 51%) vs. other off-platform referrers (44%) (page
+16). 95% bootstrapped CIs are in square parentheses.
+
+(CODE ONLY, see how `youtube_referrers_data` is constructed in
+`build.R`)
 
 -   alternative v. other: 0.0472 \[0.0408, 0.0539\]
 -   extremist v. other: 0.0702 \[0.0550, 0.0865\]
@@ -2370,341 +2131,11 @@ bs_CIs <- map(
 )
 ```
 
-## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
-
-``` r
-aggregated_referrers_by_channel <- youtube_referrers_data %>%
-  group_by(channel_type) %>%
-  count(all_referrers_grouped) %>%
-  filter(!is.na(all_referrers_grouped)) %>%
-  mutate(
-    total = sum(n),
-    proportion = (n / sum(n)),
-    std_err = sqrt((proportion * (1 - proportion)) / total),
-    ci_lwr = 100 * (proportion - std_err * 1.96),
-    ci_upr = 100 * (proportion + std_err * 1.96),
-    percentage = 100 * proportion,
-    on_off_platform = case_when(
-      all_referrers_grouped %in% c(str_replace(names(external_referrers), "_", " "), "other off-platform") ~ "off-platform",
-      all_referrers_grouped %in% c(internal_referrers, "other on-platform") ~ "on-platform"
-    )
-  ) %>%
-  ungroup() %>%
-  mutate(channel_type_referrer = interaction(channel_type, all_referrers_grouped)) %>%
-  arrange(channel_type, on_off_platform) %>%
-  mutate(order_var = 1:nrow(.)) %>%
-  arrange(on_off_platform, percentage) %>%
-  mutate(
-    all_referrers_grouped = factor(all_referrers_grouped, levels = unique(.$all_referrers_grouped)),
-    all_referrers_grouped = str_replace(all_referrers_grouped, "youtube", "YouTube")
-  )
-
-# on platform panel
-referrers_channel_type_videos_on_platform <-
-  aggregated_referrers_by_channel %>%
-  filter(on_off_platform == "on-platform" &
-           all_referrers_grouped != "Other on-platform") %>%
-  mutate(
-    on_off_platform = case_when(
-      on_off_platform == "on-platform" ~ "On-platform referrer",
-      on_off_platform == "off-platform" ~ "Off-platform referrer"
-    )
-  ) %>%
-  ggplot(
-    data = .,
-    aes(
-      y = percentage,
-      x = str_wrap_factor(reorder(all_referrers_grouped, order_var), width = 10),
-      fill = channel_type,
-      group = channel_type_referrer
-    )
-  ) +
-  geom_bar(position = position_dodge(width = .9),
-           stat = "identity") +
-  geom_linerange(aes(ymin = ci_lwr, ymax = ci_upr),
-                 position = position_dodge(width = .9),
-                 size = .8) +
-  #coord_cartesian(ylim = c(0, 50)) +
-  scale_fill_manual(
-    values = color_palette,
-    labels = c(
-      "Alternative channel\nvideos",
-      "Extremist channel\nvideos",
-      "Mainstream media channel\nvideos",
-      "Other channel\nvideos"
-    ),
-    name = "Domains leading to:"
-  ) +
-  scale_y_continuous(
-    limits = c(0, 60),
-    breaks = seq(0, 60, 10),
-    labels = paste0(seq(0, 60, 10), "%")
-  ) +
-  labs(x = "", y = "Estimated percentage from preceding domain") +
-  facet_wrap( ~ on_off_platform, nrow = 2) +
-  ggthemes::theme_gdocs() +
-  theme(
-    legend.position = 'bottom',
-    legend.direction = 'horizontal',
-    strip.text = element_text(
-      size = 16,
-      hjust = 1,
-      color = "black"
-    ),
-    strip.background = element_rect(fill = "grey", color = "grey"),
-    panel.grid.major.y = element_line(color = "grey95"),
-    panel.grid.major.x = element_blank(),
-    axis.text.x = element_text(size = 12),
-    plot.background = element_rect(color = "white")
-  )
-
-# off platform panel
-referrers_channel_type_videos_off_platform <-
-  aggregated_referrers_by_channel %>%
-  filter(on_off_platform == "off-platform" &
-           all_referrers_grouped != "Other off-platform") %>%
-  mutate(
-    on_off_platform = case_when(
-      on_off_platform == "on-platform" ~ "On-platform referrer",
-      on_off_platform == "off-platform" ~ "Off-platform referrer"
-    ),
-    all_referrers_grouped = case_when(
-      all_referrers_grouped == "alternative social" ~ "Alternative social",
-      all_referrers_grouped == "webmail" ~ "Webmail",
-      all_referrers_grouped == "search engine" ~ "Search engine",
-      all_referrers_grouped == "main social" ~ "Mainstream social",
-      all_referrers_grouped == "other off-platform" ~ "Other off-platform"
-    )
-  ) %>%
-  ggplot(
-    data = .,
-    aes(
-      y = percentage,
-      x = str_wrap_factor(reorder(all_referrers_grouped, order_var), width = 10),
-      fill = channel_type,
-      group = channel_type_referrer
-    )
-  ) +
-  geom_bar(position = position_dodge(width = .9),
-           stat = "identity") +
-  geom_linerange(aes(ymin = ci_lwr, ymax = ci_upr),
-                 position = position_dodge(width = .9),
-                 size = .8) +
-  #coord_cartesian(ylim = c(0, 50)) +
-  scale_y_continuous(
-    limits = c(0, 60),
-    breaks = seq(0, 60, 10),
-    labels = paste0(seq(0, 60, 10), "%")
-  ) +
-  scale_fill_manual(
-    values = color_palette,
-    labels = c(
-      "Alternative channel\nvideos",
-      "Extremist channel\nvideos",
-      "Mainstream media channel\nvideos",
-      "Other channel\nvideos"
-    ),
-    name = "Domains leading to:"
-  ) +
-  labs(x = "", y = "Estimated percentage from preceding domain") +
-  facet_wrap( ~ on_off_platform, nrow = 2) +
-  ggthemes::theme_gdocs() +
-  theme(
-    legend.position = 'bottom',
-    legend.direction = 'horizontal',
-    strip.text = element_text(
-      size = 16,
-      hjust = 1,
-      color = "black"
-    ),
-    strip.background = element_rect(fill = "grey", color = "grey"),
-    panel.grid.major.y = element_line(color = "grey95"),
-    panel.grid.major.x = element_blank(),
-    axis.text.x = element_text(size = 12),
-    plot.background = element_rect(color = "white")
-  )
-
-common_legend_channel_type <- get_legend(referrers_channel_type_videos_off_platform)
-
-plot_grid(
-  plot_grid(
-    referrers_channel_type_videos_on_platform +
-      theme(legend.position = 'none'),
-    referrers_channel_type_videos_off_platform +
-      theme(legend.position = 'none'),
-    labels = c("A", "B"),
-    label_size = 30,
-    nrow = 2
-  ),
-  common_legend_channel_type,
-  ncol = 1,
-  rel_heights = c(1, .1)
-)
-```
-
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
-
-``` r
-ggsave('./main-text-figures_files/referrers_channel_type_videos.pdf',
-      dpi = 600, width = 12, height = 12)
-```
-
-## Figure 8: Recommendation frequency by type of channel being watched
-
-``` r
-#function to calculate %s as input to waffle plots
-recs_prop_table_fxn <- function(channel_type, statistic) {
-  filter_var <-
-    ifelse(statistic == 'shown', "rec_n_video", "rec_match_")
-  results_tab <- recs_data %>%
-    select(variable, .data[[channel_type]]) %>%
-    filter(str_detect(variable, filter_var)) %>%
-    rename(value = .data[[channel_type]]) %>%
-    mutate(visit = channel_type,
-           prop = value / sum(value))
-  if (statistic == "shown") {
-    results_tab %>% mutate(
-      shown = str_replace(variable, "_all", ""),
-      shown = str_match(shown, '(?<=video_).*')[, 1]
-    )
-  } else if (statistic == "followed") {
-    results_tab %>% mutate(
-      followed = str_replace(variable, "_match$", ""),
-      followed = str_match(followed, '(?<=_match_).*')[, 1]
-    )
-  }
-}
-
-#waffle
-waffle_plot_fxn <- function(data,
-                            title,
-                            statistic = c("shown", "followed"),
-                            make_proportional = T) {
-  data %>%
-    ggplot(aes(fill = factor(.data[[statistic]]),
-               values = prop * 100))  +
-    geom_waffle(
-      n_rows = 10,
-      size = .5,
-      color = "white",
-      make_proportional = make_proportional,
-      show.legend = F,
-      radius = unit(5, "pt")
-    ) +
-    scale_fill_manual(
-      values = c(
-        'alternative' = "#FFA500",
-        'extremist' = "#CD5C5C",
-        'mainstream' = "#015CB9",
-        'other' = '#E3E6E6'
-      )
-    ) +
-    labs(title = title) +
-    #theme(plot.title = ggtext::element_markdown(size = 15, hjust = .5))+
-    theme(
-      legend.position = "none",
-      legend.text = element_text(color = "#242829"),
-      text = element_text(size = 16),
-      axis.text.x = element_blank(),
-      axis.title.x = element_blank(),
-      axis.title.y = element_blank(),
-      axis.ticks = element_blank(),
-      axis.text.y = element_blank(),
-      plot.title = ggtext::element_markdown(size = 15, hjust = .5),
-      panel.background = element_blank(),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      plot.background = element_blank()
-    )
-}
-
-# bar to show relative frequency of visits
-scale_plot_fxn <- function(data,
-                           multiplicative_factor = 8,
-                           text_positions = c(-3, 4, 12, 100),
-                           segment_y_lower = 4,
-                           segment_y_upper = 8,
-                           statistic = c("shown", "followed")) {
-  start_points <- c(0,
-                    data$cumulative_percent[1],
-                    data$cumulative_percent[2],
-                    data$cumulative_percent[3])
-  end_points <- data$cumulative_percent
-  
-  bar_recs_shown_table <- data.frame(
-    start_points = start_points * multiplicative_factor,
-    end_points = end_points * multiplicative_factor,
-    text_positions = text_positions * multiplicative_factor,
-    color = c("#FFA500", "#CD5C5C", "#015CB9", 'gray'),
-    labels = c("alt", "ext", "msm", "other")
-  )
-  
-  out <- bar_recs_shown_table %>%
-    ggplot() +
-    theme_void() +
-    geom_rect(
-      aes(
-        xmin = start_points,
-        xmax = end_points,
-        ymin = -2,
-        ymax = 4,
-        fill = labels
-      ),
-      show.legend = F
-    ) +
-    annotate(
-      geom = "text",
-      x = bar_recs_shown_table$text_positions,
-      y = segment_y_upper + 3,
-      size = 5,
-      label = paste0("(", round(data$overall_percent, 1), "%)")
-    ) +
-    annotate(
-      geom = "text",
-      x = bar_recs_shown_table$text_positions,
-      y = segment_y_upper + 8,
-      size = 4.5,
-      label = c("Alternative", "Extremist", "Mainstream\nmedia", "Other")
-    ) +
-    annotate(
-      geom = "segment",
-      x = 0,
-      xend = bar_recs_shown_table$text_positions[1],
-      y = segment_y_lower,
-      yend = segment_y_upper
-    ) +
-    annotate(
-      geom = "segment",
-      x = 1 * multiplicative_factor,
-      xend = bar_recs_shown_table$text_positions[2],
-      y = segment_y_lower,
-      yend = segment_y_upper
-    ) +
-    annotate(
-      geom = "segment",
-      x = 5 * multiplicative_factor,
-      xend = bar_recs_shown_table$text_positions[3],
-      y = segment_y_lower,
-      yend = segment_y_upper
-    ) +
-    annotate(
-      geom = "segment",
-      x = 98 * multiplicative_factor,
-      xend = bar_recs_shown_table$text_positions[4],
-      y = segment_y_lower,
-      yend = segment_y_upper
-    ) +
-    scale_fill_manual(values = c("#FFA500", "#CD5C5C", "#015CB9", '#E3E6E6'),
-                      name = "") +
-    scale_y_continuous(limits = c(-2, 25)) +
-    scale_x_continuous(limits = c(-5, 101) * multiplicative_factor) +
-    coord_fixed(ratio = 4)
-  return(out)
-}
-```
+## Figure 5: Recommendation frequency by type of channel being watched
 
 ``` r
 ### ===== recommendations shown setup
+# recs_prop_table_fxn() is in helper_fxns.R
 #inputs to waffle_plot_fxn
 alternative_shown_table <-
   recs_prop_table_fxn(channel_type = "alternative",
@@ -2819,142 +2250,11 @@ recs_shown_grid
 <img src="main-text-figures_files/figure-gfm/recommedations show plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/waffle_recs_shown.pdf',
+ggsave('./main-text-figures_files/waffle_recs_shown.png',
       dpi = 600, width = 14, height = 8)
 ```
 
-## Figure 9: Recommendation follows by video channel type
-
-``` r
-### ===== recommendations followed setup
-alternative_followed_table <-
-  recs_prop_table_fxn(channel_type = "alternative",
-                      statistic = "followed")
-extremist_followed_table <-
-  recs_prop_table_fxn(channel_type = "extremist",
-                      statistic = "followed")
-mainstream_followed_table <-
-  recs_prop_table_fxn(channel_type = "mainstream",
-                      statistic = "followed")
-mainstream_followed_table_rounded <- mainstream_followed_table %>%
-  mutate(
-    prop = case_when(
-      variable == "rec_match_alternative_match" ~ .01,
-      variable == "rec_match_other_match" ~ 0.295,
-      variable == "rec_match_mainstream_match" ~ 0.70,
-      TRUE ~ prop
-    )
-  )
-other_followed_table <- 
-  recs_prop_table_fxn(channel_type = "other",
-                      statistic = "followed")
-#outputs to waffle_plot_fxn
-alternative_recs_followed <-
-  waffle_plot_fxn(alternative_followed_table, statistic = "followed",
-                  title = "Alternative channel\nvideos")
-extremist_recs_followed <-
-  waffle_plot_fxn(extremist_followed_table, statistic = "followed",
-                  title = "Extremist channel\nvideos")
-mainstream_recs_followed <-
-  waffle_plot_fxn(mainstream_followed_table_rounded, statistic = "followed",
-                  make_proportional = F,
-                  title = "Mainstream media\nchannel videoes")
-other_recs_followed <-
-  waffle_plot_fxn(other_followed_table, statistic = "followed",
-                  title = "Other channel\nvideos")
-
-
-# bar on top of waffles to show scale
-total_recs_followed_table <- recs_data %>%
-  filter(variable == "total recs followed") %>%
-  pivot_longer(-variable) %>%
-  select(-variable) %>%
-  mutate(
-    overall_percent = 100 * (value / sum(value)),
-    cumulative_percent = cumsum(overall_percent)
-  )
-
-bar_recs_followed_plot <- scale_plot_fxn(
-  data = total_recs_followed_table,
-  multiplicative_factor = 8,
-  text_positions = c(-3, 4, 12, 100),
-  segment_y_lower = 4,
-  segment_y_upper = 10,
-  statistic = "followed"
-)
-
-# create dummy plot for legend
-dummy_plot_followed <- alternative_shown_table %>%
-  ggplot(aes(fill = factor(shown),
-             values = prop * 100))  +
-  geom_waffle(
-    n_rows = 10,
-    size = .5,
-    color = "white",
-    make_proportional = TRUE,
-    radius = unit(5, "pt")
-  ) +
-  scale_fill_manual(
-    values = c(
-      'alternative' = "#FFA500",
-      'extremist' = "#CD5C5C",
-      'mainstream' = "#015CB9",
-      'other' = '#E3E6E6'
-    ),
-    labels = c(
-      'Alternative channel\nvideos' ,
-      'Extremist channel\nvideos',
-      'Mainstream media\nchannel videos',
-      'Other channel\nvideos'
-    ),
-    name = "Recommendations followed to:"
-  ) +
-  theme(
-    plot.title = ggtext::element_markdown(size = 12, hjust = .5),
-    legend.position = 'bottom'
-  )
-
-common_legend_followed <- lemon::g_legend(dummy_plot_followed)
-
-all_waffles_followed <- gridExtra::arrangeGrob(
-  alternative_recs_followed,
-  extremist_recs_followed,
-  mainstream_recs_followed,
-  other_recs_followed,
-  nrow = 1
-)
-```
-
-``` r
-recs_followed_grid <- plot_grid(
-  plot_grid(
-    bar_recs_followed_plot,
-    all_waffles_followed,
-    rel_heights = c(1.2, 1.5),
-    labels = c(
-      "A) Percentage of total recommendations followed:",
-      "B) Recommendations followed when watching:"
-    ),
-    label_y = c(.9, 1.1),
-    label_size = 18,
-    hjust = 0,
-    nrow = 2
-  ),
-  common_legend_followed,
-  ncol = 1,
-  rel_heights = c(1, .1)
-)
-recs_followed_grid
-```
-
-<img src="main-text-figures_files/figure-gfm/recommendations followed plot-1.png" style="display: block; margin: auto;" />
-
-``` r
-ggsave('./main-text-figures_files/waffle_recs_followed.pdf',
-      dpi = 600, width = 14, height = 8)
-```
-
-## Figure 10: YouTube recommendations by subscription status and channel type
+## Figure 6: YouTube recommendations by subscription status and channel type
 
 ``` r
 # select all subscription variables
@@ -3151,15 +2451,169 @@ combined %>%
 <img src="main-text-figures_files/figure-gfm/recs by sub-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/subscriptions_bars.pdf',
+ggsave('./main-text-figures_files/subscriptions_bars.png',
       dpi = 600,width = 11, height = 5.5)
 ```
 
-## Methods
+## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
 
-### Study participants stats (page 19)
+(CODE ONLY, see how `aggregated_referrers_by_channel` is constructed in
+`build.R` under “REFERRERS DATA”)
 
-### Survey measures of racial resentment and hostile sexism stats (page 24)
+``` r
+# on platform panel
+referrers_channel_type_videos_on_platform <-
+  aggregated_referrers_by_channel %>%
+  filter(on_off_platform == "on-platform" &
+           all_referrers_grouped != "Other on-platform") %>%
+  mutate(
+    on_off_platform = case_when(
+      on_off_platform == "on-platform" ~ "On-platform referrer",
+      on_off_platform == "off-platform" ~ "Off-platform referrer"
+    )
+  ) %>%
+  ggplot(
+    data = .,
+    aes(
+      y = percentage,
+      x = str_wrap_factor(reorder(all_referrers_grouped, order_var), width = 10),
+      fill = channel_type,
+      group = channel_type_referrer
+    )
+  ) +
+  geom_bar(position = position_dodge(width = .9),
+           stat = "identity") +
+  geom_linerange(aes(ymin = ci_lwr, ymax = ci_upr),
+                 position = position_dodge(width = .9),
+                 size = .8) +
+  #coord_cartesian(ylim = c(0, 50)) +
+  scale_fill_manual(
+    values = color_palette,
+    labels = c(
+      "Alternative channel\nvideos",
+      "Extremist channel\nvideos",
+      "Mainstream media channel\nvideos",
+      "Other channel\nvideos"
+    ),
+    name = "Domains leading to:"
+  ) +
+  scale_y_continuous(
+    limits = c(0, 60),
+    breaks = seq(0, 60, 10),
+    labels = paste0(seq(0, 60, 10), "%")
+  ) +
+  labs(x = "", y = "Estimated percentage from preceding domain") +
+  facet_wrap( ~ on_off_platform, nrow = 2) +
+  ggthemes::theme_gdocs() +
+  theme(
+    legend.position = 'bottom',
+    legend.direction = 'horizontal',
+    strip.text = element_text(
+      size = 16,
+      hjust = 1,
+      color = "black"
+    ),
+    strip.background = element_rect(fill = "grey", color = "grey"),
+    panel.grid.major.y = element_line(color = "grey95"),
+    panel.grid.major.x = element_blank(),
+    axis.text.x = element_text(size = 12),
+    plot.background = element_rect(color = "white")
+  )
+
+# off platform panel
+referrers_channel_type_videos_off_platform <-
+  aggregated_referrers_by_channel %>%
+  filter(on_off_platform == "off-platform" &
+           all_referrers_grouped != "Other off-platform") %>%
+  mutate(
+    on_off_platform = case_when(
+      on_off_platform == "on-platform" ~ "On-platform referrer",
+      on_off_platform == "off-platform" ~ "Off-platform referrer"
+    ),
+    all_referrers_grouped = case_when(
+      all_referrers_grouped == "alternative social" ~ "Alternative social",
+      all_referrers_grouped == "webmail" ~ "Webmail",
+      all_referrers_grouped == "search engine" ~ "Search engine",
+      all_referrers_grouped == "main social" ~ "Mainstream social",
+      all_referrers_grouped == "other off-platform" ~ "Other off-platform"
+    )
+  ) %>%
+  ggplot(
+    data = .,
+    aes(
+      y = percentage,
+      x = str_wrap_factor(reorder(all_referrers_grouped, order_var), width = 10),
+      fill = channel_type,
+      group = channel_type_referrer
+    )
+  ) +
+  geom_bar(position = position_dodge(width = .9),
+           stat = "identity") +
+  geom_linerange(aes(ymin = ci_lwr, ymax = ci_upr),
+                 position = position_dodge(width = .9),
+                 size = .8) +
+  #coord_cartesian(ylim = c(0, 50)) +
+  scale_y_continuous(
+    limits = c(0, 60),
+    breaks = seq(0, 60, 10),
+    labels = paste0(seq(0, 60, 10), "%")
+  ) +
+  scale_fill_manual(
+    values = color_palette,
+    labels = c(
+      "Alternative channel\nvideos",
+      "Extremist channel\nvideos",
+      "Mainstream media channel\nvideos",
+      "Other channel\nvideos"
+    ),
+    name = "Domains leading to:"
+  ) +
+  labs(x = "", y = "Estimated percentage from preceding domain") +
+  facet_wrap( ~ on_off_platform, nrow = 2) +
+  ggthemes::theme_gdocs() +
+  theme(
+    legend.position = 'bottom',
+    legend.direction = 'horizontal',
+    strip.text = element_text(
+      size = 16,
+      hjust = 1,
+      color = "black"
+    ),
+    strip.background = element_rect(fill = "grey", color = "grey"),
+    panel.grid.major.y = element_line(color = "grey95"),
+    panel.grid.major.x = element_blank(),
+    axis.text.x = element_text(size = 12),
+    plot.background = element_rect(color = "white")
+  )
+
+common_legend_channel_type <- get_legend(referrers_channel_type_videos_off_platform)
+
+plot_grid(
+  plot_grid(
+    referrers_channel_type_videos_on_platform +
+      theme(legend.position = 'none'),
+    referrers_channel_type_videos_off_platform +
+      theme(legend.position = 'none'),
+    labels = c("A", "B"),
+    label_size = 30,
+    nrow = 2
+  ),
+  common_legend_channel_type,
+  ncol = 1,
+  rel_heights = c(1, .1)
+)
+```
+
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./main-text-figures_files/referrers_channel_type_videos.png',
+      dpi = 600, width = 12, height = 12)
+```
+
+### Rabbit Hole stats
+
+### Survey measures of racial resentment and hostile sexism stats (page 10)
 
 Racial resentment and hostile sexism measures were also included in our
 2020 survey; responses showed a high degree of persistence over time
@@ -3167,23 +2621,6 @@ Racial resentment and hostile sexism measures were also included in our
 
 ``` r
 #persistence racial resentment
-merged_data %>%
-  mutate(radicalize = case_when(rr_cts < 2.5 & rr_blk_mean > 3.5 ~ "radicalize",
-                                rr_cts > 3.5 & rr_blk_mean < 2.5 ~ "de-radicalize",
-                                TRUE ~ "neither")) %>%
-  ggplot(aes(rr_cts, rr_blk_mean)) +
-  geom_jitter(aes(col = radicalize),
-              size = 3, alpha = .8) +
-  scale_color_manual(name = "",  
-                     values = c("dodgerblue", "grey", "salmon")) +
-  labs(x = "Racial resentment score, 2018", y = "Racial resentment score, 2020") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-<img src="main-text-figures_files/figure-gfm/persist rr-1.png" style="display: block; margin: auto;" />
-
-``` r
 cor(merged_data$rr_blk_mean, merged_data$rr_cts,
     use = "complete.obs",
     method = 'pearson')
@@ -3193,22 +2630,6 @@ cor(merged_data$rr_blk_mean, merged_data$rr_cts,
 
 ``` r
 # hostile sexism
-merged_data%>%
-  mutate(radicalize = case_when(fem_cts < 2.5 & fem_mean > 3.5 ~ "radicalize",
-                                fem_cts > 3.5 & fem_mean < 2.5 ~ "de-radicalize",
-                                TRUE ~ "neither")) %>%
-  ggplot(aes(fem_cts, fem_mean)) +
-  geom_jitter(aes(col = radicalize),
-              size = 3, alpha = .8) +
-  scale_color_manual(name = "", values = c("dodgerblue", "grey", "salmon")) +
-  labs(x = "Hostile sexism score, 2018", y = "Hostile sexism score, 2020") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-```
-
-<img src="main-text-figures_files/figure-gfm/persist hostile sexism-1.png" style="display: block; margin: auto;" />
-
-``` r
 cor(merged_data$fem_mean, merged_data$fem_cts,
     use = "complete.obs",
     method = 'pearson')

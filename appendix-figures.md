@@ -16,21 +16,32 @@ Appendix Tables and Figures
     id="toc-figure-a3-and-a4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video">Figure
     A3 and A4: YouTube video diets of individuals who viewed any
     alternative/extremist channel video</a>
--   <a href="#figure-a7-and-a8" id="toc-figure-a7-and-a8">Figure A7 and
-    A8:</a>
+-   <a
+    href="#figure-s5-youtube-video-diets-of-alternative-and-extremist-superconsumers"
+    id="toc-figure-s5-youtube-video-diets-of-alternative-and-extremist-superconsumers">Figure
+    S5. YouTube video diets of alternative and extremist superconsumers</a>
+-   <a href="#figure-s6-recommendation-follows-by-video-channel-type"
+    id="toc-figure-s6-recommendation-follows-by-video-channel-type">Figure
+    S6. Recommendation follows by video channel type</a>
+-   <a
+    href="#figure-s7-pages-viewed-immediately-prior-to-youtube-videos-by-channel-type"
+    id="toc-figure-s7-pages-viewed-immediately-prior-to-youtube-videos-by-channel-type">Figure
+    S7: Pages viewed immediately prior to YouTube videos by channel type</a>
+-   <a
+    href="#figure-s10-and-table-s5-correlates-of-youtube-video-exposure-by-channel-type-with-party-controls"
+    id="toc-figure-s10-and-table-s5-correlates-of-youtube-video-exposure-by-channel-type-with-party-controls">Figure
+    S10 and Table S5: Correlates of YouTube video exposure by channel type
+    (with party controls)</a>
     -   <a
-        href="#figure-a7-correlates-of-youtube-video-exposure-by-channel-type-with-party-controls"
-        id="toc-figure-a7-correlates-of-youtube-video-exposure-by-channel-type-with-party-controls">Figure
-        A7: Correlates of YouTube video exposure by channel type (with party
-        controls)</a>
-    -   <a href="#table-a7-hostile-sexism-and-racial-resentment-specifications"
-        id="toc-table-a7-hostile-sexism-and-racial-resentment-specifications">Table
-        A7: Hostile sexism and Racial resentment specifications</a>
+        href="#tables-s6-and-s7-separating-hostile-sexism-and-racial-resentment-specifications"
+        id="toc-tables-s6-and-s7-separating-hostile-sexism-and-racial-resentment-specifications">Tables
+        S6 and S7: Separating Hostile sexism and Racial resentment
+        specifications</a>
     -   <a
-        href="#figure-a8-correlates-of-exposure-to-youtube-videos-by-channel-type-alternate-racial-attitude-measure"
-        id="toc-figure-a8-correlates-of-exposure-to-youtube-videos-by-channel-type-alternate-racial-attitude-measure">Figure
-        A8: Correlates of exposure to YouTube videos by channel type (alternate
-        racial attitude measure)</a>
+        href="#figure-s11-and-table-s8-correlates-of-exposure-to-youtube-videos-by-channel-type-alternate-racial-attitude-measure"
+        id="toc-figure-s11-and-table-s8-correlates-of-exposure-to-youtube-videos-by-channel-type-alternate-racial-attitude-measure">Figure
+        S11 and Table S8: Correlates of exposure to YouTube videos by channel
+        type (alternate racial attitude measure)</a>
     -   <a href="#factor-loadings" id="toc-factor-loadings">Factor loadings</a>
     -   <a href="#correlation-between-racial-and-gender-resentment"
         id="toc-correlation-between-racial-and-gender-resentment">Correlation
@@ -38,63 +49,74 @@ Appendix Tables and Figures
     -   <a href="#model-with-combined-score"
         id="toc-model-with-combined-score">Model with combined score</a>
 -   <a
-    href="#figure-a5-zero-inflated-models-on-correlates-of-time-on-youtube-video-by-channel-type"
-    id="toc-figure-a5-zero-inflated-models-on-correlates-of-time-on-youtube-video-by-channel-type">Figure
-    A5: Zero-inflated models on correlates of time on YouTube video by
-    channel type</a>
--   <a href="#figure-a6-correlates-of-youtube-video-views-by-channel-type"
-    id="toc-figure-a6-correlates-of-youtube-video-views-by-channel-type">Figure
-    A6: Correlates of YouTube video views by channel type</a>
--   <a href="#figure-a9-correlation-between-browser-history-and-activity"
-    id="toc-figure-a9-correlation-between-browser-history-and-activity">Figure
-    A9: Correlation between browser history and activity</a>
+    href="#figure-s8-and-table-s3-zero-inflated-models-on-correlates-of-time-on-youtube-video-by-channel-type"
+    id="toc-figure-s8-and-table-s3-zero-inflated-models-on-correlates-of-time-on-youtube-video-by-channel-type">Figure
+    S8 and Table S3: Zero-inflated models on correlates of time on YouTube
+    video by channel type</a>
+-   <a
+    href="#figure-s9-and-table-s4-correlates-of-youtube-video-views-by-channel-type"
+    id="toc-figure-s9-and-table-s4-correlates-of-youtube-video-views-by-channel-type">Figure
+    S9 and Table S4: Correlates of YouTube video views by channel type</a>
+-   <a href="#figure-s12-correlation-between-browser-history-and-activity"
+    id="toc-figure-s12-correlation-between-browser-history-and-activity">Figure
+    S12: Correlation between browser history and activity</a>
 -   <a
     href="#table-a8-predictors-of-proportion-of-time-spent-on-alternativeextremist-videos-by-day"
     id="toc-table-a8-predictors-of-proportion-of-time-spent-on-alternativeextremist-videos-by-day">Table
     A8: Predictors of proportion of time spent on alternative/extremist
     videos by day</a>
 -   <a
-    href="#figure-a10-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample"
-    id="toc-figure-a10-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample">Figure
-    A10: Differences in perceptions of YouTube between full sample and
+    href="#figure-s13-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample"
+    id="toc-figure-s13-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample">Figure
+    S13: Differences in perceptions of YouTube between full sample and
     extension sample</a>
 -   <a
-    href="#figure-a11-percentage-of-views-to-each-channel-type-by-video-number-within-session"
-    id="toc-figure-a11-percentage-of-views-to-each-channel-type-by-video-number-within-session">Figure
-    A11: Percentage of views to each channel type by video number within
+    href="#figure-s14-percentage-of-views-to-each-channel-type-by-video-number-within-session"
+    id="toc-figure-s14-percentage-of-views-to-each-channel-type-by-video-number-within-session">Figure
+    S14: Percentage of views to each channel type by video number within
     session</a>
 -   <a
-    href="#figure-a12-percentage-of-views-to-each-channel-type-by-total-session-length"
-    id="toc-figure-a12-percentage-of-views-to-each-channel-type-by-total-session-length">Figure
-    A12: Percentage of views to each channel type by total session
+    href="#figure-s15-percentage-of-views-to-each-channel-type-by-total-session-length"
+    id="toc-figure-s15-percentage-of-views-to-each-channel-type-by-total-session-length">Figure
+    S15: Percentage of views to each channel type by total session
     length</a>
 -   <a
-    href="#table-a9-external-referrers-to-alternative-and-extremist-channel-videos"
-    id="toc-table-a9-external-referrers-to-alternative-and-extremist-channel-videos">Table
-    A9: External referrers to alternative and extremist channel videos</a>
+    href="#table-s10-external-referrers-to-alternative-and-extremist-channel-videos"
+    id="toc-table-s10-external-referrers-to-alternative-and-extremist-channel-videos">Table
+    S10: External referrers to alternative and extremist channel videos</a>
 -   <a
-    href="#figure-a13-concentration-of-exposure-to-alternative-and-extremist-channels-view-counts"
-    id="toc-figure-a13-concentration-of-exposure-to-alternative-and-extremist-channels-view-counts">Figure
-    A13: Concentration of exposure to alternative and extremist channels
+    href="#figure-s16-concentration-of-exposure-to-alternative-and-extremist-channels-view-counts"
+    id="toc-figure-s16-concentration-of-exposure-to-alternative-and-extremist-channels-view-counts">Figure
+    S16: Concentration of exposure to alternative and extremist channels
     (view counts)</a>
 
 ``` r
 ### ----------- data
-# survey + extension data for individuals
+# survey + extension data for all participants
 merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 # activity data
 activity_data <- read_rds("data/activity_yg_cces.rds") 
 # browser history data
 browser_history_data <-read_rds("data/browser_history_yg_cces.rds")
+
 # over time data for consumption over time
 at_over_time <- read_rds("data/activity_time_user_by_date.rds")
 at_over_views <- read_rds("data/activity_count_user_by_date.rds")
 
-# data on server...
-#referrers_data <- read_delim(paste0(data_dir, "activity/referrers.tsv"), delim = "\t")
+# referrers data (see build.R for construction of this table)
+on_platform_referrers_by_channel <- 
+  read_csv('data/on_platform_referrers_by_channel.csv')
+
+# recommendations data
+recs_data <- 
+  read_delim("data/recommendation_pipeline.tsv", delim = '\t')
 
 # color palette 
 color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
+```
+
+``` r
+source("helper_fxns.R") # these are mostly for plotting and presentation
 ```
 
 ## Table A1: Demographic statistics by sample
@@ -1666,92 +1688,13 @@ minutes_activity_time_all_week <- c(
   )
 
 # calculate for all channel types
-at_cum_time_user <- map_dfr(minutes_activity_time_all_week, 
+concentration_time_user <- map_dfr(minutes_activity_time_all_week, 
                             ~cumsum_fxn(.x, activity_data))
-
-topuser_plot <- function (data,
-                          channel_type,
-                          title,
-                          ylabel,
-                          y_limit = 5e4,
-                          figure_size,
-                          figure_space) {
-  
-  nobs <- nrow(data %>% distinct(caseid))
-
-  
-  if (channel_type == 'Extremist') {
-    
-    p <- data %>%
-      mutate(channel_type = factor(
-        channel_type,
-        levels = c("extremist", "alternative", "mainstream", "other")
-      )) %>%
-      ggplot(., aes(x = rank,
-                    y = minutes_value,
-                    fill = channel_type)) +
-      geom_col(position = position_stack(reverse = TRUE)) +
-      geom_image(
-        data = . %>%
-          filter((super_alternative == 1) &
-                   channel_type == "other"),
-        aes(image = image,
-            y = figure_space),
-        size = figure_size,
-        show.legend = FALSE
-      )
-    
-  } else if (channel_type == 'Alternative') {
-    p <-  data %>% 
-      ggplot(., aes(x = rank, 
-                      y = minutes_value,
-                      fill = channel_type)) +
-      geom_col(position = position_stack(reverse = TRUE)) +
-      geom_image(
-        data = . %>%
-          filter((super_extremist == 1) &
-                   channel_type == "other"),
-        aes(image = image,
-            y = figure_space),
-        size = figure_size,
-        show.legend = FALSE
-      )
-  }
-  
-  p +
-    scale_fill_manual(
-      name = "",
-      values = c(
-        "alternative" = "#FFA500",
-        "extremist" = "#CD5C5C",
-        "mainstream" = "#015CB9",
-        "other" = "#E3E6E6"
-      ),
-      labels = c(
-        "alternative" = "Alternative \nchannels",
-        "extremist" = "Extremist \nchannels",
-        "mainstream" = "Mainstream \nmedia",
-        "other" = "Other \nchannels"
-      )
-    ) +
-    labs(x = "",
-         y = ylabel,
-         title = paste0(title, " (n = ", nobs, ")")) +
-    theme_minimal() +
-    theme(
-      legend.position = 'bottom',
-      panel.grid.minor.x = element_blank(),
-      panel.grid.major.x = element_blank(),
-      axis.text.x = element_blank(),
-      axis.title.x = element_text(hjust = .95)
-    ) +
-    coord_cartesian(ylim = c(-160, y_limit))
-}
 
 # join with rest of survey data
 activity_data_supers <- activity_data %>%
   left_join(
-    at_cum_time_user %>%
+    concentration_time_user %>%
       select(caseid, cum_views,  source) %>%
       pivot_wider(
         names_from = "source",
@@ -1815,7 +1758,343 @@ topuser_plot(
 
 <img src="appendix-figures_files/figure-gfm/unnamed-chunk-4-2.png" style="display: block; margin: auto;" />
 
-## Figure A7 and A8:
+## Figure S5. YouTube video diets of alternative and extremist superconsumers
+
+Distribution of time spent per week on channels for alternative
+(extremist) superconsumers. Superconsumers are individuals who make up
+the top 80th percentile of watch time for the given channel type. Bars
+are in descending order of most to least time on alternative (extremist)
+channel videos.
+
+``` r
+# join with rest of survey data
+activity_data_supers <- activity_data %>%
+  left_join(
+    concentration_time_user %>%
+      select(caseid, cum_views,  source) %>%
+      pivot_wider(
+        names_from = "source",
+        names_glue = "cumsum_{source}",
+        values_from = "cum_views"
+      ),
+    by = "caseid"
+  ) %>%
+  # define a superconsumer as someone who is in the top 80th percentile of watch time per week
+  mutate(
+    super_alternative = if_else(cumsum_alternative <= .8, 1, 0),
+    super_extremist = if_else(cumsum_extremist <= .8, 1, 0),
+    super_mainstream = if_else(cumsum_mainstream <= .8, 1, 0)
+  )
+
+
+# select the top alternative super consumers
+top_time_all_weeks_most_alt <- activity_data_supers  %>%
+  filter(super_alternative == 1)  %>%
+  arrange(desc(
+    minutes_activity_yt_video_time_elapsed_capped_total_alternative_all_week
+  )) %>%
+  mutate(rank = 1:nrow(.)) %>%
+  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>%
+  mutate(
+    channel_type = str_replace(name, "_all_week$", ""),
+    channel_type = str_extract(channel_type, "[a-z]+$"),
+    minutes_value = value,
+    image = if_else(
+      super_extremist == 1 ,
+      "https://i.postimg.cc/bwL3hjPY/user-icon-extremist.png",
+      NA_character_
+    )
+  )
+
+# select the top extremist super consumers
+top_time_all_weeks_most_ext <- activity_data_supers  %>%
+  filter(super_extremist == 1)  %>%
+  arrange(desc(
+    minutes_activity_yt_video_time_elapsed_capped_total_extremist_all_week
+  )) %>%
+  mutate(rank = 1:nrow(.)) %>%
+  pivot_longer(cols = all_of(minutes_activity_time_all_week)) %>%
+  mutate(
+    channel_type = str_replace(name, "_all_week$", ""),
+    channel_type = str_extract(channel_type, "[a-z]+$"),
+    minutes_value = value,
+    image = if_else(
+      super_alternative == 1 ,
+      "https://i.postimg.cc/D0BPKrVj/user-icon-alternative.png",
+      NA_character_
+    )
+  )
+
+alternative_superconsumers <- activity_data_supers %>% 
+  filter(super_alternative == 1) 
+extemist_superconsumers <- activity_data_supers %>% 
+  filter(super_extremist == 1) 
+
+# alternative superconsumers
+alternative_superconsumers_weeks_plot <-
+  topuser_plot(
+    data = top_time_all_weeks_most_alt,
+    figure_space = -160,
+    figure_size = .075,
+    channel_type = "Alternative",
+    title = "Alternative channel superconsumers",
+    ylabel = "Minutes per week on YouTube videos",
+    y_limit = 3e3
+  )
+# extremist superconsumers
+extremist_superconsumers_weeks_plot <-
+  topuser_plot(
+    data = top_time_all_weeks_most_ext,
+    figure_space = -160,
+    figure_size = .075,
+    channel_type = "Extremist",
+    title = "Extremist channel superconsumers",
+    ylabel = "Minutes per week on YouTube videos",
+    y_limit = 3e3
+  )
+
+# same legend 
+common_legend_superconsumers <-
+  get_legend(alternative_superconsumers_weeks_plot)
+
+# put panels side by side
+plot_grid(
+  plot_grid(
+    alternative_superconsumers_weeks_plot +
+      theme(legend.position = 'none'),
+    extremist_superconsumers_weeks_plot +
+      theme(legend.position = 'none'),
+    labels = c("A", "B"),
+    label_size = 16,
+    nrow = 1
+  ),
+  common_legend_superconsumers,
+  ncol = 1,
+  rel_heights = c(1, .1)
+)
+```
+
+<img src="appendix-figures_files/figure-gfm/calculate cumulative sums-1.png" style="display: block; margin: auto;" />
+
+## Figure S6. Recommendation follows by video channel type
+
+``` r
+### ===== recommendations followed setup
+alternative_followed_table <-
+  recs_prop_table_fxn(channel_type = "alternative",
+                      statistic = "followed")
+extremist_followed_table <-
+  recs_prop_table_fxn(channel_type = "extremist",
+                      statistic = "followed")
+mainstream_followed_table <-
+  recs_prop_table_fxn(channel_type = "mainstream",
+                      statistic = "followed")
+mainstream_followed_table_rounded <- mainstream_followed_table %>%
+  mutate(
+    prop = case_when(
+      variable == "rec_match_alternative_match" ~ .01,
+      variable == "rec_match_other_match" ~ 0.295,
+      variable == "rec_match_mainstream_match" ~ 0.70,
+      TRUE ~ prop
+    )
+  )
+other_followed_table <- 
+  recs_prop_table_fxn(channel_type = "other",
+                      statistic = "followed")
+#outputs to waffle_plot_fxn
+alternative_recs_followed <-
+  waffle_plot_fxn(alternative_followed_table, statistic = "followed",
+                  title = "Alternative channel\nvideos")
+extremist_recs_followed <-
+  waffle_plot_fxn(extremist_followed_table, statistic = "followed",
+                  title = "Extremist channel\nvideos")
+mainstream_recs_followed <-
+  waffle_plot_fxn(mainstream_followed_table_rounded, statistic = "followed",
+                  make_proportional = F,
+                  title = "Mainstream media\nchannel videoes")
+other_recs_followed <-
+  waffle_plot_fxn(other_followed_table, statistic = "followed",
+                  title = "Other channel\nvideos")
+
+
+# bar on top of waffles to show scale
+total_recs_followed_table <- recs_data %>%
+  filter(variable == "total recs followed") %>%
+  pivot_longer(-variable) %>%
+  select(-variable) %>%
+  mutate(
+    overall_percent = 100 * (value / sum(value)),
+    cumulative_percent = cumsum(overall_percent)
+  )
+
+bar_recs_followed_plot <- scale_plot_fxn(
+  data = total_recs_followed_table,
+  multiplicative_factor = 8,
+  text_positions = c(-3, 4, 12, 100),
+  segment_y_lower = 4,
+  segment_y_upper = 10,
+  statistic = "followed"
+)
+
+# create dummy plot for legend
+dummy_plot_followed <- alternative_followed_table %>%
+  ggplot(aes(fill = factor(followed),
+             values = prop * 100))  +
+  geom_waffle(
+    n_rows = 10,
+    size = .5,
+    color = "white",
+    make_proportional = TRUE,
+    radius = unit(5, "pt")
+  ) +
+  scale_fill_manual(
+    values = c(
+      'alternative' = "#FFA500",
+      'extremist' = "#CD5C5C",
+      'mainstream' = "#015CB9",
+      'other' = '#E3E6E6'
+    ),
+    labels = c(
+      'Alternative channel\nvideos' ,
+      'Extremist channel\nvideos',
+      'Mainstream media\nchannel videos',
+      'Other channel\nvideos'
+    ),
+    name = "Recommendations followed to:"
+  ) +
+  theme(
+    plot.title = ggtext::element_markdown(size = 12, hjust = .5),
+    legend.position = 'bottom'
+  )
+
+common_legend_followed <- lemon::g_legend(dummy_plot_followed)
+
+all_waffles_followed <- gridExtra::arrangeGrob(
+  alternative_recs_followed,
+  extremist_recs_followed,
+  mainstream_recs_followed,
+  other_recs_followed,
+  nrow = 1
+)
+```
+
+``` r
+recs_followed_grid <- plot_grid(
+  plot_grid(
+    bar_recs_followed_plot,
+    all_waffles_followed,
+    rel_heights = c(1.2, 1.5),
+    labels = c(
+      "A) Percentage of total recommendations followed:",
+      "B) Recommendations followed when watching:"
+    ),
+    label_y = c(.9, 1.1),
+    label_size = 18,
+    hjust = 0,
+    nrow = 2
+  ),
+  common_legend_followed,
+  ncol = 1,
+  rel_heights = c(1, .1)
+)
+recs_followed_grid
+```
+
+<img src="appendix-figures_files/figure-gfm/recommendations followed plot-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./main-text-figures_files/waffle_recs_followed.png',
+      dpi = 600, width = 14, height = 8)
+```
+
+## Figure S7: Pages viewed immediately prior to YouTube videos by channel type
+
+(CODE ONLY, SOURCE DATA IS ON SECURE SERVER. See `build.R` under
+“REFERRERS DATA” for construction of
+`on_platform_referrers_by_channel.csv`)
+
+``` r
+on_platform_referrers_by_channel_plot <-
+  on_platform_referrers_by_channel %>%
+  mutate(
+    channel_type = case_when(
+      channel_type == "alternative" ~ "Alternative channel videos",
+      channel_type == "extremist" ~ "Extremist channel videos",
+      channel_type == "mainstream" ~ "Mainstream media channel videos",
+      channel_type == "other" ~ "Other channel videos"
+    )
+  ) %>%
+  ggplot(
+    data = .,
+    aes(
+      x = str_wrap_factor(reorder(channel_type, order_var), width = 17),
+      y = percentage,
+      fill = youtube_video_referrers_by_channel_type,
+      group = channel_type
+    )
+  ) +
+  geom_col(position = position_dodge2(padding = 0,
+                                      width = .95)) +
+  geom_linerange(aes(ymin = ci_lwr,
+                     ymax = ci_upr),
+                 size = .7,
+                 position = position_dodge2(width = .90)) +
+  labs(x = "", y = "Estimated percentage from preceding link") +
+  scale_fill_manual(
+    values = c(
+      'alternative' = "#FFA500",
+      'extremist'  = "#CD5C5C",
+      'mainstream'  =  "#015CB9",
+      'other' = "#E3E6E6",
+      'Non-video on-platform'  =  "#7f7f7f",
+      'Off-platform'  =  "#2D2E32"
+    ),
+    breaks  = c(
+      'alternative',
+      'other',
+      'extremist',
+      'Non-video on-platform',
+      'mainstream',
+      'Off-platform'
+    ),
+    labels = c(
+      'alternative' = "Alternative\nchannel videos",
+      'extremist' = "Extremist\nchannel videos",
+      'mainstream'  =  "Mainstream media\nchannel videos",
+      'other' = "Other\nchannel videos",
+      'Non-video on-platform'  = "Non-video \non-platform",
+      'Off-platform'  = "Off-platform"
+    ),
+    name = "Type of preceding link:"
+  ) +
+  scale_y_continuous(
+    limits = c(0, 60),
+    labels = paste0(seq(0, 60, 20), "%"),
+    breaks = seq(0, 60, 20)
+  ) +
+  ggthemes::theme_gdocs() +
+  theme(
+    legend.position = 'bottom',
+    legend.direction = 'horizontal',
+    panel.grid.major.y = element_line(color = "grey95"),
+    panel.grid.major.x = element_blank(),
+    axis.text.x = element_text(size = 12),
+    plot.background = element_rect(color = "white")
+  )
+
+on_platform_referrers_by_channel_plot
+```
+
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./main-text-figures_files/on_platform_referrers_by_channel.png',
+      dpi = 600, width = 12, height = 6)
+```
+
+\[TABLE S2: Correlates of time on YouTube videos by channel type\]
+
+## Figure S10 and Table S5: Correlates of YouTube video exposure by channel type (with party controls)
 
 ``` r
 # with party ID
@@ -1926,70 +2205,6 @@ robust_weighted_quasipoisson <- function(data = activity_data,
   }
   return(results)
 }
-
-coef_plot <- function(data) {
-  
-  if (str_detect(deparse(substitute(data)), "time")) {
-    facet_labels <- c(
-      "alternative" = str_wrap("Minutes/week on alternative channel videos", width = 30),
-      "extremist" = str_wrap("Minutes/week on extremist channel videos", width = 30),
-      "mainstream" = str_wrap("Minutes/week on mainstream media channel videos", width = 30)
-    )
-  } else {
-    facet_labels <- c(
-      "alternative" = str_wrap("Views/week on alternative channel videos", width = 30),
-      "extremist" = str_wrap("Views/week on extremist channel videos", width = 30),
-      "mainstream" = str_wrap("Views/week on mainstream media channel videos", width = 30)
-    )
-  }
-
-  
-  data %>%
-    filter(predictor != "(Intercept)") %>%
-    mutate(predictor = refactor_fxn(recode_fxn(predictor))) %>%
-    ggplot(aes(x = estimate, y = str_wrap_factor(predictor, width = 12))) +
-    geom_vline(xintercept = 0, lty = 2) +
-    geom_linerange(
-      aes(
-        xmin = ci_lwr,
-        xmax = ci_upr,
-        color = channel_type
-      ),
-      size = 9,
-      show.legend = FALSE
-    ) +
-    geom_point(
-      size = 10,
-      shape = 21,
-      stroke = 1,
-      color = "black",
-      fill = "#FFFFFF"
-    ) +
-    geom_text(aes(label = round(estimate, 2)),
-              size = 3.5, color = "black") +
-    geom_text(
-      aes(label = stat_sig),
-      size = 8,
-      nudge_x = .45,
-      nudge_y = .25
-    ) +
-    facet_wrap(~ channel_type,
-               labeller = as_labeller(facet_labels)) +
-    scale_color_manual(
-      values = c(
-        "alternative" = "#FFA500",
-        "extremist" = "#CD5C5C",
-        "mainstream" = "#015CB9"
-      )
-    ) +
-    labs(y = "", x = "Quasipoisson coefficient") +
-    theme_bw() +
-    theme(
-      strip.text = element_text(size = 12, hjust = .5),
-      strip.background = element_rect(fill = "grey", color = "grey"),
-      axis.text.y = element_text(size = 12)
-    )
-}
 ```
 
 ``` r
@@ -2039,8 +2254,6 @@ coef_names <- c("Intercept",
                 "Non-white")
 ```
 
-### Figure A7: Correlates of YouTube video exposure by channel type (with party controls)
-
 ``` r
 visit_pid_models <- bind_rows(QP_visit_pid_fit)
 
@@ -2059,6 +2272,7 @@ pid_time_plot
 <img src="appendix-figures_files/figure-gfm/PID time plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
+# separately estimate without robust SEs becuase tex reg doesn't like this... :L
 QP_visit_pid_fit_nonrob <- QP_time_pid_fit_nonrob <- list()
 for (i in 1:length(visit_pid_fs)) {
   QP_visit_pid_fit_nonrob[[i]] <-
@@ -2076,6 +2290,7 @@ texreg(c(QP_visit_pid_fit_nonrob, QP_time_pid_fit_nonrob),
        label = "tab:figa7table",
        caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
        # texreg reads models as separate lists
+       # manually adding in robust p-vals
        override.pvalues = list(robust_pvals[1:12],
                     robust_pvals[13:24],
                     robust_pvals[25:36],
@@ -2109,7 +2324,7 @@ texreg(c(QP_visit_pid_fit_nonrob, QP_time_pid_fit_nonrob),
           file = "appendix-figures_files/figureA7.tex")
 ```
 
-### Table A7: Hostile sexism and Racial resentment specifications
+### Tables S6 and S7: Separating Hostile sexism and Racial resentment specifications
 
 ``` r
 # without hostile sexism
@@ -2199,9 +2414,9 @@ for (i in 1:length(time_rr_fs)) {
   QP_time_hs_fit[[i]] <-
     robust_weighted_quasipoisson(formula = time_hs_fs[[i]])
   QP_visit_rr_fit[[i]] <-
-    robust_weighted_quasipoisson(formula = time_rr_fs[[i]])
+    robust_weighted_quasipoisson(formula = visit_rr_fs[[i]])
   QP_visit_hs_fit[[i]] <-
-    robust_weighted_quasipoisson(formula = time_hs_fs[[i]])
+    robust_weighted_quasipoisson(formula = visit_hs_fs[[i]])
 }
 
 names(QP_time_rr_fit) <-
@@ -2223,6 +2438,7 @@ names(QP_visit_hs_fit) <-
 ```
 
 ``` r
+# separately estimate without robust SEs becuase tex reg doesn't like this... :L
 QP_time_hs_fit_nonrob <- QP_time_rr_fit_nonrob <- list()
 QP_visit_hs_fit_nonrob <- QP_visit_rr_fit_nonrob <- list()
 for (i in 1:length(time_hs_fs)) {
@@ -2264,6 +2480,7 @@ texreg(
        label = "tab:tablea7.1",
        caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
        # texreg reads models as separate lists
+       # manually adding in robust p-vals
        override.pvalues = list(robust_pvals[1:9],
                     robust_pvals[10:18],
                     robust_pvals[19:27],
@@ -2321,6 +2538,7 @@ texreg(
        label = "tab:tablea7.2",
        caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
        # texreg reads models as separate lists
+       # manually adding in robust SEs
        override.pvalues = list(robust_pvals[1:9],
                     robust_pvals[10:18],
                     robust_pvals[19:27],
@@ -2352,7 +2570,7 @@ texreg(
           file = "appendix-figures_files/additional_regressions_hs_rr_views.tex")
 ```
 
-### Figure A8: Correlates of exposure to YouTube videos by channel type (alternate racial attitude measure)
+### Figure S11 and Table S8: Correlates of exposure to YouTube videos by channel type (alternate racial attitude measure)
 
 ``` r
 visit_fire_models <- bind_rows(QP_visit_fire_fit)
@@ -2373,6 +2591,7 @@ fire_time_plot
 <img src="appendix-figures_files/figure-gfm/FIRE time plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
+# separately estimate without robust SEs becuase tex reg doesn't like this... :L
 QP_visit_fire_fit_nonrob <- QP_time_fire_fit_nonrob <- list()
 for (i in 1:length(time_fire_fs)) {
   QP_visit_fire_fit_nonrob[[i]] <-
@@ -2391,6 +2610,7 @@ texreg(c(QP_visit_fire_fit_nonrob, QP_time_fire_fit_nonrob),
        label = "tab:figa8table",
        caption = "Quasipoisson coefficients for correlates of of views and time per week spent on videos from alternative, extremist, and mainstream media channels. Robust standard errors are in parentheses.",
        # texreg reads models as separate lists
+       # manually adding in robust SEs
        override.pvalues =  list(robust_pvals[1:10],
                     robust_pvals[11:20],
                     robust_pvals[21:30],
@@ -2562,7 +2782,7 @@ all_pca_rot
 AMR::ggplot_pca(prcomp(all_cces_vars[complete.cases(all_cces_vars),]))
 ```
 
-<img src="appendix-figures_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ### Correlation between racial and gender resentment
 
@@ -2678,7 +2898,7 @@ texreg(c(QP_visit_rrfem_fit_norob, QP_time_rrfem_fit_norob),
           file = "appendix-figures_files/additional_regressions_combined_hs_rr.tex")
 ```
 
-## Figure A5: Zero-inflated models on correlates of time on YouTube video by channel type
+## Figure S8 and Table S3: Zero-inflated models on correlates of time on YouTube video by channel type
 
 ``` r
 # make floats integers for pscl
@@ -2851,7 +3071,7 @@ plot_grid(
 <img src="appendix-figures_files/figure-gfm/zip plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave("appendix-figures_files/zip_coefficient_time.pdf",
+ggsave("appendix-figures_files/zip_coefficient_time.png",
        height = 14, width = 11 )
 ```
 
@@ -2899,7 +3119,7 @@ texreg(ZIP_time_fit,
        file = "appendix-figures_files/figureA5.tex")
 ```
 
-## Figure A6: Correlates of YouTube video views by channel type
+## Figure S9 and Table S4: Correlates of YouTube video views by channel type
 
 ``` r
 # DV is view counts
@@ -2981,11 +3201,12 @@ visit_models %>%
 <img src="appendix-figures_files/figure-gfm/visits plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave("appendix-figures_files/qpois_coefficient_visit.pdf",
+ggsave("appendix-figures_files/qpois_coefficient_visit.png",
        height = 6, width = 11 )
 ```
 
 ``` r
+# separately estimate without robust SEs becuase tex reg doesn't like this... :L
 QP_visit_fit_nonrob <- list()
 for (i in 1:length(main_visit_fs)) {
   QP_visit_fit_nonrob[[i]] <-
@@ -3026,7 +3247,7 @@ texreg(QP_visit_fit_nonrob,
           file = "appendix-figures_files/figureA6.tex")
 ```
 
-## Figure A9: Correlation between browser history and activity
+## Figure S12: Correlation between browser history and activity
 
 ``` r
 ### --------- specify a bunch of variables we want to look at
@@ -3148,10 +3369,6 @@ corr_time <- map2(.x = bh_time, .y = at_time,
      correlation_fxn) %>% 
   bind_rows()
 
-# number channel visit
-# corr_channel <- map2(.x = bh_subscribed_counts, .y = at_subscribed_counts,
-#      correlation_fxn) %>% 
-#   bind_rows()
 # number subscribed
 corr_subs_count <- map2(.x = bh_subscribed_counts, .y = at_subscribed_counts,
      correlation_fxn) %>% 
@@ -3208,16 +3425,16 @@ youtube_channel_type <- youtube_corr_df %>%
 youtube_channel_type 
 ```
 
-<img src="appendix-figures_files/figure-gfm/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave("appendix-figures_files/correlations_history_activity_youtube_channel_type.pdf",
+ggsave("appendix-figures_files/correlations_history_activity_youtube_channel_type.png",
        height = 8, width = 9 )
 ```
 
 ## Table A8: Predictors of proportion of time spent on alternative/extremist videos by day
 
-## Figure A10: Differences in perceptions of YouTube between full sample and extension sample
+## Figure S13: Differences in perceptions of YouTube between full sample and extension sample
 
 ``` r
 ### ====== survey measures for those who did and did not install the extension
@@ -3385,17 +3602,12 @@ plot_grid(
 )
 ```
 
-<img src="appendix-figures_files/figure-gfm/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
-## Figure A11: Percentage of views to each channel type by video number within session
+## Figure S14: Percentage of views to each channel type by video number within session
 
-This repository does not contain session-level data (merged.tsv)
-(withheld for participant privacy), but code that reproduces session
-level figures are presented.
-
-## Figure A12: Percentage of views to each channel type by total session length
-
-(See above caveat for session-level data.)
+This repository does not contain session-level data in `merged.tsv`, but
+code that reproduces session level figures are presented.
 
 ``` r
 # need data where each observation is a youtube action
@@ -3420,7 +3632,6 @@ within_session_raw <- restricted_sample %>%
   ungroup() %>% 
   group_by(video_index) %>%
   mutate(
-    # on besoin aussi combien d'obs ont-t-il pour video index 1, 2, 3,...
     total_video_index = n(),
     fraction_alternative = sum(alternative_match) / total_video_index,
     fraction_extremist = sum(extremist_match) / total_video_index,
@@ -3482,84 +3693,62 @@ within_session_raw %>%
         axis.title.x = element_text(hjust = .95))
 ```
 
-## Table A9: External referrers to alternative and extremist channel videos
-
-(`referrers_data` is on server.)
+## Figure S15: Percentage of views to each channel type by total session length
 
 ``` r
-# define referrer domains
-external_referrers <- list(
-  # other social 
-  main_social = c("facebook.com",
-                  "apps.facebook.com",
-                  "messenger.com",
-                  "twitter.com",
-                  "tweetdeck.twitter.com",
-                  "instagram.com",
-                  "linkedin.com",
-                  "discord.com",
-                  "tiktok.com",
-                  "tumblr.com",
-                  "tinder.com",
-                  "bumble.com",
-                  "pinterest.com",
-                  "twitch.tv",
-                  "reddit.com",
-                  "old.reddit.com"),
-  # alternative social
-  alternative_social = c("twitchy.com",
-                         "gab.com",
-                         "parler.com",
-                         "banned.video",
-                         "boards.4channel.org"
-                         "boards.4chan.org",
-                         "4chan.org"),
-  # search engine
-  search_engine = c("google.com",
-                    "bing.com",
-                    "yahoo.com", 
-                    "search.yahoo.com",
-                    "duckduckgo.com"),
-  # webmail
-  webmail = c("mail.google.com",
-              "mail.yahoo.com",
-              "mail.com",
-              "mail.aol.com",
-              "outlook.office365.com",
-              "outlook.office.com",
-              "outlook.live.com")
-)
+user_sessions_at <- read_delim("./Data/extremism/user_summary_sessions_activity.tsv",
+                            delim = '\t') 
+# merge sessions data with survey data
+user_sessions_at_yg <- user_sessions_at %>% 
+  left_join(activity_data %>% select(user_id, caseid_d34, weight_cmd)) %>% 
+  filter(!is.na(weight_cmd))
 
-internal_referrers_other <- c(
-  "playlist",
-  "post",    
-  "custom",  
-  "other",   
-  "user",    
-  "redirect"
-)
+user_sessions_at_yg %>%
+  select(all_of(count_vars), yt_n_video, yt_window) %>%
+  group_by(yt_n_video) %>%
+  summarize_at(.vars = all_of(count_vars),
+               .funs = ~ (sum(.) / sum(yt_n_video)) * 100) %>%
+  pivot_longer(-yt_n_video) %>%
+  filter(name != 'yt_n_video_other_all') %>%
+  ggplot(aes(x = yt_n_video, y = value,
+             color = name)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = 'loess',
+              aes(fill = name),
+              method.args = list(degree = 1),
+              span = .5)+
+  geom_rug(aes(x = yt_n_video,
+               y = 0),
+           alpha = .3,
+           sides = "b",
+           #position = position_jitter(width = .15),
+           inherit.aes = F) +
+  scale_color_manual(values = c("#FFA500", "#CD5C5C", "#015CB9"),
+                     labels = c("Alternative\nchannels",
+                                "Extremist\nchannels",
+                                "Mainstream\nmedia"),
+                     name = "") +
+  scale_fill_manual(values = c("#FFA500", "#CD5C5C", "#015CB9"),
+                     labels = c("Alternative\nchannels",
+                                "Extremist\nchannels",
+                                "Mainstream\nmedia"),
+                     name = "") +
+  labs(x = "Number of videos in session (session length)",
+       y = 'Average percentage of channel videos viewed',
+       caption = "") +
+  coord_cartesian(xlim = c(0, session_length_threshold99)) +
+  scale_y_continuous(limits = c(-1, 60),
+                     breaks = seq(0, 60, 10),
+                     labels = paste0(seq(0, 60, 10), "%") )
+```
 
-internal_referrers <- c(
-  "youtube homepage",
-  "youtube video",   
-  "youtube search",  
-  "youtube channel"
-)
+## Table S10: External referrers to alternative and extremist channel videos
 
-referrers_list <- list(
-  external_referrers = external_referrers,
-  internal_referrers_other = internal_referrers_other,
-  internal_referrers = internal_referrers
-)
+(`referrers_data` is on a secure server and cannot be made public. See
+`build.R` for how the dataframe was constructed and for a list of the
+referrers.)
 
-external_referrers <- referrers_list$external_referrers
-internal_referrers_other <- referrers_list$internal_referrers_other
-internal_referrers <- referrers_list$internal_referrers
-
-# get all users
-final_sample_ids <- merged_data %>% 
-  pull(user_id)
-
+``` r
 # external referrers table
 total_external_referrers_by_channel_type <- referrers_data %>% 
   mutate(is_external_referrer = if_else(!str_detect(predecessor_url, "youtube.com"), 1,0 )) %>% 
@@ -3617,7 +3806,7 @@ external_referrers_by_domain_table %>%
   readr::write_lines(file = "./appendix-figures_files/external_referrers_by_channel_type.tex")
 ```
 
-## Figure A13: Concentration of exposure to alternative and extremist channels (view counts)
+## Figure S16: Concentration of exposure to alternative and extremist channels (view counts)
 
 ``` r
 # get the %user for 80% watch time
@@ -3628,7 +3817,7 @@ lab_stat <-
   pull(ln_cum_user)
 
 # log 10 on x-axis
-time_cumsum_plot_inset <- at_cum_time_user %>%
+time_cumsum_plot_inset <- concentration_time_user %>%
   ggplot(aes(x = ln_cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   geom_point(
@@ -3706,7 +3895,7 @@ time_cumsum_plot_inset <- at_cum_time_user %>%
   )
 
 # without logging x
-time_cumsum_plot_zoomout <- at_cum_time_user %>%
+time_cumsum_plot_zoomout <- concentration_time_user %>%
   ggplot(aes(x = cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   scale_y_continuous(labels = scales::percent) +
