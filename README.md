@@ -14,12 +14,22 @@ The rendered markdown file with outputs: `main-text-figures.md` and `appendix-fi
 4. In the `.Rmd`s, run the code chunk by chunk or `knit` to re-render the `.md`
 
 
-# Data
+# Code and Data
 
-`build.R` produces the user-level datasets: `activity_yg_cces.rds`, `browser_history_yg_cces.rds`, and `yg_browser_cces_merged.rds`. Variables from the YouGov survey are renamed (see `DART0034_codebook.pdf` for original names). Additional preprocessing of survey and browser extension data are in this script. The latter portion of the script also contains code to generate referrers (`on_platform_referrers_by_channel.csv`, `aggregated_referrers_by_channel.csv`), recommendations (`recommendation_pipeline.tsv`), and subscriptions (`summarize_subscribe_table.csv`) datasets. Only the code and final outputs are provided in the repository, as some source data cannot be made public.
+Only the code and final outputs are provided in the repository, as some source data cannot be made public.
 
-The primary dataset used for user-level analyses is `activity_yg_cces.rds`, which combines survey data (provided by YouGov), 2018 CCES survey data (provided by YouGov), and browser activity counts for participants where they exist subsetting to only users with any browser activity data. We also restricted the set of participants in the analyses to those for whom we could capture at least one day of activity data. `browser_history_yg_cces.rds` merges the same YouGov data except that it contains browser _history_ variables (used in the appendix) rather than _activity_ data (used for main text), and subsets to only users with any browser history data. `yg_browser_cces_merged.rds` is data for all participants who took the YouGov survey.
+`build.R`  
+Contains preprocessing of survey and browser extension data, and produces three user-level datasets:  
+   1. `activity_yg_cces.rds` : the primary dataset used for user-level analyses, combines survey data (provided by YouGov), 2018 CCES survey data (provided by YouGov), and browser activity counts for participants where they exist subsetting to only users with any browser activity data.  
+   2. `browser_history_yg_cces.rds` : merges the same YouGov data except that it contains browser _history_ variables (used in the appendix) rather than _activity_ data (used for main text), and subsets to only users with any browser history data.
+   3. `yg_browser_cces_merged.rds` : a merged table containing survey, browser history, and browser activity data for each user.  
 
+Also produces several other aggregated datasets used in the analysis:  
+   1. `on_platform_referrers_by_channel.csv` : YouTube referrers by channel.  
+   2. `aggregated_referrers_by_channel.csv` : all referrers by channel.  
+   3. `recommendation_pipeline.tsv`: pipeline of YouTube recommendations and follows.  
+   4. `summarize_subscribe_table.csv`: summary of user subscription results.  
+
+Variables in each dataset are renamed from the YouGov survey (see `DART0034_codebook.pdf` for original names). We restricted the set of participants in the analyses to those for whom we could capture at least one day of activity data. `browser_history_yg_cces.rds` and `yg_browser_cces_merged.rds` contain data for all participants who took the YouGov survey.
 
 We also provide tables for day-level averages by channel type for browser activity data in `day_count_averages.csv` and `day_time_averages.csv`.
-
