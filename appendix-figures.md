@@ -1,20 +1,20 @@
 Appendix Tables and Figures
 ================
 
--   <a href="#table-a1-demographic-statistics-by-sample"
-    id="toc-table-a1-demographic-statistics-by-sample">Table A1: Demographic
+-   <a href="#table-s1-demographic-statistics-by-sample"
+    id="toc-table-s1-demographic-statistics-by-sample">Table S1: Demographic
     statistics by sample</a>
 -   <a
-    href="#figure-a1-total-participants-with-browser-activity-data-over-time"
-    id="toc-figure-a1-total-participants-with-browser-activity-data-over-time">Figure
-    A1: Total participants with browser activity data over time</a>
--   <a href="#figure-a2-coonsumption-levels-over-time-by-channel-type"
-    id="toc-figure-a2-coonsumption-levels-over-time-by-channel-type">Figure
-    A2: Coonsumption levels over time by channel type</a>
+    href="#figure-s1-total-participants-with-browser-activity-data-over-time"
+    id="toc-figure-s1-total-participants-with-browser-activity-data-over-time">Figure
+    S1: Total participants with browser activity data over time</a>
+-   <a href="#figure-s2-coonsumption-levels-over-time-by-channel-type"
+    id="toc-figure-s2-coonsumption-levels-over-time-by-channel-type">Figure
+    S2: Coonsumption levels over time by channel type</a>
 -   <a
-    href="#figure-a3-and-a4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video"
-    id="toc-figure-a3-and-a4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video">Figure
-    A3 and A4: YouTube video diets of individuals who viewed any
+    href="#figure-s3-and-s4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video"
+    id="toc-figure-s3-and-s4-youtube-video-diets-of-individuals-who-viewed-any-alternativeextremist-channel-video">Figure
+    S3 and S4: YouTube video diets of individuals who viewed any
     alternative/extremist channel video</a>
 -   <a
     href="#figure-s5-youtube-video-diets-of-alternative-and-extremist-superconsumers"
@@ -60,11 +60,9 @@ Appendix Tables and Figures
 -   <a href="#figure-s12-correlation-between-browser-history-and-activity"
     id="toc-figure-s12-correlation-between-browser-history-and-activity">Figure
     S12: Correlation between browser history and activity</a>
--   <a
-    href="#table-a8-predictors-of-proportion-of-time-spent-on-alternativeextremist-videos-by-day"
-    id="toc-table-a8-predictors-of-proportion-of-time-spent-on-alternativeextremist-videos-by-day">Table
-    A8: Predictors of proportion of time spent on alternative/extremist
-    videos by day</a>
+-   <a href="#table-s9-differential-browsing-behavior-after-install"
+    id="toc-table-s9-differential-browsing-behavior-after-install">Table S9:
+    Differential browsing behavior after install</a>
 -   <a
     href="#figure-s13-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample"
     id="toc-figure-s13-differences-in-perceptions-of-youtube-between-full-sample-and-extension-sample">Figure
@@ -99,9 +97,9 @@ activity_data <- read_rds("data/activity_yg_cces.rds")
 # browser history data
 browser_history_data <-read_rds("data/browser_history_yg_cces.rds")
 
-# over time data for consumption over time
-at_over_time <- read_rds("data/activity_time_user_by_date.rds")
-at_over_views <- read_rds("data/activity_count_user_by_date.rds")
+# over time activity data, averages by days and channel type
+day_count_averages <- read_csv( "data/day_count_averages.csv")
+day_time_averages <- read_csv( "data/day_time_averages.csv")
 
 # referrers data (see build.R for construction of this table)
 on_platform_referrers_by_channel <- 
@@ -119,7 +117,7 @@ color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
 source("helper_fxns.R") # these are mostly for plotting and presentation
 ```
 
-## Table A1: Demographic statistics by sample
+## Table S1: Demographic statistics by sample
 
 ``` r
 # select variables of interest
@@ -1463,7 +1461,7 @@ n = 1236
 </tfoot>
 </table>
 
-## Figure A1: Total participants with browser activity data over time
+## Figure S1: Total participants with browser activity data over time
 
 ``` r
 # study period
@@ -1503,6 +1501,11 @@ n_users_by_date %>%
 
 <img src="appendix-figures_files/figure-gfm/attrition-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave('./appendix-figures_files/attrition.png',
+      dpi = 600, width = 10, height = 6)
+```
+
 Distribution of time in study
 
 ``` r
@@ -1526,27 +1529,9 @@ ggplot(tibble(days_enrolled = rowSums(users_by_mat))) +
 
 <img src="appendix-figures_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
-## Figure A2: Coonsumption levels over time by channel type
+## Figure S2: Coonsumption levels over time by channel type
 
 ``` r
-# averages by days
-# views
-day_count_averages <- at_over_views %>%
-  group_by(full_date, source) %>%
-  summarise(avg_count_day = weighted.mean(value, w = weight_cmd, na.rm = T)) %>%
-  ungroup() %>%
-  complete(., full_date, source, fill = list(avg_count_day = 0,
-                                             avg_count_day = 0)) 
-# time elapsed
-day_time_averages <- at_over_time %>%
-  group_by(full_date, source) %>%
-  summarise(
-    avg_time_day = weighted.mean(value, w = weight_cmd, na.rm = T) / 60, # to minutes
-  ) %>%
-  ungroup() %>%
-  complete(., full_date, source, fill = list(avg_time_day = 0,
-                                             prop_time_day = 0)) 
-
 # calculate centered moving averages for each channel type
 # views
 ma_count <- day_count_averages %>%
@@ -1613,12 +1598,6 @@ sma_count_plot <- ma_count %>%
   theme(legend.position = "bottom") +
   guides(linetype = guide_legend(""))
 
-sma_count_plot
-```
-
-<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
-
-``` r
 sma_time_plot <- ma_time %>%
   mutate(source = recode_channel_type_fxn(source)) %>%
   ggplot(aes(x = full_date, y = avg_time_day,
@@ -1648,12 +1627,18 @@ sma_time_plot <- ma_time %>%
   theme(legend.position = "bottom") +
   guides(linetype = guide_legend(""))
 
-sma_time_plot
+
+sma_count_plot + sma_time_plot + plot_layout(ncol=1,heights=c(2,1))
 ```
 
-<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-2.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
-## Figure A3 and A4: YouTube video diets of individuals who viewed any alternative/extremist channel video
+``` r
+ggsave('./appendix-figures_files/trend_by_channel_type_sma.png',
+      dpi = 600, width = 10, height = 14)
+```
+
+## Figure S3 and S4: YouTube video diets of individuals who viewed any alternative/extremist channel video
 
 Distribution of time spent per week on channels for anyone who watched
 an alternative (extremist) channel video over the course of the study.
@@ -1745,6 +1730,9 @@ topuser_plot(
 <img src="appendix-figures_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
 ``` r
+ggsave('./appendix-figures_files/any_alternative_video_diet_time_elapsed_week.png',
+      dpi = 600, width = 10, height = 6)
+
 topuser_plot(
     data = top_time_all_weeks_most_any_ext,
     figure_size = .02,
@@ -1757,6 +1745,11 @@ topuser_plot(
 ```
 
 <img src="appendix-figures_files/figure-gfm/unnamed-chunk-4-2.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./appendix-figures_files/any_extremist_video_diet_time_elapsed_week.png',
+      dpi = 600, width = 10, height = 6)
+```
 
 ## Figure S5. YouTube video diets of alternative and extremist superconsumers
 
@@ -1875,6 +1868,11 @@ plot_grid(
 ```
 
 <img src="appendix-figures_files/figure-gfm/calculate cumulative sums-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./appendix-figures_files/asuperconsumers_time_elapsed_week.png',
+      dpi = 600, width = 12, height = 6)
+```
 
 ## Figure S6. Recommendation follows by video channel type
 
@@ -2003,7 +2001,7 @@ recs_followed_grid
 <img src="appendix-figures_files/figure-gfm/recommendations followed plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/waffle_recs_followed.png',
+ggsave('./appendix-figures_files/waffle_recs_followed.png',
       dpi = 600, width = 14, height = 8)
 ```
 
@@ -2088,8 +2086,8 @@ on_platform_referrers_by_channel_plot
 <img src="appendix-figures_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/on_platform_referrers_by_channel.png',
-      dpi = 600, width = 12, height = 6)
+ggsave('./appendix-figures_files/on_platform_referrers_by_channel.png',
+      dpi = 600, width = 16, height = 10)
 ```
 
 \[TABLE S2: Correlates of time on YouTube videos by channel type\]
@@ -2256,20 +2254,20 @@ coef_names <- c("Intercept",
 
 ``` r
 visit_pid_models <- bind_rows(QP_visit_pid_fit)
-
 pid_visit_plot <- coef_plot(data = visit_pid_models) 
-pid_visit_plot
-```
 
-<img src="appendix-figures_files/figure-gfm/PID visit plot-1.png" style="display: block; margin: auto;" />
-
-``` r
 time_pid_models <- bind_rows(QP_time_pid_fit)
 pid_time_plot <- coef_plot(data = time_pid_models) 
-pid_time_plot
+
+pid_visit_plot + pid_time_plot + plot_layout(ncol = 1)
 ```
 
-<img src="appendix-figures_files/figure-gfm/PID time plot-1.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/PID visit and time plot-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave('./appendix-figures_files/qpois_coefficients_pid.png',
+      dpi = 600, width = 20, height = 11)
+```
 
 ``` r
 # separately estimate without robust SEs becuase tex reg doesn't like this... :L
@@ -2574,21 +2572,11 @@ texreg(
 
 ``` r
 visit_fire_models <- bind_rows(QP_visit_fire_fit)
-
 fire_visit_plot <- coef_plot(data = visit_fire_models)
-fire_visit_plot
-```
 
-<img src="appendix-figures_files/figure-gfm/FIRE visit plot-1.png" style="display: block; margin: auto;" />
-
-``` r
 time_fire_models <- bind_rows(QP_time_fire_fit)
-
 fire_time_plot <- coef_plot(data = time_fire_models)
-fire_time_plot
 ```
-
-<img src="appendix-figures_files/figure-gfm/FIRE time plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
 # separately estimate without robust SEs becuase tex reg doesn't like this... :L
@@ -3429,10 +3417,81 @@ youtube_channel_type
 
 ``` r
 ggsave("appendix-figures_files/correlations_history_activity_youtube_channel_type.png",
-       height = 8, width = 9 )
+      dpi = 600, height = 8, width = 9 )
 ```
 
-## Table A8: Predictors of proportion of time spent on alternative/extremist videos by day
+## Table S9: Differential browsing behavior after install
+
+(CODE ONLY)
+
+``` r
+### combine ALT/EXT/TOTAL browser history user-time data 
+# must use browser HISTORY data
+alt_ext_time <- bh_alt_time %>% 
+  pivot_longer(-user_id, names_to = "date") %>% 
+  mutate(source = "alternative") %>% 
+  bind_rows(bh_ext_time %>% 
+              pivot_longer(-user_id, names_to = "date") %>% 
+              mutate(source = "extremist") ) %>% 
+  right_join(bh_all_time %>%
+              pivot_longer(-user_id, names_to = "date", values_to = "total"),
+            by = c("user_id", "date")) %>%
+  mutate(full_date = as.Date(date),
+         year = 2020,
+         month = month(full_date),
+         week = week(full_date),
+         week_date = as.Date(str_c(week, "-1"), format = "%U-%u"),
+         fraction = value/total) %>% 
+  group_by(week_date, source) %>% 
+  mutate(time_per_week = sum(value)) %>% 
+  group_by(month, source) %>% 
+  mutate(time_per_month = sum(value)) %>% 
+  ungroup()
+
+# merge with yougov data
+all_alt_ext_time <- alt_ext_time %>% 
+  left_join(merged_data, by = "user_id") %>%
+  mutate(install_date = ymd(install_date),
+         install_diff = full_date - install_date,  # install date difference
+         install_diff_biweek = cut(as.numeric(install_diff), 
+                                   breaks = seq(-120, 150, by = 15))) 
+
+# make panel data
+its_panel_data <- all_alt_ext_time %>%
+  mutate(value = if_else(!is.na(total), replace_na(value, 0), value)) %>%
+  group_by(full_date, user_id, .drop = FALSE) %>%
+  summarize(fraction_time_per_day = value/total,
+            weight_cmd, value, total, install_diff) %>%
+  ungroup() %>% 
+  mutate(
+    installed = if_else(install_diff < 0, 0, 1),
+    days_after_install = ifelse(install_diff < 0, 0, install_diff)
+  ) %>% 
+  distinct(full_date, user_id, .keep_all = T) 
+
+# estimate user/day fixed effects OLS
+weighted_FE1 <-
+  lm(
+    fraction_time_per_day ~ installed + factor(user_id) + factor(full_date),
+    data = its_panel_data,
+    weights = weight_cmd
+  )
+# same model but with days after install
+weighted_FE2 <-
+  lm(
+    fraction_time_per_day ~ installed + days_after_install + factor(user_id) + factor(full_date),
+    data = its_panel_data,
+    weights = weight_cmd
+  )
+
+# cluster by user
+lmtest::coeftest(weighted_FE1, vcov = sandwich::vcovCL(weighted_FE1,
+                                                cluster = ~ user_id,
+                                                type = "HC1"))
+lmtest::coeftest(weighted_FE2, vcov = sandwich::vcovCL(weighted_FE2,
+                                                cluster = ~ user_id,
+                                                type = "HC1"))
+```
 
 ## Figure S13: Differences in perceptions of YouTube between full sample and extension sample
 
@@ -3604,6 +3663,11 @@ plot_grid(
 
 <img src="appendix-figures_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
+``` r
+ggsave("appendix-figures_files/youtube_attitudes.png",
+      dpi = 600, height = 6, width = 12 )
+```
+
 ## Figure S14: Percentage of views to each channel type by video number within session
 
 This repository does not contain session-level data in `merged.tsv`, but
@@ -3691,6 +3755,9 @@ within_session_raw %>%
   theme_minimal() +
   theme(legend.position = 'bottom',
         axis.title.x = element_text(hjust = .95))
+
+ggsave("appendix-figures_files/extension_sessions_proportions_channel_type.png",
+      dpi = 600, height = 6, width = 12 )
 ```
 
 ## Figure S15: Percentage of views to each channel type by total session length
@@ -3740,6 +3807,9 @@ user_sessions_at_yg %>%
   scale_y_continuous(limits = c(-1, 60),
                      breaks = seq(0, 60, 10),
                      labels = paste0(seq(0, 60, 10), "%") )
+
+ggsave("appendix-figures_files/percent_visits_sessions_length99.png",
+      dpi = 600, height = 6, width = 12 )
 ```
 
 ## Table S10: External referrers to alternative and extremist channel videos
@@ -3931,3 +4001,8 @@ time_cumsum_plot_zoomout +
 ```
 
 <img src="appendix-figures_files/figure-gfm/ecdf visits-1.png" style="display: block; margin: auto;" />
+
+``` r
+ggsave("appendix-figures_files/cdf_users_visit_exposure.png",
+      dpi = 600, width = 8, height = 6)
+```

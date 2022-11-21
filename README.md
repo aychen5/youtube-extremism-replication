@@ -1,7 +1,7 @@
 # youtube-extremism-replication
 
 
-The rendered markdown file with outputs: `main-text-figures.md` and `appendix-figures.md`. `renv` ensures that everyone is working from the same environment and with the same package versions.
+The rendered markdown file with outputs: `main-text-figures.md` and `appendix-figures.md`. `renv` ensures that everyone is working from the same environment and with the same package versions. Code was run on R 4.0.2.
 
 # Running the code
 
@@ -21,5 +21,5 @@ The rendered markdown file with outputs: `main-text-figures.md` and `appendix-fi
 The primary dataset used for user-level analyses is `activity_yg_cces.rds`, which combines survey data (provided by YouGov), 2018 CCES survey data (provided by YouGov), and browser activity counts for participants where they exist subsetting to only users with any browser activity data. We also restricted the set of participants in the analyses to those for whom we could capture at least one day of activity data. `browser_history_yg_cces.rds` merges the same YouGov data except that it contains browser _history_ variables (used in the appendix) rather than _activity_ data (used for main text), and subsets to only users with any browser history data. `yg_browser_cces_merged.rds` is data for all participants who took the YouGov survey.
 
 
-We also provide user by day tables (???)
+We also provide tables for day-level averages by channel type for browser activity data in `day_count_averages.csv` and `day_time_averages.csv`.
 
