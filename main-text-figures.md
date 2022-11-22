@@ -8,7 +8,7 @@ merged_data <- read_rds("data/yg_browser_cces_merged.rds")
 # activity data
 activity_data <- read_rds("data/activity_yg_cces.rds") 
 
-# subscriptions data
+# subscriptions data (see build.R for construction of this table)
 summarize_subscribe_table <-
   read_csv("data/summarize_subscribe_table.csv")
 
@@ -24,7 +24,7 @@ external_referrers <- referrers_list$external_referrers
 internal_referrers_other <- referrers_list$internal_referrers_other
 internal_referrers <- referrers_list$internal_referrers
 
-# recommendations data
+# recommendations data (see build.R for construction of this table)
 recs_data <- 
   read_delim("data/recommendation_pipeline.tsv", delim = '\t')
 ```

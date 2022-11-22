@@ -1870,7 +1870,7 @@ plot_grid(
 <img src="appendix-figures_files/figure-gfm/calculate cumulative sums-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./appendix-figures_files/asuperconsumers_time_elapsed_week.png',
+ggsave('./appendix-figures_files/superconsumers_time_elapsed_week.png',
       dpi = 600, width = 12, height = 6)
 ```
 
