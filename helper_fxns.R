@@ -8,7 +8,7 @@ topuser_plot <- function (data,
                           figure_size,
                           figure_space) {
   
-  nobs <- nrow(data %>% distinct(caseid))
+  #nobs <- nrow(data %>% distinct(caseid))
   
   
   if (channel_type == 'Extremist') {
@@ -67,7 +67,8 @@ topuser_plot <- function (data,
     ) +
     labs(x = "",
          y = ylabel,
-         title = paste0(title, " (n = ", nobs, ")")) +
+         title = title) +
+         #title = paste0(title, " (n = ", nobs, ")")) +
     theme_minimal() +
     theme(
       legend.position = 'bottom',

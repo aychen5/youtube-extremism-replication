@@ -10,13 +10,13 @@ activity_data <- read_rds("data/activity_yg_cces.rds")
 
 # subscriptions data (see build.R for construction of this table)
 summarize_subscribe_table <-
-  read_csv("data/summarize_subscribe_table.csv")
+  read_csv("data/summarize_subscribe_table_wtd.csv")
 
 # referrers data (see build.R for construction of these tables)
 on_platform_referrers_by_channel <- 
-  read_csv('data/on_platform_referrers_by_channel.csv')
+  read_csv('data/on_platform_referrers_by_channel_wtd.csv')
 aggregated_referrers_by_channel <- 
-  read_csv('data/aggregated_referrers_by_channel.csv')
+  read_csv('data/aggregated_referrers_by_channel_wtd.csv')
 
 # list of referrers (see appendix figs script for list of referrers)
 referrers_list <- read_rds('data/referrers_list.rds')
@@ -26,7 +26,7 @@ internal_referrers <- referrers_list$internal_referrers
 
 # recommendations data (see build.R for construction of this table)
 recs_data <- 
-  read_delim("data/recommendation_pipeline.tsv", delim = '\t')
+  read_delim("data/recommendation_pipeline_wtd.tsv", delim = '\t')
 ```
 
 ``` r
@@ -124,7 +124,7 @@ weighted_prop_fxn <- function(x, data) {
   result_unweighted <- prop.table(table(data[x])) * 100
   
   output <- tibble(
-    channel_type = str_extract(x, "alt|ext|msm|other"),
+    channel_type = str_extract(x, "alt|ext|msm|mainstream|other"),
     raw_prop = result_unweighted[2],
     raw_se = sqrt((raw_prop * (100 - raw_prop)) / nrow(na.omit(data[, x]))),
     weighted_prop = result[2],
@@ -138,7 +138,7 @@ weighted_prop_fxn <- function(x, data) {
       channel_type = case_when(
         channel_type == "alt" ~ "Alternative",
         channel_type == "ext" ~ "Extremist",
-        channel_type == "msm" ~ "Mainstream",
+        channel_type == "msm" | channel_type == "mainstream" ~ "Mainstream",
         channel_type == "other" ~ "Other"
       )
     )
@@ -380,7 +380,7 @@ Extremist
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+Mainstream
 </td>
 <td style="text-align:right;">
 20.34
@@ -524,9 +524,31 @@ summarize_subscribe_plot
 <img src="main-text-figures_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/subscriptions_by_other_subscriptions.png',
+ggsave('./main-text-figures_files/subscriptions_by_other_subscriptions_wtd.png',
+       dpi = 600, width = 11, height = 6)
+ggsave('./main-text-figures_files/subscriptions_by_other_subscriptions_wtd.pdf',
        dpi = 600, width = 11, height = 6)
 ```
+
+If we instead define subscribers to include all people who subscribe to
+at least one channel of the type in question, the proportion of views
+from subscribers increases to 88% (92.9% weighted) for alternative
+channels and 89% for extremist channels (84.7% weighted).
+
+``` r
+summarize_subscribe_table %>%
+  filter(subscribed_group!="not subscribed") %>%
+  group_by(channel_type) %>%
+  summarise(sum(percent))
+```
+
+    ## # A tibble: 4 x 2
+    ##   channel_type                `sum(percent)`
+    ##   <chr>                                <dbl>
+    ## 1 "Alternative channel\n(3%)"           92.9
+    ## 2 "Extremist channel\n(0.5%)"           84.7
+    ## 3 "Mainstream media\n(3.5%)"            61.6
+    ## 4 "Other channel\n(93%)"                95.2
 
 ### Exposure level estimates (page 12)
 
@@ -1089,7 +1111,7 @@ time_cumsum_plot_inset <- concentration_time_user %>%
     y = .95,
     label = str_wrap(paste0(
       round(10^(lab_stat) * 100, 1),
-      "% of users account for 80% of time \nspent viewing alternative channel videos."
+      "% of users account for 79% of time \nspent viewing alternative channel videos."
     ), width = 45),
     size = 2.5
   ) +
@@ -1139,10 +1161,13 @@ time_cumsum_plot_zoomout +
                            on_top = TRUE)
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ``` r
 ggsave('./main-text-figures_files/cdf_users_time_exposure.png',
+      dpi = 600, width = 8, height = 6)
+
+ggsave('./main-text-figures_files/cdf_users_time_exposure.pdf',
       dpi = 600, width = 8, height = 6)
 ```
 
@@ -1207,30 +1232,70 @@ top_time_all_weeks_most_ext <- activity_data_supers  %>%
   )
 ```
 
-1.6% of participants (17 people) account for 79% of total time spent on
-videos from alternative channels.
+1.6% of participants (17 people unweighted, 18.4 weighted) account for
+79% of total time spent on videos from alternative channels.
 
 ``` r
-concentration_time_user %>% 
-  filter(source == "alternative" & cum_views <= .8) %>% 
+con_super_alt <- concentration_time_user %>% 
+  filter(source == "alternative" & cum_views <= .8)
+
+con_super_alt %>% 
   pull(cum_user) %>% 
   max()
 ```
 
     ## [1] 0.01561862
 
-This imbalance is even more severe for extremist channels, where 0.6% of
-participants (9 people) were responsible for 80% of total time spent on
-these videos.
+``` r
+# unweighted n
+con_super_alt %>% 
+  nrow()
+```
+
+    ## [1] 17
 
 ``` r
-concentration_time_user %>% 
-  filter(source == "extremist" & cum_views <= .8) %>% 
+# weighted n
+con_super_alt %>% 
+  summarise(sum(weight_cmd))
+```
+
+    ## # A tibble: 1 x 1
+    ##   `sum(weight_cmd)`
+    ##               <dbl>
+    ## 1              18.4
+
+This imbalance is even more severe for extremist channels, where 0.6% of
+participants (9 people unweighted, 7.65 weighted) were responsible for
+80% of total time spent on these videos.
+
+``` r
+con_super_ext <- concentration_time_user %>% 
+  filter(source == "extremist" & cum_views <= .8) 
+
+con_super_ext %>% 
   pull(cum_user) %>% 
   max()
 ```
 
     ## [1] 0.006480922
+
+``` r
+con_super_ext %>% 
+  nrow()
+```
+
+    ## [1] 9
+
+``` r
+con_super_ext %>% 
+  summarise(sum(weight_cmd))
+```
+
+    ## # A tibble: 1 x 1
+    ##   `sum(weight_cmd)`
+    ##               <dbl>
+    ## 1              7.65
 
 ### Exposure level estimates (Superconsumers in appendix)
 
@@ -1272,7 +1337,7 @@ weighted_mean_fxn("minutes_at_yt_video_time_elapsed_capped_total_week",
 
     ## [1] 14.28387
 
-Number of alternative superconsumers is 17.
+Number of alternative superconsumers is 17 (weighted 18.4).
 
 ``` r
 activity_data_supers %>% 
@@ -1282,7 +1347,7 @@ activity_data_supers %>%
 
     ## [1] 17
 
-Number of extremist superconsumers is 9.
+Number of extremist superconsumers is 9 (weighted 7.65).
 
 ``` r
 activity_data_supers %>% 
@@ -1747,10 +1812,10 @@ Predicted value
 
 ### Internal and external referrers (page 20)
 
-49% and 51% of referrers to alternative and extremist channel videos,
-respectively, were off-platform sources compared to 41% and 44%,
-respectively, for videos from mainstream media channels and other
-channels.
+49% (52.4% weighted) and 51% (46.6% weighted) of referrers to
+alternative and extremist channel videos, respectively, were
+off-platform sources compared to 41% (42%) and 44% (41%), respectively,
+for videos from mainstream media channels and other channels.
 
 ``` r
 on_platform_referrers_by_channel %>% 
@@ -1784,7 +1849,7 @@ alternative
 Off-platform
 </td>
 <td style="text-align:right;">
-48.58
+52.38
 </td>
 </tr>
 <tr>
@@ -1795,7 +1860,7 @@ extremist
 Off-platform
 </td>
 <td style="text-align:right;">
-50.89
+46.44
 </td>
 </tr>
 <tr>
@@ -1806,7 +1871,7 @@ mainstream
 Off-platform
 </td>
 <td style="text-align:right;">
-40.46
+41.74
 </td>
 </tr>
 <tr>
@@ -1817,16 +1882,17 @@ other
 Off-platform
 </td>
 <td style="text-align:right;">
-43.86
+41.14
 </td>
 </tr>
 </tbody>
 </table>
 
-…we observe homophily across the video types, with 18% of referrers to
-alternative videos coming from other alternative video, 14% of referrers
-to extreme videos coming from other extreme videos, and 26% of referrers
-to mainstream media videos coming from other mainstream media videos
+…we observe homophily across the video types, with 18% (19.6% weighted)
+of referrers to alternative videos coming from other alternative video,
+14% (21.3% weighted) of referrers to extreme videos coming from other
+extreme videos, and 26% (25.6% weighted) of referrers to mainstream
+media videos coming from other mainstream media videos
 
 ``` r
 on_platform_referrers_by_channel %>% 
@@ -1860,7 +1926,7 @@ alternative
 alternative
 </td>
 <td style="text-align:right;">
-18.30
+19.62
 </td>
 </tr>
 <tr>
@@ -1871,7 +1937,7 @@ extremist
 extremist
 </td>
 <td style="text-align:right;">
-13.90
+21.34
 </td>
 </tr>
 <tr>
@@ -1882,7 +1948,7 @@ mainstream
 mainstream
 </td>
 <td style="text-align:right;">
-25.88
+25.63
 </td>
 </tr>
 <tr>
@@ -1893,15 +1959,15 @@ other
 other
 </td>
 <td style="text-align:right;">
-35.93
+37.14
 </td>
 </tr>
 </tbody>
 </table>
 
-Interestingly, we observe 5% of referrals to extreme videos coming from
-alternative videos, but only 0.7% of referrals from alternative videos
-coming from extreme videos
+Interestingly, we observe 5% (3.8% weighted) of referrals to extreme
+videos coming from alternative videos, but only 0.7% (0.8% weighted) of
+referrals from alternative videos coming from extreme videos
 
 ``` r
 on_platform_referrers_by_channel %>% 
@@ -1936,7 +2002,7 @@ alternative
 alternative
 </td>
 <td style="text-align:right;">
-18.30
+19.62
 </td>
 </tr>
 <tr>
@@ -1947,7 +2013,7 @@ alternative
 extremist
 </td>
 <td style="text-align:right;">
-0.72
+0.79
 </td>
 </tr>
 <tr>
@@ -1958,7 +2024,7 @@ extremist
 alternative
 </td>
 <td style="text-align:right;">
-5.05
+3.80
 </td>
 </tr>
 <tr>
@@ -1969,7 +2035,7 @@ extremist
 extremist
 </td>
 <td style="text-align:right;">
-13.90
+21.34
 </td>
 </tr>
 </tbody>
@@ -1977,7 +2043,8 @@ extremist
 
 Lastly, we observe that alternative, extreme, and mainstream media
 videos all receive roughly equal referrals from videos in other channels
-(13–16%) and other on-platform sources (16–19%).
+(13–16%) (10.0–12.8% weighted) and other on-platform sources (16–19%)
+(15.1–19.1% weighted).
 
 ``` r
 on_platform_referrers_by_channel %>% 
@@ -2012,7 +2079,7 @@ alternative
 other
 </td>
 <td style="text-align:right;">
-15.56
+11.59
 </td>
 </tr>
 <tr>
@@ -2023,7 +2090,7 @@ alternative
 Non-video on-platform
 </td>
 <td style="text-align:right;">
-16.24
+15.11
 </td>
 </tr>
 <tr>
@@ -2034,7 +2101,7 @@ extremist
 other
 </td>
 <td style="text-align:right;">
-12.72
+10.00
 </td>
 </tr>
 <tr>
@@ -2045,7 +2112,7 @@ extremist
 Non-video on-platform
 </td>
 <td style="text-align:right;">
-17.01
+18.19
 </td>
 </tr>
 <tr>
@@ -2056,7 +2123,7 @@ mainstream
 other
 </td>
 <td style="text-align:right;">
-13.66
+12.79
 </td>
 </tr>
 <tr>
@@ -2067,25 +2134,23 @@ mainstream
 Non-video on-platform
 </td>
 <td style="text-align:right;">
-19.42
+19.14
 </td>
 </tr>
 </tbody>
 </table>
 
-Bootstrap difference between alternative/extremist off-platform
-referrers (49% and 51%) vs. other off-platform referrers (44%) (page
-16). 95% bootstrapped CIs are in square parentheses.
-
-(CODE ONLY, see how `youtube_referrers_data` is constructed in
-`build.R`)
-
--   alternative v. other: 0.0472 \[0.0408, 0.0539\]
--   extremist v. other: 0.0702 \[0.0550, 0.0865\]
--   alternative v. mainstream: 0.0812 \[0.0738 , 0.0888\]
--   extremist v. mainstream: 0.1043 \[0.0873 , 0.1196\]
-
 ``` r
+### === these are unweighted numbers
+# Bootstrap difference between alternative/extremist off-platform referrers (49% and 51%) vs. other off-platform referrers (44%) (page 16). 95% bootstrapped CIs are in square parentheses.
+# 
+# (CODE ONLY, see how `youtube_referrers_data` is constructed in `build.R`)
+# 
+# - alternative v. other: 0.0472 [0.0408, 0.0539]
+# - extremist v. other: 0.0702 [0.0550, 0.0865]
+# - alternative v. mainstream: 0.0812 [0.0738 , 0.0888]
+# - extremist v. mainstream: 0.1043 [0.0873 , 0.1196]
+
 alt_ext_oth <- youtube_referrers_data %>%
   select(channel_type, youtube_video_referrers_by_channel_type)
 
@@ -2136,6 +2201,7 @@ bs_CIs <- map(
 ``` r
 ### ===== recommendations shown setup
 # recs_prop_table_fxn() is in helper_fxns.R
+
 #inputs to waffle_plot_fxn
 alternative_shown_table <-
   recs_prop_table_fxn(channel_type = "alternative",
@@ -2224,6 +2290,18 @@ all_waffles_shown <- gridExtra::arrangeGrob(
 ) 
 ```
 
+Recommendations to alternative and extremist channel videos are rare
+when watching videos from mainstream media or other types of channels,
+which together make up 97% (98% weighted) of views in our sample.
+Recommendations to alternative and extremist channel videos are much
+more common, however, when people are already viewing videos from
+alternative and extremist channels, which make up 2.6% (3% weighted) and
+0.4% (0.5% weighted) of views, respectively. Just over a third (34.6%)
+(48% weighted) of recommendations when viewing an alternative channel
+video point to another alternative channel video, while 25.5% (41%
+weighted) of recommendations follow the same pattern for extremist
+channel videos.
+
 ``` r
 # add legend and bar to waffles
 recs_shown_grid <- plot_grid(
@@ -2250,7 +2328,9 @@ recs_shown_grid
 <img src="main-text-figures_files/figure-gfm/recommedations show plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/waffle_recs_shown.png',
+ggsave('./main-text-figures_files/waffle_recs_shown_wtd.png',
+      dpi = 600, width = 14, height = 8)
+ggsave('./main-text-figures_files/waffle_recs_shown_wtd.pdf',
       dpi = 600, width = 14, height = 8)
 ```
 
@@ -2262,6 +2342,7 @@ sub_data <- activity_data %>%
   select(ends_with("subscribed"),
          ends_with("unclassified"),
          -contains("adl"),
+         samplegroup,
          caseid, weight_cmd) %>%
   # make names consistent
   rename(activity_yt_n_video_total_subscribed = activity_yt_n_video_subscribed,
@@ -2277,6 +2358,7 @@ sub_data <- activity_data %>%
 
 n_video_substatus <- 
   sub_data %>% 
+    mutate(across(starts_with('activity_yt_n_video'), .f = ~weight_cmd*.x)) %>% 
     select(starts_with('activity_yt_n_video')) %>% 
     summarise_all(~sum(.x, na.rm = T)) %>% 
     pivot_longer(everything()) %>% 
@@ -2300,6 +2382,7 @@ n_video_substatus <-
 # recommendations shown
 rec_n_video_substatus <- 
   sub_data %>% 
+  mutate(across(starts_with('activity_yt_rec_n_video'), .f = ~weight_cmd*.x)) %>% 
   select(starts_with('activity_yt_rec_n_video')) %>% 
   summarise_all(~sum(.x, na.rm = T)) %>% 
   pivot_longer(everything()) %>% 
@@ -2323,6 +2406,7 @@ rec_n_video_substatus <-
 # recommendations followed 
 rec_match_n_video_substatus <- 
   sub_data %>% 
+  mutate(across(starts_with('activity_yt_rec_match_n_video'), .f = ~weight_cmd*.x)) %>% 
   select(starts_with('activity_yt_rec_match_n_video')) %>% 
   summarise_all(~sum(.x, na.rm = T)) %>% 
   pivot_longer(everything()) %>% 
@@ -2343,6 +2427,14 @@ rec_match_n_video_substatus <-
                 .fns = function(.x) (.x/total))) %>% 
   select(metric, channel_type, subscribed, everything()) 
 
+total_visits_table <- recs_data %>%
+    filter(variable == "total visits") %>%
+    pivot_longer(-variable) %>%
+    select(-variable) %>%
+    mutate(
+        overall_percent = 100 * (value / sum(value)),
+        overall_percent = format(round(overall_percent, 1))
+    )
 
 combined <-
   rec_n_video_substatus %>%
@@ -2385,10 +2477,10 @@ combined <-
                  "Recommendations followed")
     ),
     channel_type_label = case_when(
-      channel_type == "alternative" ~ "Alternative channel videos\n(2.7%)",
-      channel_type == "extremist" ~ "Extremist channel videos\n(0.4%)",
-      channel_type == "mainstream" ~ "Mainstream media channel videos\n(4.6%)",
-      channel_type == "other" ~ "Other channel videos\n(92.3%)"
+      channel_type == "alternative" ~ paste0("Alternative channel videos\n(",total_visits_table$overall_percent[1],"%)"),
+      channel_type == "extremist" ~  paste0("Extremist channel videos\n(",total_visits_table$overall_percent[2],"%)"),
+      channel_type == "mainstream" ~  paste0("Mainstream media channel videos\n(",total_visits_table$overall_percent[3],"%)"),
+      channel_type == "other" ~  paste0("Other channel videos\n(",total_visits_table$overall_percent[4],"%)")
     ),
     total_label = scales::comma(total)
   ) %>%
@@ -2451,14 +2543,16 @@ combined %>%
 <img src="main-text-figures_files/figure-gfm/recs by sub-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/subscriptions_bars.png',
+ggsave('./main-text-figures_files/subscriptions_bars_wtd.png',
+      dpi = 600,width = 11, height = 5.5)
+ggsave('./main-text-figures_files/subscriptions_bars_wtd.pdf',
       dpi = 600,width = 11, height = 5.5)
 ```
 
 ## Figure 7: Relative frequency of referrals to YouTube videos by channel and referrer type
 
-(CODE ONLY, see how `aggregated_referrers_by_channel` is constructed in
-`build.R` under “REFERRERS DATA”)
+(See how `aggregated_referrers_by_channel` is constructed in `build.R`
+under “REFERRERS DATA”)
 
 ``` r
 # on platform panel
@@ -2604,14 +2698,14 @@ plot_grid(
 )
 ```
 
-<img src="main-text-figures_files/figure-gfm/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
+<img src="main-text-figures_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./main-text-figures_files/referrers_channel_type_videos.png',
+ggsave('./main-text-figures_files/referrers_channel_type_videos_wtd.png',
+      dpi = 600, width = 12, height = 12)
+ggsave('./main-text-figures_files/referrers_channel_type_videos_wtd.pdf',
       dpi = 600, width = 12, height = 12)
 ```
-
-### Rabbit Hole stats
 
 ### Survey measures of racial resentment and hostile sexism stats (page 10)
 
@@ -2636,3 +2730,132 @@ cor(merged_data$fem_mean, merged_data$fem_cts,
 ```
 
     ## [1] 0.7947342
+
+### what % of alt and ext channel video views are from the high gender/racial resentment oversample? what % from high YT oversample?
+
+n_views_alternative_RRgroup / total_views_alternative
+
+1.  total_views_alternative = sum(n_video_views_alternative)
+2.  n_views_alternative_RRgroup = sum(n_video_views_alternative \|
+    subgroup = RR)
+
+``` r
+#samplegroup = 2 is high RR
+oversample_analysis <- merged_data %>%
+  select(user_id, samplegroup, browser_sample, weight_cmd,
+         rr_2018 = rr_cts, 
+         rr_2020 = rr_blk_mean,
+         gr_2018 = fem_cts,
+         gr_2020 = fem_mean,
+         activity_yt_n_video_alternative_all,
+         activity_yt_n_video_extremist_all,
+         activity_yt_video_time_elapsed_capped_total_alternative_all, # in seconds
+         activity_yt_video_time_elapsed_capped_total_extremist_all)  %>%
+  mutate(samplegroup = case_when(
+    samplegroup ==1 ~ "CCES 2018 recontact",
+    samplegroup ==2 ~ "CCES 2018 with high racial resentment recontact",
+    samplegroup ==3 ~ "High YouTube users"
+  ))
+  
+browser_oversample_analysis <- oversample_analysis %>%
+  filter(browser_sample == 'browser')
+
+dvs <- c(
+  "activity_yt_n_video_alternative_all",
+  "activity_yt_n_video_extremist_all",
+  "activity_yt_video_time_elapsed_capped_total_alternative_all",
+  "activity_yt_video_time_elapsed_capped_total_extremist_all"
+)
+
+raw_numbers <- map_dfr(
+  dvs,
+  ~ browser_oversample_analysis  %>%
+    group_by(samplegroup)  %>%
+    summarise(raw_subgroup_n = sum(.data[[.x]], na.rm = T)) %>%
+    ungroup()  %>%
+    mutate(raw_total_n = sum(raw_subgroup_n),
+           raw_prop_n = raw_subgroup_n / raw_total_n,
+           stat = .x)
+);raw_numbers
+```
+
+    ## # A tibble: 12 x 5
+    ##    samplegroup          raw_subgroup_n raw_total_n raw_prop_n stat              
+    ##    <chr>                         <dbl>       <dbl>      <dbl> <chr>             
+    ##  1 CCES 2018 recontact           9964       28059       0.355 activity_yt_n_vid…
+    ##  2 CCES 2018 with high…          5054       28059       0.180 activity_yt_n_vid…
+    ##  3 High YouTube users           13041       28059       0.465 activity_yt_n_vid…
+    ##  4 CCES 2018 recontact           1609        4455       0.361 activity_yt_n_vid…
+    ##  5 CCES 2018 with high…          1547        4455       0.347 activity_yt_n_vid…
+    ##  6 High YouTube users            1299        4455       0.292 activity_yt_n_vid…
+    ##  7 CCES 2018 recontact        2011035.    4882863.      0.412 activity_yt_video…
+    ##  8 CCES 2018 with high…        613129.    4882863.      0.126 activity_yt_video…
+    ##  9 High YouTube users         2258699.    4882863.      0.463 activity_yt_video…
+    ## 10 CCES 2018 recontact         216356.     598946.      0.361 activity_yt_video…
+    ## 11 CCES 2018 with high…         96053.     598946.      0.160 activity_yt_video…
+    ## 12 High YouTube users          286537.     598946.      0.478 activity_yt_video…
+
+``` r
+weighted_numbers <- map_dfr(
+  dvs,
+  ~ browser_oversample_analysis %>%
+    mutate(wtd_stat = .data[[.x]] * weight_cmd) %>%
+    group_by(samplegroup) %>%
+    summarise(wtd_subgroup_n = sum(wtd_stat, na.rm = T))  %>%
+    ungroup()  %>%
+    mutate(wtd_total_n = sum(wtd_subgroup_n),
+           wtd_prop_n = wtd_subgroup_n / wtd_total_n,
+           stat = .x)
+);weighted_numbers
+```
+
+    ## # A tibble: 12 x 5
+    ##    samplegroup          wtd_subgroup_n wtd_total_n wtd_prop_n stat              
+    ##    <chr>                         <dbl>       <dbl>      <dbl> <chr>             
+    ##  1 CCES 2018 recontact           9998.      38322.     0.261  activity_yt_n_vid…
+    ##  2 CCES 2018 with high…          3196.      38322.     0.0834 activity_yt_n_vid…
+    ##  3 High YouTube users           25128.      38322.     0.656  activity_yt_n_vid…
+    ##  4 CCES 2018 recontact           1787.       6590.     0.271  activity_yt_n_vid…
+    ##  5 CCES 2018 with high…           958.       6590.     0.145  activity_yt_n_vid…
+    ##  6 High YouTube users            3844.       6590.     0.583  activity_yt_n_vid…
+    ##  7 CCES 2018 recontact        2030896.    5264334.     0.386  activity_yt_video…
+    ##  8 CCES 2018 with high…        372672.    5264334.     0.0708 activity_yt_video…
+    ##  9 High YouTube users         2860766.    5264334.     0.543  activity_yt_video…
+    ## 10 CCES 2018 recontact         233831.     615934.     0.380  activity_yt_video…
+    ## 11 CCES 2018 with high…         61779.     615934.     0.100  activity_yt_video…
+    ## 12 High YouTube users          320324.     615934.     0.520  activity_yt_video…
+
+``` r
+visit_time_subgroup <- bind_cols(raw_numbers,
+                    weighted_numbers  %>% select(-samplegroup,-stat))  %>%
+  select(samplegroup, stat, everything())  %>% 
+  mutate(
+        channel_type = case_when(
+    str_detect(stat, "alternative") ~ "Alternative", 
+    str_detect(stat, "extremist") ~ "Extremist"
+    ),
+    stat = case_when(
+      stat == 'activity_yt_n_video_alternative_all' ~ "visit",
+            stat == 'activity_yt_n_video_extremist_all' ~ "visit",
+            stat == 'activity_yt_video_time_elapsed_capped_total_alternative_all' ~ "time (secs)",
+            stat == 'activity_yt_video_time_elapsed_capped_total_extremist_all' ~ "time (secs)"
+      
+    )
+  ) %>%
+  rename(`Unwweighted prop` = raw_prop_n,
+         `Weighted prop` = wtd_prop_n,
+         `Unwweighted n` = raw_subgroup_n,
+         `Unwweighted total` = raw_total_n,
+         `Weighted n` = wtd_subgroup_n,
+         `Weighted total` = wtd_total_n) %>%
+  select(samplegroup, channel_type, stat,
+         everything())
+
+
+visit_time_subgroup  %>%
+  kbl(digits = 2, 
+      booktabs = T,
+      format = "latex") %>% 
+  kable_styling() %>% 
+  save_kable("main-text-figures_files/exposure_by_subgroup.tex",float = FALSE)
+```

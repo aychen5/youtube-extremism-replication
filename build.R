@@ -626,8 +626,6 @@ external_referrers <- referrers_list$external_referrers
 internal_referrers_other <- referrers_list$internal_referrers_other
 internal_referrers <- referrers_list$internal_referrers
 
-
-
 # ACCESS BY SERVER ONLY
 all_activity_data <- read_delim(paste0(data_dir,'activity/merged.tsv'), delim='\t') # (not user-level) all activity data
 youtube_urls <- read_delim(paste0(data_dir, 'activity/youtube/merged.tsv'), delim='\t') # youtube videos (activity)
@@ -663,7 +661,6 @@ tidy_merged <- all_activity_youtube_data %>%
          predecessor_youtube_url_type = lag(url_type, n = 1L)) %>% 
   ungroup()
 # 
-
 
 #
 predecessor_grouping_data <- tidy_merged %>% 
@@ -710,11 +707,20 @@ write_tsv(referrers_data,
 write_csv(youtube_referrers_data, 
           paste0(data_dir, 'youtube/youtube_referrers.csv'))
 
+activity_data <- sample_data %>% 
+  filter(browser_sample=='browser' & activity_window>1) %>% 
+  select(user_id, browser_sample, samplegroup, weight_cmd)
 
-on_platform_referrers_by_channel <- youtube_referrers_data %>%
-  group_by(channel_type) %>%
-  count(youtube_video_referrers_by_channel_type) %>%
+yt_smp_merge_data <- youtube_referrers_data  %>%  
+  left_join(activity_data,
+            by = c("user_id_all"="user_id"))
+
+on_platform_referrers_by_channel_wtd <- yt_smp_merge_data %>%
+  group_by(user_id_all, channel_type, youtube_video_referrers_by_channel_type) %>%
+  summarise(n = sum(weight_cmd)) %>%
   filter(!is.na(youtube_video_referrers_by_channel_type)) %>%
+  group_by(channel_type, youtube_video_referrers_by_channel_type) %>%
+  summarise(n = sum(n)) %>%
   mutate(
     total = sum(n),
     proportion = (n / sum(n)),
@@ -741,13 +747,16 @@ on_platform_referrers_by_channel <- youtube_referrers_data %>%
   arrange(channel_type, youtube_video_referrers_by_channel_type) %>%
   mutate(order_var = 1:nrow(.))
 
-write_csv(on_platform_referrers_by_channel, 
-          'data/on_platform_referrers_by_channel.csv')
+write_csv(on_platform_referrers_by_channel_wtd, 
+          'data/on_platform_referrers_by_channel_wtd.csv')
 
-aggregated_referrers_by_channel <- youtube_referrers_data %>%
-  group_by(channel_type) %>%
-  count(all_referrers_grouped) %>%
+
+aggregated_referrers_by_channel_wtd <- yt_smp_merge_data %>%
+  group_by(user_id_all, channel_type, all_referrers_grouped) %>%
+  summarise(n = sum(weight_cmd)) %>%
   filter(!is.na(all_referrers_grouped)) %>%
+  group_by(channel_type, all_referrers_grouped) %>%
+  summarise(n = sum(n)) %>%
   mutate(
     total = sum(n),
     proportion = (n / sum(n)),
@@ -770,8 +779,8 @@ aggregated_referrers_by_channel <- youtube_referrers_data %>%
     all_referrers_grouped = str_replace(all_referrers_grouped, "youtube", "YouTube")
   )
 
-write_csv(aggregated_referrers_by_channel, 
-          paste0('data/aggregated_referrers_by_channel.csv'))
+write_csv(aggregated_referrers_by_channel_wtd, 
+          paste0('data/aggregated_referrers_by_channel_wtd.csv'))
 
 ####################################################################
 ### RECOMMENDATIONS DATA
@@ -792,9 +801,18 @@ youtube_recs_followed_summary  <- read_delim(paste0(data_dir, 'youtube/video_rec
 youtube_merged_visits_recs <- youtube_video_visits %>% 
   left_join(youtube_recs_shown_summary, by = "id") %>% 
   left_join(youtube_recs_followed_summary, by = "id") %>% 
-  filter(user_id %in% final_sample_ids)
+  filter(user_id %in% final_sample_ids)  %>% 
+  left_join(activity_data %>% select(user_id, weight_cmd),
+            by = 'user_id')
 
 ### === create recs shown/followed table conditional on the channel type of current video
+channel_types = c(
+  "alternative",
+  "extremist",
+  "mainstream",
+  "other"
+)
+
 channel_type_vars <- c(
   'alternative_match',
   'extremist_match',
@@ -818,10 +836,14 @@ recs_followed_vars <- c(
 
 recs_table_fxn <- function(channel_type_var, rec_statistic) {
   youtube_merged_visits_recs %>% 
-    group_by(.data[[channel_type_var]]) %>% 
-    select(all_of(rec_statistic),
+    mutate(across(all_of(rec_statistic), .f = ~weight_cmd * .x)) %>% 
+    select(user_id,
+           all_of(rec_statistic),
            .data[[channel_type_var]]) %>% 
-    summarize_all(.funs = ~sum(.x, na.rm = T)) %>% 
+    group_by(user_id, .data[[channel_type_var]]) %>% 
+    summarize(across(all_of(rec_statistic), .f = ~sum(.x, na.rm = T))) %>% 
+    group_by(.data[[channel_type_var]]) %>% 
+    summarize(across(all_of(rec_statistic), .f = ~sum(.x, na.rm = T))) %>% 
     filter(.data[[channel_type_var]] == 1) %>% 
     mutate(channel_type = str_replace(channel_type_var, "_match", "")) %>% 
     select(-.data[[channel_type_var]])
@@ -839,29 +861,34 @@ recs_followed_table <- bind_rows(map(channel_type_vars, ~recs_table_fxn(.x, recs
   pivot_wider(variable, names_from = channel_type)
 
 #all totals
-totals_table_fxn <- function(vars_list) {
-  out <- youtube_merged_visits_recs %>% 
-    select(all_of(vars_list)) %>% 
-    summarize_all(.funs = ~sum(.x, na.rm = T)) %>% 
-    mutate(variable = paste0("total ", deparse(substitute(vars_list))) ) %>% 
-    select(variable, everything())
-  names(out) <- c('variable', 'alternative', 'extremist', 'mainstream', 'other')
-  return(out)
-}
+total_visit_table <- youtube_merged_visits_recs %>% 
+  select(user_id, weight_cmd, all_of(channel_type_vars)) %>% 
+  mutate(across(all_of(channel_type_vars), .f = ~weight_cmd * .x)) %>% 
+  select(-user_id, -weight_cmd) %>% 
+  summarize_all(.funs = ~sum(.x, na.rm = T)) %>% 
+  rename_all(.funs = ~str_replace(.x, "_match", "")) %>% 
+  mutate(variable =  "total visits" )
 
-totals_vars_list <- list(channel_type_vars, recs_shown_vars, recs_followed_vars)
-totals_table <- bind_rows(map(totals_vars_list, ~totals_table_fxn(.x))) %>% 
-  mutate(variable = c("total visits", "total recs shown", "total recs followed"))
+total_recs_shown_table <- recs_shown_table %>% 
+  summarize(across(all_of(channel_types), .f = ~sum(.x, na.rm = T)))%>% 
+  mutate(variable = "total recs shown")
 
+total_recs_followed_table <- recs_followed_table_unwtd %>% 
+  summarize(across(all_of(channel_types), .f = ~sum(.x, na.rm = T)))%>% 
+  mutate(variable = "total recs followed")
+
+totals_table <- bind_rows(total_visit_table, 
+                          total_recs_shown_table, 
+                          total_recs_followed_table)
 
 # put totals and recs tables together to generate recommendation_pipeline.tsv
 recommendation_pipeline_table <- totals_table %>%
   bind_rows(recs_shown_table) %>%
-  bind_rows(recs_followed_table)
+  bind_rows(recs_followed_table) %>%
+  select(variable, everything())
 
 write_tsv(recommendation_pipeline_table, 
-          paste0(data_dir, 'youtube/recommendation_pipeline.tsv'))
-
+          paste0(data_dir, 'youtube/recommendation_pipeline_wtd.tsv'))
 
 
 ####################################################################
@@ -1042,8 +1069,11 @@ merged_cumulative_all <- left_join(merged_cumulative_extremist,
 
 
 # remove folks not matched to survey w/activity data
+final_sample_ids <- activity_data$user_id
 merged_cumulative_all <- merged_cumulative_all %>% 
-  filter(user_id %in% final_sample_ids)
+  filter(user_id %in% final_sample_ids) %>% 
+  # add survey sampling info
+  left_join(activity_data)
 
 #Bar graph of subscribed, not subscribed to that one but to another one, 
 #not subscribed to any in channel - binary, one for alt and one for extremist
@@ -1070,16 +1100,20 @@ summary_youtube_subscriptions <- merged_cumulative_all %>%
       cum_other_sub_no_current_channel == 0 & channel_type == "other"~ "not subscribed"
     )) 
 
-summarize_subscribe_fxn <- function(subscribed_group) {
+
+summarize_subscribe_fxn <- function(sub_group) {
   summary_youtube_subscriptions %>%
-    group_by(.data[[subscribed_group]]) %>%
-    count() %>% 
-    filter(!is.na(.data[[subscribed_group]])) %>% 
-    ungroup() %>% 
+    group_by(user_id, .data[[sub_group]]) %>%
+    summarise(wtd_n = sum(weight_cmd)) %>%
+    ungroup()  %>%
+    group_by(.data[[sub_group]]) %>%
+    summarise(n = sum(wtd_n)) %>%
+    ungroup() %>%
+    filter(!is.na(.data[[sub_group]])) %>%
     mutate(total = sum(n),
            percent = 100*(n/total),
-           channel_type = subscribed_group) %>% 
-    rename(subscribed_group = .data[[subscribed_group]]) %>% 
+           channel_type = sub_group) %>%
+    rename(subscribed_group = .data[[sub_group]]) %>%
     mutate(stderr = sqrt((percent*(100 - percent))/n),
            ci_lwr95 = percent - qt(.025, df = total, lower.tail = F)*stderr,
            ci_upr95 = percent + qt(.025, df = total, lower.tail = F)*stderr,
@@ -1089,16 +1123,20 @@ summarize_subscribe_fxn <- function(subscribed_group) {
 }
 
 prop_table <- merged_cumulative_all %>% 
-  count(channel_type) %>% 
+  group_by(user_id, channel_type) %>%
+  summarise(wtd_n = sum(weight_cmd)) %>% 
+  group_by(channel_type) %>%
+  summarise(n = sum(wtd_n)) %>% 
+  ungroup() %>%
   mutate(prop = round(n/sum(n), 3))
 
-summarize_subscribe_table <- map(
+
+summarize_subscribe_table_wtd <- map_dfr(
   c('subscribed_alternative',
     'subscribed_extremist',
     'subscribed_mainstream',
     'subscribed_other'), 
-  ~summarize_subscribe_fxn(subscribed_group = .x)) %>% 
-  bind_rows() %>% 
+  ~summarize_subscribe_fxn(sub_group = .x)) %>% 
   mutate(channel_type = case_when(channel_type == "subscribed_alternative" ~ paste0("Alternative channel\n(",prop_table[prop_table$channel_type == "alternative",]$prop*100,"%)"),
                                   channel_type == "subscribed_extremist" ~  paste0("Extremist channel\n(",prop_table[prop_table$channel_type == "extremist",]$prop*100,"%)"),
                                   channel_type == "subscribed_mainstream" ~  paste0("Mainstream media\n(",prop_table[prop_table$channel_type == "mainstream",]$prop*100,"%)"),
@@ -1108,4 +1146,7 @@ summarize_subscribe_table <- map(
                                               "subscribed to another",
                                               "not subscribed")))
 
-write_csv(summarize_subscribe_table, "./data/summarize_subscribe_table.csv")
+
+write_csv(summarize_subscribe_table_wtd, "./data/summarize_subscribe_table_wtd.csv")
+
+

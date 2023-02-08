@@ -103,11 +103,11 @@ day_time_averages <- read_csv( "data/day_time_averages.csv")
 
 # referrers data (see build.R for construction of this table)
 on_platform_referrers_by_channel <- 
-  read_csv('data/on_platform_referrers_by_channel.csv')
+  read_csv('data/on_platform_referrers_by_channel_wtd.csv')
 
 # recommendations data
 recs_data <- 
-  read_delim("data/recommendation_pipeline.tsv", delim = '\t')
+  read_delim("data/recommendation_pipeline_wtd.tsv", delim = '\t')
 
 # color palette 
 color_palette <- c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
@@ -1483,7 +1483,7 @@ for (i in 1:nrow(activity_data)) {
   end_id <-
     which(date_vector == as.Date(activity_data[i, ]$activity_end_date))
   # interpolate between start and end date
-  users_by_mat[i, start_id:end_id] <- 1
+  users_by_mat[i, start_id:end_id] <- activity_data[i, ]$weight_cmd
 }
 
 # tally total number for each day
@@ -1502,7 +1502,9 @@ n_users_by_date %>%
 <img src="appendix-figures_files/figure-gfm/attrition-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./appendix-figures_files/attrition.png',
+ggsave('./appendix-figures_files/attrition_wtd.png',
+      dpi = 600, width = 10, height = 6)
+ggsave('./appendix-figures_files/attrition_wtd.pdf',
       dpi = 600, width = 10, height = 6)
 ```
 
@@ -1636,6 +1638,8 @@ sma_count_plot + sma_time_plot + plot_layout(ncol=1,heights=c(2,1))
 ``` r
 ggsave('./appendix-figures_files/trend_by_channel_type_sma.png',
       dpi = 600, width = 10, height = 14)
+ggsave('./appendix-figures_files/trend_by_channel_type_sma.pdf',
+      dpi = 600, width = 10, height = 14)
 ```
 
 ## Figure S3 and S4: YouTube video diets of individuals who viewed any alternative/extremist channel video
@@ -1732,6 +1736,8 @@ topuser_plot(
 ``` r
 ggsave('./appendix-figures_files/any_alternative_video_diet_time_elapsed_week.png',
       dpi = 600, width = 10, height = 6)
+ggsave('./appendix-figures_files/any_alternative_video_diet_time_elapsed_week.pdf',
+      dpi = 600, width = 10, height = 6)
 
 topuser_plot(
     data = top_time_all_weeks_most_any_ext,
@@ -1748,6 +1754,8 @@ topuser_plot(
 
 ``` r
 ggsave('./appendix-figures_files/any_extremist_video_diet_time_elapsed_week.png',
+      dpi = 600, width = 10, height = 6)
+ggsave('./appendix-figures_files/any_extremist_video_diet_time_elapsed_week.pdf',
       dpi = 600, width = 10, height = 6)
 ```
 
@@ -1871,6 +1879,8 @@ plot_grid(
 
 ``` r
 ggsave('./appendix-figures_files/superconsumers_time_elapsed_week.png',
+      dpi = 600, width = 12, height = 6)
+ggsave('./appendix-figures_files/superconsumers_time_elapsed_week.pdf',
       dpi = 600, width = 12, height = 6)
 ```
 
@@ -2001,7 +2011,10 @@ recs_followed_grid
 <img src="appendix-figures_files/figure-gfm/recommendations followed plot-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./appendix-figures_files/waffle_recs_followed.png',
+ggsave('./appendix-figures_files/waffle_recs_followed_wtd.png',
+      dpi = 600, width = 14, height = 8)
+
+ggsave('./appendix-figures_files/waffle_recs_followed_wtd.pdf',
       dpi = 600, width = 14, height = 8)
 ```
 
@@ -2086,7 +2099,9 @@ on_platform_referrers_by_channel_plot
 <img src="appendix-figures_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave('./appendix-figures_files/on_platform_referrers_by_channel.png',
+ggsave('./appendix-figures_files/on_platform_referrers_by_channel_wtd.png',
+      dpi = 600, width = 16, height = 10)
+ggsave('./appendix-figures_files/on_platform_referrers_by_channel_wtd.pdf',
       dpi = 600, width = 16, height = 10)
 ```
 
@@ -3682,19 +3697,22 @@ activity_youtube_video <- activity_youtube %>%
   filter(!is.na(video_id))
 
 # remove users not matched to surveys
-final_sample_ids <- merged_data %>% 
-  pull(user_id)
-
 restricted_sample <- activity_youtube_video %>% 
-  filter(user_id %in% final_sample_ids)
+  filter(user_id %in% activity_data$user_id) %>% 
+  left_join(activity_data %>%
+              select(user_id, browser_sample, samplegroup, weight_cmd))
 
-#within each session
-within_session_raw <- restricted_sample %>% 
+within_session_wtd <- restricted_sample %>% 
   group_by(user_id, yt_session) %>% 
   mutate(yt_n_video_in_session = n(),
          video_index = row_number(yt_session)) %>% 
   ungroup() %>% 
   group_by(video_index) %>%
+  mutate(across(c("alternative_match", 
+                  "extremist_match", 
+                  "mainstream_match", 
+                  "other_match"),
+                ~.x * weight_cmd)) %>%
   mutate(
     total_video_index = n(),
     fraction_alternative = sum(alternative_match) / total_video_index,
@@ -3715,7 +3733,7 @@ video_index_rug <- restricted_sample %>%
   select(video_index)
 
 
-within_session_raw %>%
+within_session_wtd %>%
   filter(channel_type != "fraction_other") %>% 
   filter(video_index %in% 1:319) %>% # 99%
   ggplot(aes(x = video_index, 
@@ -3756,7 +3774,9 @@ within_session_raw %>%
   theme(legend.position = 'bottom',
         axis.title.x = element_text(hjust = .95))
 
-ggsave("appendix-figures_files/extension_sessions_proportions_channel_type.png",
+ggsave("./data/extension_sessions_proportions_channel_type.png",
+      dpi = 600, height = 6, width = 12 )
+ggsave("./data/extension_sessions_proportions_channel_type.pdf",
       dpi = 600, height = 6, width = 12 )
 ```
 
@@ -3765,16 +3785,18 @@ ggsave("appendix-figures_files/extension_sessions_proportions_channel_type.png",
 ``` r
 user_sessions_at <- read_delim("./Data/extremism/user_summary_sessions_activity.tsv",
                             delim = '\t') 
-# merge sessions data with survey data
+`# merge sessions data with survey data
 user_sessions_at_yg <- user_sessions_at %>% 
   left_join(activity_data %>% select(user_id, caseid_d34, weight_cmd)) %>% 
   filter(!is.na(weight_cmd))
 
 user_sessions_at_yg %>%
-  select(all_of(count_vars), yt_n_video, yt_window) %>%
+  select(all_of(count_vars), yt_n_video, yt_window, weight_cmd) %>%
+  mutate(across(c(all_of(count_vars)),
+                ~.x*weight_cmd)) %>%
   group_by(yt_n_video) %>%
   summarize_at(.vars = all_of(count_vars),
-               .funs = ~ (sum(.) / sum(yt_n_video)) * 100) %>%
+               .funs = ~ (sum(.) / sum(yt_n_video*weight_cmd)) * 100) %>%
   pivot_longer(-yt_n_video) %>%
   filter(name != 'yt_n_video_other_all') %>%
   ggplot(aes(x = yt_n_video, y = value,
@@ -3820,14 +3842,20 @@ referrers.)
 
 ``` r
 # external referrers table
-total_external_referrers_by_channel_type <- referrers_data %>% 
+total_external_referrers_by_channel_type_wtd <- referrers_data %>% 
+  left_join(activity_data %>%
+              select(user_id, weight_cmd),
+            by = c('user_id_all'= 'user_id')) %>% 
   mutate(is_external_referrer = if_else(!str_detect(predecessor_url, "youtube.com"), 1,0 )) %>% 
   group_by(channel_type, is_external_referrer) %>% 
-  summarise(n = n()) %>% 
+  summarise(n = sum(weight_cmd, na.rm = T)) %>% 
   filter(is_external_referrer == 1 & channel_type %in% c("alternative", "extremist"))
 
 # calculate proportions
 external_referrers_by_domain <- referrers_data %>% 
+  left_join(activity_data %>%
+              select(user_id, weight_cmd),
+            by = c('user_id_all'= 'user_id')) %>% 
   mutate(external_referrer_group = case_when(predecessor_domain %in% external_referrers$main_social ~ "Mainstream social",
                                              predecessor_domain %in% external_referrers$alternative_social ~ "Alternative social",
                                              predecessor_domain %in% external_referrers$search_engine ~ "Search engine social",
@@ -3835,10 +3863,10 @@ external_referrers_by_domain <- referrers_data %>%
                                              TRUE ~ NA_character_)) %>%
   filter(!is.na(external_referrer_group) ) %>% 
   group_by(predecessor_domain, channel_type) %>% 
-  summarise(n = n()) %>% 
+  summarise(n = sum(weight_cmd, na.rm = T)) %>% 
   filter(channel_type %in% c("alternative", "extremist")) %>% 
-  mutate(n_external_alternative = total_external_referrers_by_channel_type[total_external_referrers_by_channel_type$channel_type == "alternative", ]$n,
-         n_external_extremist = total_external_referrers_by_channel_type[total_external_referrers_by_channel_type$channel_type == "extremist", ]$n,
+  mutate(n_external_alternative = total_external_referrers_by_channel_type_wtd[total_external_referrers_by_channel_type_wtd$channel_type == "alternative", ]$n,
+         n_external_extremist = total_external_referrers_by_channel_type_wtd[total_external_referrers_by_channel_type_wtd$channel_type == "extremist", ]$n,
          percent = if_else(channel_type == "alternative" ,
                         100*(n/n_external_alternative),
                         100*(n/n_external_extremist))) %>% 
@@ -3854,8 +3882,8 @@ external_referrers_by_domain_table <- external_referrers_by_domain %>%
                                              predecessor_domain %in% external_referrers$search_engine ~ "Search engine social",
                                              predecessor_domain %in% external_referrers$webmail ~ "Webmail",
                                              TRUE ~ NA_character_)) %>% 
-  mutate(percent_extremist = round(percent_extremist, 2),
-         percent_alternative = round(percent_alternative, 2))
+  mutate(percent_extremist = round(percent_extremist, 3),
+         percent_alternative = round(percent_alternative, 3))%>% 
   select(`Referrer type` = external_referrer_group,
          `Preceding domain` = predecessor_domain,
          `Percent to extremist channel` = percent_extremist,
@@ -3865,29 +3893,48 @@ external_referrers_by_domain_table <- external_referrers_by_domain %>%
 # print out
 external_referrers_by_domain_table %>%
   kbl(format = "html",
-      digits = 2,
+      digits = 5,
       booktabs = TRUE) 
 
 # save as TEX file
 external_referrers_by_domain_table %>%
   kbl(format = "latex",
-      digits = 2,
+      digits = 3,
       booktabs = TRUE) %>% 
-  readr::write_lines(file = "./appendix-figures_files/external_referrers_by_channel_type.tex")
+  readr::write_lines(file = "./appendix-figures_files/external_referrers_by_channel_type_wtd.tex")
 ```
 
 ## Figure S16: Concentration of exposure to alternative and extremist channels (view counts)
 
 ``` r
-# get the %user for 80% watch time
-lab_stat <-
-  cumsum_fxn('activity_yt_video_time_elapsed_capped_total_alternative_all',
-             activity_data) %>%
-  filter(round(cum_views, 2) == .8) %>%
-  pull(ln_cum_user)
+cumsum_fxn <- function (var, data) {
+  channel_type <-
+      str_replace(str_extract(var, "[a-z]+_all$"), "_all", "")
+  data %>%
+    arrange(desc(.data[[var]])) %>%
+    mutate(
+      users = weight_cmd / sum(.$weight_cmd, na.rm = T),
+      views = (.data[[var]] / sum(.data[[var]], na.rm = T)),
+      cum_user = cumsum(users),
+      cum_views = cumsum(views),
+      ln_cum_user = log10(cumsum(users)),
+      ln_cum_views = log10(cumsum(views)),
+      source = channel_type
+    ) %>%
+    select(cum_user, cum_views, ln_cum_user, source, caseid, weight_cmd)
+}
 
-# log 10 on x-axis
-time_cumsum_plot_inset <- concentration_time_user %>%
+lab_stat <-
+  cumsum_fxn('activity_yt_n_video_alternative_all', activity_data) %>%
+  filter(round(cum_views, 2) == .80) %>%
+  pull(ln_cum_user)
+at_counts <- paste0("activity_yt_n_video_",
+                    channel_types,
+                    "_all")
+at_cum_count_user <- bind_rows(map(at_counts, 
+                                   ~ cumsum_fxn(.x, activity_data)))
+
+count_cumsum_plot_inset <- at_cum_count_user %>%
   ggplot(aes(x = ln_cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   geom_point(
@@ -3898,6 +3945,7 @@ time_cumsum_plot_inset <- concentration_time_user %>%
     size = 1.5
   ) +
   scale_y_continuous(labels = scales::percent) +
+  #scale_x_continuous(labels = scales::percent) +
   scale_color_manual(
     name = "",
     labels = c(
@@ -3906,7 +3954,7 @@ time_cumsum_plot_inset <- concentration_time_user %>%
       "Mainstream media\nchannels",
       "Other\nchannels"
     ),
-    values = color_palette
+    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
   ) +
   geom_segment(aes(
     x = -4,
@@ -3931,6 +3979,7 @@ time_cumsum_plot_inset <- concentration_time_user %>%
       y = .9,
       yend = .8
     ),
+    #arrow = arrow(type = "closed", length = unit(0.03, "npc")),
     curvature = 0.25,
     angle = 35,
     color = 'black'
@@ -3949,23 +3998,27 @@ time_cumsum_plot_inset <- concentration_time_user %>%
     x = -3,
     y = .95,
     label = str_wrap(paste0(
-      round(10^(lab_stat) * 100, 1),
-      "% of users account for 80% of time \nspent viewing alternative channel videos."
+      format(round(10^(lab_stat), 3) * 100, nsmall = 1),
+      "% of users account for 80% of visits to alternative channel videos."
     ), width = 45),
     size = 2.5
   ) +
   labs(x = expression(log[10]~ "(Percentage of users)"), 
-       y = "Percentage of total exposure (minutes)") +
+       y = "Percentage of total exposure (views)") +
   theme_minimal() +
+  #title = "Total percent alternative/extremist videos watched by user percentile"
   theme(
     plot.background = element_blank(),
     legend.position = 'bottom',
     axis.title.x = element_text(size = 10),
     axis.title.y = element_text(size = 10)
-  )
+  );count_cumsum_plot_inset
+```
 
-# without logging x
-time_cumsum_plot_zoomout <- concentration_time_user %>%
+<img src="appendix-figures_files/figure-gfm/ecdf visits-1.png" style="display: block; margin: auto;" />
+
+``` r
+count_cumsum_plot_zoomout <- at_cum_count_user %>%
   ggplot(aes(x = cum_user, y = cum_views, color = source)) +
   geom_line(size = 2) +
   scale_y_continuous(labels = scales::percent) +
@@ -3978,13 +4031,14 @@ time_cumsum_plot_zoomout <- concentration_time_user %>%
       "Mainstream media\nchannels",
       "Other\nchannels"
     ),
-    values = color_palette
+    values = c("#FFA500", "#CD5C5C", "#015CB9", "#E3E6E6")
   ) +
   annotate(geom = "rect", col = "black", fill = "white",
            lwd = 2,
            ymin = 0, ymax = .87, xmin = .28, xmax = 1) +
-  labs(x = "Percentage of users", y = "Percentage of total exposure (minutes)") +
+  labs(x = "Percentage of users", y = "Percentage of total exposure (views)") +
   theme_minimal() +
+  #title = "Total percent alternative/extremist videos watched by user percentile"
   theme(
     plot.background = element_blank(),
     legend.position = 'bottom',
@@ -3992,17 +4046,20 @@ time_cumsum_plot_zoomout <- concentration_time_user %>%
     axis.title.y = element_text(size = 12)
   )
 
-# combine inset (logged) and non-log 
-time_cumsum_plot_zoomout +
-  patchwork::inset_element(time_cumsum_plot_inset +
+
+count_cumsum_plot_zoomout +
+  patchwork::inset_element(count_cumsum_plot_inset +
                              guides(color = "none"), 
                            left = 0.3, bottom = 0.05, right = .95, top = .85,
                            on_top = TRUE)
 ```
 
-<img src="appendix-figures_files/figure-gfm/ecdf visits-1.png" style="display: block; margin: auto;" />
+<img src="appendix-figures_files/figure-gfm/ecdf visits-2.png" style="display: block; margin: auto;" />
 
 ``` r
-ggsave("appendix-figures_files/cdf_users_visit_exposure.png",
-      dpi = 600, width = 8, height = 6)
+ggsave(
+  "appendix-figures_files/cdf_users_visit_exposure.pdf",
+  width = 8.5,
+  height = 5.5
+)
 ```
