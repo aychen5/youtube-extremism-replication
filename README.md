@@ -25,10 +25,12 @@ Contains preprocessing of survey and browser extension data, and produces three 
    3. `yg_browser_cces_merged.rds` : a merged table containing survey, browser history, and browser activity data for all participants in the YouGov survey. This dataset is used in comparisons between the full sample of 4,000 and the fraction of those for whom we have browser extension data (e.g., in Table S1 and Figure S13).
 
 Also produces several other aggregated datasets used in the analysis:  
-   1. `on_platform_referrers_by_channel.csv` : YouTube referrers by channel.  
-   2. `aggregated_referrers_by_channel.csv` : all referrers by channel.  
-   3. `recommendation_pipeline.tsv`: pipeline of YouTube recommendations and follows.  
-   4. `summarize_subscribe_table.csv`: summary of user subscription results.  
+   1. `on_platform_referrers_by_channel_wtd.csv` : YouTube referrers by channel.  
+   2. `aggregated_referrers_by_channel_wtd.csv` : all referrers by channel.  
+   3. `recommendation_pipeline_wtd.tsv`: pipeline of YouTube recommendations and follows.  
+   4. `summarize_subscribe_table_wtd.csv`: summary of user subscription results.  
+
+The datasets without `*_wtd` in the name contain the unweighted estimates.
 
 Variables in each dataset are renamed from the YouGov survey (see `DART0034_codebook.pdf` for original names). In `activity_yg_cces.rds` and `browser_history_yg_cces.rds`, we restricted the set of participants in the analyses to those for whom we could capture at least one day of activity/browser history data. `yg_browser_cces_merged.rds` contain data for all participants who took the YouGov survey.
 
