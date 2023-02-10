@@ -337,7 +337,7 @@ summarize_subscribe_table %>%
       booktabs = T,
       format = "latex") %>% 
   kable_styling() %>% 
-  save_kable("main-text-figures_files/c",float = FALSE)
+  save_kable("./main-text-figures_files/subscriptions_by_other_subscriptions_wtd.tex",float = FALSE)
 ```
 
 If we instead define subscribers to include all people who subscribe to at least one channel of the type in question, the proportion of views from subscribers increases to 88% (92.9% weighted) for alternative channels and 89% for extremist channels (84.7% weighted).
@@ -502,7 +502,7 @@ time_cumsum_plot_inset <- concentration_time_user %>%
     y = .95,
     label = str_wrap(paste0(
       round(10^(lab_stat) * 100, 1),
-      "% of users account for 79% of time \nspent viewing alternative channel videos."
+      "% of users account for 80% of time \nspent viewing alternative channel videos."
     ), width = 45),
     size = 2.5
   ) +
@@ -1340,6 +1340,7 @@ sub_data <- activity_data %>%
   select(ends_with("subscribed"),
          ends_with("unclassified"),
          -contains("adl"),
+         user_id,
          samplegroup,
          caseid, weight_cmd) %>%
   # make names consistent
@@ -1431,7 +1432,7 @@ total_visits_table <- recs_data %>%
     select(-variable) %>%
     mutate(
         overall_percent = 100 * (value / sum(value)),
-        overall_percent = format(round(overall_percent, 1))
+        overall_percent = format(round(overall_percent, 2))
     )
 
 combined <-

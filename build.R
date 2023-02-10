@@ -791,6 +791,7 @@ write_csv(aggregated_referrers_by_channel_wtd,
 youtube_visits <- read_delim(paste0(data_dir, 'youtube/merged.tsv'), delim = '\t')
 youtube_video_visits <- youtube_visits %>% 
   filter(!is.na(video_id))
+
 # recs shown
 youtube_recs_shown_summary <- read_delim(paste0(data_dir, 'youtube/video_recs_visit_summary.tsv'), delim = '\t')
 # recs followed
@@ -1122,7 +1123,11 @@ summarize_subscribe_fxn <- function(sub_group) {
            total_label = scales::comma(n))
 }
 
-prop_table <- merged_cumulative_all %>% 
+# total visits to videos by channel
+prop_table <- youtube_video_visits %>% 
+  filter(!is.na(video_id)) %>% 
+  filter(user_id %in% final_sample_ids) %>% 
+  left_join(activity_data) %>% 
   group_by(user_id, channel_type) %>%
   summarise(wtd_n = sum(weight_cmd)) %>% 
   group_by(channel_type) %>%
